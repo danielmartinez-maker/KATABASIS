@@ -1,0 +1,7 @@
+node_modules/
+dist/
+KATABASIS Data/
+katabasis.html
+katabasis.html.tmp-*
+npm-debug.log*
+

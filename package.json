@@ -1,0 +1,43 @@
+{
+  "name": "katabasis",
+  "version": "1.0.0",
+  "description": "A roguelite set in Ancient Greece.",
+  "main": "desktop/main.cjs",
+  "author": "Daniel Martinez",
+  "homepage": "https://github.com/danielmartinez-maker/KATABASIS",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "44.4.5",
+    "electron-builder": "26.17.0"
+  },
+  "build": {
+    "appId": "com.danielmartinezmaker.katabasis",
+    "productName": "KATABASIS",
+    "asar": true,
+    "files": [
+      "desktop/**",
+      "assets/**",
+      "css/**",
+      "js/**",
+      "index.html",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-${version}-win-${arch}-portable.${ext}"
+    }
+  }
+}

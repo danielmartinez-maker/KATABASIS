@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
+<title>KATABASIS — A Descent Through Myth</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="icon" href="assets/ui/favicon.webp" />
+</head>
+<body>
+<div id="asset-loading">Loading generated image art…</div>
+<div id="stage">
+  <canvas id="game"></canvas>
+
+  <!-- ===================== HUD ===================== -->
+  <div id="hud" class="hidden">
+    <div id="hud-top">
+      <div id="vitals">
+        <div class="bar-wrap hp">
+          <div id="hp-bar" class="bar"></div>
+          <div id="hp-ghost" class="bar ghost"></div>
+          <div id="hp-text" class="bar-label">100 / 100</div>
+        </div>
+        <div class="shield-row" id="shield-row"></div>
+      </div>
+
+      <div id="region-plaque">
+        <div id="region-name">TARTARUS</div>
+        <div id="act-status" class="act-status">ACT I · REGION 1/8</div>
+        <div id="room-track"></div>
+      </div>
+      <div id="run-status" class="run-status" aria-live="polite"></div>
+
+      <div id="right-stack">
+      <div id="obol-count"><span class="obol-glyph"></span> <span id="obol-num">0</span></div>
+        <div id="dash-pips"></div>
+        <div id="trial-hud-status" class="trial-hud-status" aria-live="polite"></div>
+        <div id="power-status" class="power-status hidden" aria-label="Active build powers"></div>
+      </div>
+    </div>
+
+    <div id="boss-bar-wrap" class="hidden">
+      <div id="boss-name">THE NEMEAN LION</div>
+      <div class="bar-wrap boss"><div id="boss-bar" class="bar"></div></div>
+      <div id="boss-stage-readout"><span id="boss-stage-pips"></span><span id="boss-stage-name"></span></div>
+      <div id="boss-sub"></div>
+    </div>
+
+    <div id="boon-tray"></div>
+    <div id="relic-tray"></div>
+
+    <div id="ability-bar">
+      <div class="ability" id="ab-attack"><div class="ab-key">LMB</div><div class="ab-name">Strike</div><div class="ab-cd"><i></i></div></div>
+      <div class="ability" id="ab-guard"><div class="ab-key">RMB</div><div class="ab-name">Guard</div><div class="ab-cd"><i></i></div></div>
+      <div class="ability" id="ab-cast"><div class="ab-key">F</div><div class="ab-name">Cast</div><div class="ab-cd"><i></i></div></div>
+      <div class="ability" id="ab-dash"><div class="ab-key">SPACE</div><div class="ab-name">Dash</div><div class="ab-cd"><i></i></div></div>
+      <div class="ability" id="ab-rush"><div class="ab-key">R</div><div class="ab-name">Rush</div><div class="ab-cd"><i></i></div></div>
+      <div class="ability" id="ab-special"><div class="ab-key">K</div><div class="ab-name">Wrath</div><div class="ab-cd"><i></i></div></div>
+      <div class="ability" id="ab-call"><div class="ab-key">Q</div><div class="ab-name">Call</div><div class="ab-cd"><i></i></div></div>
+      <div class="ability" id="ab-ascend"><div class="ab-key">T</div><div class="ab-name">Ascend</div><div class="ab-cd"><i></i></div></div>
+    </div>
+
+    <div id="toasts"></div>
+    <div id="interact-hint" class="hidden">[E]</div>
+  </div>
+
+  <!-- ===================== MENUS ===================== -->
+  <div id="veil" class="veil"></div>
+
+
+  <nav id="atlas-nav" class="hidden" aria-label="Campaign atlas">
+    <div class="atlas-brand"><span>ΚΑΤΑΒΑΣΙΣ</span><small>THE CAMPAIGN ATLAS</small></div>
+    <div class="atlas-routes">
+      <button type="button" data-atlas-route="descent"><span class="atlas-number">01</span><span class="atlas-label">Descent</span></button>
+      <button type="button" data-atlas-route="armory"><span class="atlas-number">02</span><span>Armory</span></button>
+      <button type="button" data-atlas-route="loom"><span class="atlas-number">03</span><span>Loom of the Fates</span></button>
+      <button type="button" data-atlas-route="codex"><span class="atlas-number">04</span><span>Divine Codex</span></button>
+      <button type="button" data-atlas-route="mirror"><span class="atlas-number">05</span><span>Mirror of Nyx</span></button>
+      <button type="button" data-atlas-route="trials" disabled><span class="atlas-number">06</span><span>Fated Trials <small class="atlas-lock">LOCKED</small></span></button>
+      <button type="button" data-atlas-route="help"><span class="atlas-number">07</span><span>How to Play</span></button>
+    </div>
+    <p class="atlas-footer">A mortal's passage.<br/>A god's unfinished story.</p>
+  </nav>
+  <div id="atlas-status" class="hidden"><span>THE HOUSE OF HADES</span><span id="atlas-resources"></span></div>
+
+  <div id="screen-title" class="screen">
+    <div class="title-wrap"><div class="title-eyebrow">AN EXPEDITION THROUGH THE UNDERWORLD</div>
+      <div class="meander"></div>
+      <h1 class="game-title">ΚΑΤΑΒΑΣΙΣ</h1>
+      <h2 class="game-sub">KATABASIS</h2>
+      <p class="tagline">The old seal is failing. The gods must finally choose what it protects.<br/>One mortal will carry their answer to the edge of the world.</p>
+      <div class="title-buttons">
+        <button id="btn-begin" class="btn primary">CHOOSE YOUR DESCENT</button>
+        <button id="btn-practice" class="btn">PRACTICE YARD</button>
+        <button id="btn-trials" class="btn" disabled>FATED TRIALS · LOCKED</button>
+        <button id="btn-armory" class="btn">THE ARMORY</button>
+        <button id="btn-paragon" class="btn">LOOM OF THE FATES</button>
+        <button id="btn-boons" class="btn">CODEX &amp; CHRONICLE</button>
+        <button id="btn-meta" class="btn">THE MIRROR OF NYX</button>
+        <button id="btn-help" class="btn">HOW TO PLAY</button>
+      </div>
+      <div id="meta-preview" class="meta-preview"></div>
+      <div class="meander"></div>
+    </div>
+  </div>
+
+  <div id="screen-heroes" class="screen hidden inventory-screen" role="dialog" aria-modal="true" aria-labelledby="hero-screen-title">
+    <section class="room-panel wide hero-panel"><div class="meander thin"></div><div class="inventory-kicker">THE DESCENT BEGINS WITH A CHOICE</div><h2 id="hero-screen-title">CHOOSE YOUR HERO</h2>
+      <div class="hero-selection"><div id="hero-roster" class="hero-roster"></div><aside class="hero-kit"><h3>PREPARE YOUR DESCENT</h3>
+      <div class="hero-loadout"><label>STARTING WEAPON <select id="hero-weapon"></select></label><label>STARTING MEMENTO <select id="hero-upgrade"></select></label></div>
+      <p id="hero-unlock-note" class="hero-unlock-note"></p></aside></div>
+      <div class="title-buttons"><button id="hero-start" class="btn primary">BEGIN THE DESCENT</button><button id="hero-back" class="btn ghostly">BACK</button></div><div class="meander thin"></div>
+    </section>
+  </div>
+
+  <div id="screen-practice" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="practice-title">
+    <section class="room-panel practice-panel"><div class="meander thin"></div><div class="inventory-kicker">NO REWARDS · NO CAMPAIGN PROGRESS</div><h2 id="practice-title">THE PRACTICE YARD</h2>
+      <p>Choose a sparring partner. Damage is harmless; you can swap targets at any time.</p><div class="practice-targets">
+        <button class="btn" data-practice-target="dummy">TRAINING SHADE</button><button class="btn" data-practice-target="shade">SHADE</button><button class="btn" data-practice-target="hoplite">HOPLITE</button><button class="btn" data-practice-target="gorgon">GORGON</button><button class="btn" data-practice-target="fury">FURY</button><button class="btn" data-practice-target="minotaur">MINOTAUR</button><button class="btn" data-practice-target="harpy">HARPY</button></div>
+      <div class="title-buttons"><button id="practice-resume" class="btn primary">RETURN TO SPARRING</button><button id="practice-exit" class="btn ghostly">LEAVE PRACTICE</button></div><div class="meander thin"></div>
+    </section>
+  </div>
+
+  <div id="screen-trials" class="screen hidden inventory-screen" role="dialog" aria-modal="true" aria-labelledby="trials-title">
+    <section class="room-panel wide trial-panel"><div class="meander thin"></div>
+      <div class="inventory-kicker">THE HOUSE REMEMBERS YOUR VICTORY</div><h2 id="trials-title">FATED TRIALS</h2>
+      <p class="trial-intro">Choose Pacts to shape a full descent. Each rank adds one to your score; only a completed Trial records it.</p>
+      <div id="trial-summary" class="trial-summary" aria-live="polite"></div>
+      <div id="trial-pacts" class="trial-pacts"></div>
+      <div id="trial-rewards" class="trial-rewards"></div>
+      <div class="title-buttons"><button id="trial-begin" class="btn primary" disabled>BEGIN TRIAL</button><button id="trial-back" class="btn ghostly">BACK</button></div>
+      <div class="meander thin"></div>
+    </section>
+  </div>
+
+  <div id="screen-room" class="screen hidden">
+    <div class="room-panel">
+      <div class="meander thin"></div>
+      <div id="room-kicker">CHAMBER I</div>
+      <h2 id="room-title">THE THRONE ROOM</h2>
+      <p id="room-desc">A wide hall of black stone. Something breathes in the dark.</p>
+      <div id="story-voices" class="campaign-voices hidden"></div>
+      <div id="room-choices" class="choices"></div>
+      <div class="meander thin"></div>
+    </div>
+  </div>
+
+  <div id="screen-cutscene" class="screen cinematic-screen hidden" role="dialog" aria-modal="true" aria-labelledby="cutscene-title">
+    <img id="cutscene-backdrop" class="cutscene-backdrop" alt="" aria-hidden="true"/>
+    <div class="cutscene-scrim" aria-hidden="true"></div>
+    <div class="cutscene-heading">
+      <div id="cutscene-kicker" class="cutscene-kicker">CAMPAIGN</div>
+      <h2 id="cutscene-title">THE HOUSE THAT HELD ITS BREATH</h2>
+      <p id="cutscene-intro"></p>
+    </div>
+    <div id="cutscene-figure-stage" class="cutscene-figure-stage" aria-hidden="true"></div>
+    <section id="cutscene-dialogue" class="cutscene-dialogue" aria-live="polite">
+      <div id="cutscene-speaker-art" class="cutscene-speaker-art" aria-hidden="true"></div>
+      <div class="cutscene-caption">
+        <div class="cutscene-speaker-line"><span id="cutscene-speaker-title"></span><span id="cutscene-progress"></span></div>
+        <h3 id="cutscene-speaker-name"></h3>
+        <p id="cutscene-line"></p>
+      </div>
+    </section>
+    <div id="cutscene-choices" class="choices cutscene-choices hidden" aria-label="Campaign decision"></div>
+    <div class="cutscene-controls">
+      <button id="cutscene-skip" class="btn ghostly small">SKIP TO CHOICE</button>
+      <button id="cutscene-review" class="btn ghostly small hidden">REVIEW DIALOGUE</button>
+      <button id="cutscene-next" class="btn primary">CONTINUE <span aria-hidden="true">›</span></button>
+    </div>
+    <div class="cutscene-letterbox top" aria-hidden="true"></div>
+    <div class="cutscene-letterbox bottom" aria-hidden="true"></div>
+  </div>
+
+  <div id="screen-reward" class="screen hidden">
+    <div class="room-panel wide">
+      <div class="meander thin"></div>
+      <div id="reward-kicker">THE GODS OFFER</div>
+      <h2 id="reward-title">CHOOSE A BOON</h2>
+      <div id="reward-choices" class="choices boons"></div>
+      <div class="reward-foot">
+        <button id="btn-reroll" class="btn small">REROLL <span id="reroll-count">(1)</span></button>
+        <button id="btn-skip-boon" class="btn small ghostly">REFUSE THE GODS <span id="skip-bonus"></span></button>
+      </div>
+      <div class="meander thin"></div>
+    </div>
+  </div>
+
+  <div id="screen-gameover" class="screen hidden">
+    <div class="room-panel">
+      <div class="meander thin"></div>
+      <h2 id="go-title">YOU ARE DEAD</h2>
+      <p id="go-desc">The Styx carries you back to the House.</p>
+      <div id="go-stats" class="stats"></div>
+      <div id="go-recap" class="run-recap"></div>
+      <div id="go-unlocks"></div>
+      <div class="title-buttons">
+        <button id="btn-again" class="btn primary">DESCEND AGAIN</button>
+        <button id="btn-meta2" class="btn">THE MIRROR OF NYX</button>
+        <button id="btn-go-chronicle" class="btn">KILL CHRONICLE</button>
+        <button id="btn-title" class="btn ghostly">TITLE</button>
+      </div>
+      <div class="meander thin"></div>
+    </div>
+  </div>
+
+  <div id="screen-victory" class="screen hidden">
+    <div class="room-panel">
+      <div class="meander thin"></div>
+      <h2 id="vic-title">THE SUMMIT BREAKS</h2>
+      <p id="vic-desc"></p>
+      <div id="vic-stats" class="stats"></div>
+      <div id="vic-recap" class="run-recap"></div>
+      <div class="title-buttons">
+        <button id="btn-again2" class="btn primary">DESCEND AGAIN</button>
+        <button id="btn-vic-chronicle" class="btn">KILL CHRONICLE</button>
+        <button id="btn-title2" class="btn ghostly">TITLE</button>
+      </div>
+      <div class="meander thin"></div>
+    </div>
+  </div>
+
+  <div id="screen-codex" class="screen hidden">
+    <div class="room-panel wide tall">
+      <div class="meander thin"></div>
+      <h2>CODEX</h2>
+      <div id="codex-tabs" class="tabs"></div>
+      <div class="codex-tools"><input id="codex-search" type="search" placeholder="Search the codex" aria-label="Search the codex"/><select id="codex-build-filter" aria-label="Filter boons by build power"><option value="all">All build powers</option></select><span id="codex-count"></span><button id="codex-prev" class="btn small">PREVIOUS</button><button id="codex-next" class="btn small">NEXT</button></div>
+      <div class="codex-workspace"><div id="codex-body" class="codex-body"></div><aside id="codex-inspector" class="codex-inspector" aria-label="Selected codex entry" aria-live="polite"></aside></div>
+      <div class="title-buttons"><button id="btn-codex-back" class="btn">BACK</button></div>
+      <div class="meander thin"></div>
+    </div>
+  </div>
+
+  <div id="screen-meta" class="screen hidden">
+    <div class="room-panel wide tall">
+      <div class="meander thin"></div>
+      <h2>THE MIRROR OF NYX</h2>
+      <p class="sub">Reflections bought with obols persist beyond death.</p>
+      <div id="meta-obols" class="meta-obols">0 Obols</div>
+      <div id="meta-list" class="meta-list"></div>
+      <div class="title-buttons">
+        <button id="btn-reset-meta" class="btn small ghostly">DISSOLVE THE MIRROR</button>
+        <button id="btn-meta-back" class="btn">BACK</button>
+      </div>
+      <div class="meander thin"></div>
+    </div>
+  </div>
+
+  <div id="screen-help" class="screen hidden">
+    <div class="room-panel wide tall">
+      <div class="meander thin"></div>
+      <h2>HOW TO DESCEND</h2>
+      <div class="help-body">
+        <div class="help-col">
+          <h3>Controls</h3>
+          <ul class="keys">
+            <li><b>W A S D</b> — move</li>
+            <li><b>Mouse</b> — aim</li>
+            <li><b>Left Click / hold</b> — Strike (3-hit combo)</li>
+            <li><b>Right Click / hold</b> — Guard (block, reflect, parry)</li>
+            <li><b>F</b> — Cast (hurled spear, leaves a rift)</li>
+            <li><b>Space</b> — Dash (charges, brief invulnerability)</li>
+            <li><b>R</b> — Rush (long invulnerable charge)</li>
+            <li><b>K</b> — Wrath (radial nova)</li>
+            <li><b>Q</b> — Call (a god answers)</li>
+            <li><b>T</b> — Ascend (brief godhood)</li>
+            <li><b>E</b> — interact / take / pass a gate</li>
+            <li><b>Story</b> — Enter / Space / → advance; ESC skip to choice</li>
+            <li><b>ESC</b> — pause &nbsp;·&nbsp; <b>M</b> — mute</li>
+          </ul>
+        </div>
+        <div class="help-col">
+          <h3>Your Eight Answers</h3>
+          <p><b>Strike</b> is your damage. <b>Guard</b> is your defence — raise it and blows from the front are largely stopped, and any <i>projectile</i> that touches it is reflected. Raise it at the instant of impact and you <b>parry</b>: no damage at all, a stagger, and your next blows land 150% harder.</p>
+          <p><b>Cast</b> gives you reach — a thrown spear that bursts into a lingering rift. <b>Dash</b> is your dodge, on charges. <b>Rush</b> is a long invulnerable charge that scatters a crowd. <b>Ascend</b> makes you untouchable, faster and stronger for five seconds — save it for when the chamber turns.</p>
+          <h3>The Descent</h3>
+          <p>The campaign crosses twenty-four regions with eight chambers each, grouped into three eight-region acts. Choose routes through combat, blood-tithe bargains, mythic nemeses, champions, treasure, Charon's shop, trials, fateful events, and optional bosses. Search each arena for image-carved relic props, and choose whether to haggle or trade life for coin at Charon's. After every capstone, speak with the gods and heroes; your answers shape the final covenant. Every enemy you slay is remembered in the Chronicle, and a foe that ends a run may return as your Nemesis.</p>
+
+          <h3>Boons</h3>
+          <p>The Olympians offer their power between chambers. Rarer boons do more. Duos and Legendaries require the right foundation. The effect lines show the exact values at the offered rarity. <b>Your build after choosing</b> shows the resulting changes after stacking and caps. Upgrades show the old value, new value, and difference.</p>
+          <h3>Death Defiance</h3>
+          <p>Certain boons and relics let you survive a killing blow. You will need them.</p>
+        </div>
+      </div>
+      <div class="title-buttons"><button id="btn-help-back" class="btn">BACK</button></div>
+      <div class="meander thin"></div>
+    </div>
+  </div>
+
+  <div id="screen-pause" class="screen hidden">
+    <div class="pause-panel">
+      <h2>PAUSED</h2>
+      <div id="pause-run-info"></div>
+      <div class="title-buttons">
+        <button id="btn-resume" class="btn primary">RESUME</button>
+        <button id="btn-armory-pause" class="btn">ARMORY</button>
+        <button id="btn-paragon-pause" class="btn">LOOM OF THE FATES</button>
+        <button id="btn-practice-menu" class="btn hidden">PRACTICE TARGET</button>
+        <button id="btn-pause-help" class="btn">HOW TO PLAY</button>
+        <button id="btn-abandon" class="btn ghostly">ABANDON RUN</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-armory" class="screen inventory-screen hidden" role="dialog" aria-modal="true" aria-labelledby="armory-title">
+    <section class="room-panel wide tall armory-panel">
+      <div class="meander thin"></div>
+      <div class="inventory-heading">
+        <div><div class="inventory-kicker">PERSISTENT COLLECTION</div><h2 id="armory-title">THE ARMORY</h2></div>
+        <div id="armory-resources" class="inventory-resources" aria-live="polite"></div>
+      </div>
+      <div class="armory-toolbar">
+        <div id="armory-slot-list" class="armory-slots" role="group" aria-label="Gear slots"></div>
+        <label>FILTER <select id="armory-filter" aria-label="Filter gear"><option value="all">All gear</option><option value="unequipped">Unequipped</option><option value="equipped">Equipped</option><option value="common">Common</option><option value="rare">Rare</option><option value="epic">Epic</option><option value="heroic">Heroic</option><option value="legendary">Legendary</option></select></label>
+        <label>SORT <select id="armory-sort" aria-label="Sort gear"><option value="level">Level</option><option value="rarity">Rarity</option><option value="name">Name</option></select></label>
+      </div>
+      <div class="armory-layout">
+        <section class="armory-collection" aria-labelledby="armory-collection-title">
+          <div class="collection-heading"><h3 id="armory-collection-title">COLLECTION</h3><span id="armory-count" aria-live="polite"></span></div>
+          <div id="armory-collection" class="armory-items" role="list" aria-label="Collected gear"></div>
+        </section>
+        <section class="armory-inspect" aria-labelledby="armory-selected-title">
+          <div class="armory-detail-heading">
+            <div id="armory-selected-art" class="armory-selected-art" aria-hidden="true"></div>
+            <div class="armory-title-group"><div id="armory-selected-rarity" class="rarity"></div><h3 id="armory-selected-title">Choose a piece</h3></div>
+          </div>
+          <div class="armory-inspect-scroll"><div id="armory-details" class="armory-details"></div>
+            <div class="armory-comparison"><h4>CHANGE IF EQUIPPED</h4><div id="armory-comparison"></div></div>
+          </div>
+          <p id="armory-status" class="armory-status" role="status" aria-live="polite"></p>
+          <div class="armory-actions">
+            <button id="armory-equip" class="btn small"><span class="action-icon" aria-hidden="true"></span> EQUIP</button>
+            <button id="armory-upgrade" class="btn small"><span class="action-icon" aria-hidden="true"></span> UPGRADE</button>
+            <button id="armory-sell" class="btn small ghostly"><span class="action-icon" aria-hidden="true"></span> SELL</button>
+            <button id="armory-salvage" class="btn small ghostly"><span class="action-icon" aria-hidden="true"></span> SALVAGE</button>
+          </div>
+        </section>
+      </div>
+      <div class="title-buttons"><button id="btn-armory-back" class="btn">BACK</button></div>
+      <div class="meander thin"></div>
+    </section>
+  </div>
+
+  <div id="screen-paragon" class="screen inventory-screen hidden" role="dialog" aria-modal="true" aria-labelledby="paragon-title">
+    <section class="room-panel wide tall paragon-panel">
+      <div class="meander thin"></div>
+      <div class="inventory-heading">
+        <div><div class="inventory-kicker">PERMANENT PROGRESSION</div><h2 id="paragon-title">LOOM OF THE FATES</h2></div>
+        <div id="paragon-progress" class="inventory-resources" aria-live="polite"></div>
+      </div>
+      <p id="paragon-lock-message" class="paragon-lock-message" role="status"></p>
+      <div class="paragon-layout">
+        <div id="paragon-tree" class="paragon-tree" aria-label="Paragon branches"></div>
+        <aside class="paragon-inspect" aria-labelledby="paragon-selected-title">
+          <div id="paragon-selected-art" class="paragon-selected-art" aria-hidden="true"></div>
+          <div id="paragon-node-state" class="inventory-kicker"></div>
+          <h3 id="paragon-selected-title">The Wayfarer</h3>
+          <p id="paragon-node-description"></p>
+          <div id="paragon-node-effects" class="paragon-effects"></div>
+          <p id="paragon-node-requirement" class="armory-status" aria-live="polite"></p>
+          <button id="paragon-buy" class="btn primary">WEAVE NODE</button>
+          <button id="paragon-respec" class="btn small ghostly">MIRROR RESPEC</button>
+          <p id="paragon-respec-info" class="armory-status"></p>
+        </aside>
+      </div>
+      <div class="title-buttons"><button id="btn-paragon-back" class="btn">BACK</button></div>
+      <div class="meander thin"></div>
+    </section>
+  </div>
+</div>
+
+<div id="save-notice" class="hidden" role="alert"><span id="save-notice-text"></span> <button id="save-retry" type="button">RETRY SAVE</button> <button id="save-backup" type="button">DOWNLOAD BACKUP</button></div>
+<script src="js/core.js"></script>
+<script src="js/persistence.js"></script>
+<script src="js/data.js"></script>
+<script src="js/content-expansion.js"></script>
+<script src="js/gear.js"></script>
+<script src="js/paragon.js"></script>
+<script src="js/run-systems.js"></script>
+<script src="js/boon-expansion.js"></script>
+<script src="js/asset-manifest.js"></script>
+<script src="js/assets.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/game.js"></script>
+<script src="js/build-powers.js"></script>
+<script src="js/render.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

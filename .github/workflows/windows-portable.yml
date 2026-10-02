@@ -1,0 +1,38 @@
+name: Windows x64 portable app
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows-x64:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install packaging dependencies
+        run: npm install --no-package-lock --no-audit --no-fund
+
+      - name: Build portable x64 executable
+        run: npm run dist:win
+
+      - name: Upload the Windows app
+        uses: actions/upload-artifact@v4
+        with:
+          name: KATABASIS-Windows-x64-portable
+          path: dist/KATABASIS-1.0.0-win-x64-portable.exe
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+
