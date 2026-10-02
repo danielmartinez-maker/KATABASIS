@@ -1,11 +1,13 @@
 {
   "name": "katabasis",
   "version": "1.0.0",
+  "packageManager": "pnpm@11.25.0",
   "description": "A roguelite set in Ancient Greece.",
   "main": "desktop/main.cjs",
   "author": "Daniel Martinez",
   "homepage": "https://github.com/danielmartinez-maker/KATABASIS",
   "scripts": {
+    "postinstall": "install-electron",
     "start": "electron .",
     "dist:win": "electron-builder --win portable --x64"
   },

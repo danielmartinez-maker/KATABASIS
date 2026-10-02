@@ -16,16 +16,22 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: pnpm
 
       - name: Install packaging dependencies
-        run: npm install --no-package-lock --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
       - name: Build portable x64 executable
-        run: npm run dist:win
+        run: pnpm run dist:win
 
       - name: Upload the Windows app
         uses: actions/upload-artifact@v4

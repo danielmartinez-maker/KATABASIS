@@ -24,8 +24,8 @@ app folder is read-only, saves fall back to this Windows account's app-data fold
 Browser progress and desktop-app progress use separate storage; existing browser saves are not
 copied automatically.
 
-To run the desktop app from source, install Node.js 24, then run `npm install` and `npm start`.
-Build the Windows x64 executable with `npm run dist:win` on Windows.
+To run the desktop app from source, install Node.js 24 and pnpm 11.25, then run `pnpm install`
+and `pnpm start`. Build the Windows x64 executable with `pnpm run dist:win` on Windows.
 
 The browser editions also work without installation.
 
