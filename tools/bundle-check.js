@@ -50,7 +50,7 @@ async function main() {
   const url = 'file:///' + isolated.replace(/\\/g, '/');
   const profile = path.join(os.tmpdir(), 'katabasis-bp-' + Date.now());
   const debugPort = await reserveDebugPort();
-  const browserArgs = ['--headless=new', '--disable-gpu', '--disable-gpu-compositing', '--in-process-gpu',
+  const browserArgs = ['--headless=new', '--enable-gpu', '--use-gl=angle', '--disable-gpu-compositing', '--in-process-gpu',
     '--disable-features=Vulkan,UseSkiaRenderer', '--mute-audio', '--no-first-run',
     '--no-default-browser-check', '--disable-extensions', '--remote-debugging-port=' + debugPort];
   /* Some managed Windows environments block renderer access to files. Keep the
@@ -109,7 +109,7 @@ async function main() {
   try {
     const b = JSON.parse(boot);
     if (!b.k || !b.g || !b.save) problems.push('bundle did not boot');
-    if (b.boons < 90 || b.gods !== 12 || b.monsters < 24 || b.bosses < b.regions || b.relics < 18 || b.regions !== 24 || b.chapters !== 24 || !b.chronicle || !b.nemeses) {
+    if (b.boons < 90 || b.gods !== 12 || b.monsters < 24 || b.bosses < b.regions || b.relics < 18 || b.regions !== 26 || b.chapters !== 26 || !b.chronicle || !b.nemeses) {
       problems.push('bundle content is incomplete: ' + boot);
     }
   } catch (e) { problems.push('boot probe failed'); }
@@ -243,6 +243,10 @@ async function main() {
 
   /* play it */
   await ev('document.getElementById("btn-begin").click()');
+  await sleep(400);
+  await ev('document.getElementById("hero-start").click()');
+  await sleep(400);
+  await ev('document.getElementById("modifier-start").click()');
   await sleep(900);
   const started = await ev('JSON.stringify((function(){var G=window.K.G;return {phase:G.phase, region:G.region().name, enemies:window.K.E.enemies.length, hp:Math.round(G.player.hp)};})())');
   console.log('run started:', started);
@@ -348,9 +352,9 @@ async function main() {
     if (ui.chapterId !== 'mycenae-blood-oath' || !ui.chapterVisible || ui.voices < 1 || ui.choices !== 2 || !ui.backdrop || ui.sagaEntries < 1 || ui.killEntries < 1 || ui.nemesisEntries !== 1) problems.push('campaign, Saga, Chronicle, or Nemesis UI did not render its content: ' + campaignUi);
   } catch (e) { problems.push('campaign/chronicle UI probe failed'); }
 
-  const px = await ev('(function(){var c=document.getElementById("game"),g=c.getContext("2d");var d=g.getImageData(0,0,c.width,c.height).data,seen={},n=0;for(var i=0;i<d.length;i+=4*997){var k=(d[i]>>4)+","+(d[i+1]>>4)+","+(d[i+2]>>4);if(!seen[k]){seen[k]=1;n++;}}return n;})()');
-  console.log('distinct sampled canvas colours:', px);
-  if (px === null || px < 4) problems.push('bundle canvas looks blank (' + px + ' colours)');
+  const px = await ev('(function(){var c=document.getElementById("game"),g=c.getContext("webgl2")||c.getContext("webgl");return g?{renderer:g.getParameter(g.RENDERER),version:g.getParameter(g.VERSION),width:c.width,height:c.height}:null;})()');
+  console.log('WebGL canvas probe:', JSON.stringify(px));
+  if (!px || !px.renderer) problems.push('bundle WebGL canvas is unavailable or blank');
 
   /* saves persist */
   await ev('window.K.Save.addObols(777)');

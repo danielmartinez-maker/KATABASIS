@@ -240,7 +240,9 @@
     if (ascending) { s.dmgMul *= 1.35; s.moveMul *= 1.2; s.attSpd *= 1.25; }
     if (run.hermesBoost > 0) s.moveMul *= 1.75;
 
-    s.deathDefy = Math.max(1, Math.floor(s.deathDefy || 0));
+    if (K.BuildPowers && K.BuildPowers.capCompiledStats) K.BuildPowers.capCompiledStats(s);
+
+    s.deathDefy = Math.max(0, Math.floor(s.deathDefy || 0));
     s.maxHp = Math.max(15, Math.round((s.maxHp) * s.maxHpMul));
     const weapon = D.WEAPONS[run.weapon] || D.WEAPONS.xiphos;
     s.damage = (weapon.dmg || BASE.dmg) * s.dmgMul * (1+(run.weaponLevel||0)*0.12);
@@ -266,6 +268,7 @@
     s.reachMul = Math.max(0.6, s.reachMul);
     s.callBoost = Math.min(0.4, s.callBoost || 0);
     if (K.BuildPowers) K.BuildPowers.capStats(s);
+    if (K.BuildPowers && K.BuildPowers.capCompiledStats) K.BuildPowers.capCompiledStats(s);
     return s;
   }
 
@@ -385,9 +388,11 @@
   /* ---------------- run lifecycle ---------------- */
   Game.prototype.startRun = function (seed, options) {
     options = options || {};
+    if(K.RunSystems.validateModifierSelection && !K.RunSystems.validateModifierSelection(options.modifiers || options.trialPacts || {}).valid)return null;
     const requestedPractice = !!options.practice;
     if (this.practiceMode && !requestedPractice) return null;
     this.practiceMode = requestedPractice;
+    this.toasts.length = 0;
     const save = K.Save.data;
     this.cinematic = null; this.timeScale = 1; this.hitStop = 0; this.slowMo = 0; this.hermesBoost = 0;
     this.run = new Run(seed === undefined ? (Math.random() * 0xffffffff) : seed);
@@ -397,6 +402,7 @@
     this.run.trialPacts = this.run.isFatedTrial ? pactSelection.ranks : {};
     this.run.trialScore = this.run.isFatedTrial ? pactSelection.score : 0;
     this.run.trialModifiers = K.RunSystems.pactModifiers(this.run.trialPacts);
+    if(K.Endgame)K.Endgame.configureRun(this.run,options,save);
     this.run.trialResult = null;
     this.run.heroId = this.practiceMode ? (options.heroId || save.selectedHero || 'perseus') : (save.selectedHero || 'perseus');
     if (options.weapon && D.WEAPONS[options.weapon]) this.run.weapon = options.weapon;
@@ -420,9 +426,9 @@
     this.player.hp = this.player.stats.maxHp;
     this.player.dashCharges = this.player.stats.dashMax;
     this.player.shield = 0;
-    this.run.deathDefyMax = Math.max(0, Math.round(this.player.stats.deathDefy || 0) - (this.run.isFatedTrial ? this.run.trialModifiers.deathDefiancePenalty : 0));
+    this.run.deathDefyMax = Math.max(0, Math.round(this.player.stats.deathDefy || 0) - ((((this.run.modifiers || this.run.trialModifiers) || {}).deathDefiancePenalty) || 0));
     this.run.deathDefy = this.run.deathDefyMax;
-    this.run.rerolls = 1 + (this.run.rerollBonus || 0);
+    this.run.rerolls = 1 + (this.run.rerollBonus || 0) + (this.run.endgameOptions && this.run.endgameOptions.rerolls || 0);
     this.exitGate = null;
     this.pendingChamberReward = null;
     this.pendingReward = null;
@@ -485,7 +491,7 @@
 
   Game.prototype.exitPractice = function () {
     if(!this.practiceMode)return false;
-    this.practiceMode=false; this.phase='idle'; this.run=null; this.player=null;
+    this.practiceMode=false; this.phase='idle'; this.run=null; this.player=null; this.toasts.length=0;
     E.enemies.length=0; E.projectiles.length=0; E.effects.length=0; E.pickups.length=0;
     this.hazards.length=0; this.interactables=[]; this.exitGate=null; this.roomDef=null;
     K.Audio.playTrack(0);
@@ -498,7 +504,7 @@
     const s = compileStats(this.run, this.player);
     this.player.stats = s;
     this.run._statsCache = s;
-    const defyMax = Math.max(0, Math.round(s.deathDefy || 0));
+    const defyMax = Math.max(0, Math.round(s.deathDefy || 0) - ((((this.run.trialModifiers || this.run.modifiers) || {}).deathDefiancePenalty) || 0));
     this.run.deathDefy = Math.max(0, defyMax - (this.run.deathDefySpent || 0));
     this.run.deathDefyMax = defyMax;
     const rerollBonus = Math.max(0, Math.round(s.rerollPlus || 0));
@@ -641,6 +647,8 @@
     const rank = Math.min(8, Math.max(1, nemesis.rank || 1));
     const tier = this.regionIndex;
     const p = this.clampToArena(this.player.x + (this.run.rng.chance(0.5) ? -1 : 1) * 270, this.player.y - 210, 56);
+    /* Nemesis stat stacking: base tier scaling * elite (2.0 HP, 1.3 dmg) * adaptation (e.g. 1.12 HP, 1.08 dmg) * rank (up to +70% HP, +49% dmg at rank 8).
+       Total HP multiplier at rank 8: 2.0 * 1.12 * 1.7 = ~3.8x base. Total dmg at rank 8: 1.3 * 1.08 * 1.49 = ~2.1x base. */
     const e = this.addEnemy(nemesis.sourceId, p.x, p.y, {
       tier, elite:true, hpMul:trait.hp * (1 + (rank - 1) * 0.1),
       dmgMul:trait.dmg * (1 + (rank - 1) * 0.07), spdMul:trait.spd
@@ -726,7 +734,7 @@
       const target = Math.min(48, Math.ceil(spawned.length / 8) * 8);
       while (spawned.length < target) spawned.push(rng.pick(pool));
     }
-    const pactEliteCount = this.run.isFatedTrial ? Math.min(spawned.length, this.run.trialModifiers.elitePressure) : 0;
+    const pactEliteCount = Math.min(spawned.length, this.run.trialModifiers && this.run.trialModifiers.elitePressure || 0);
     const eliteStart = spawned.length - pactEliteCount;
     const ring = [];
     for (let i = 0; i < spawned.length; i++) {
@@ -741,7 +749,7 @@
 
   Game.prototype.releaseSpawnQueue = function (initial) {
     if (!this.pendingSpawns || !this.pendingSpawns.length) return;
-    const active = E.enemies.filter(e => e && !e.ally && !e.dead && e.hp > 0).length;
+    const active = this.countActiveHostiles();
     if (!initial && active > 9) return;
     let slots = Math.min(initial ? 18 : 12, 22 - active);
     while (slots-- > 0 && this.pendingSpawns.length) {
@@ -830,14 +838,14 @@
     this.run._freeBuy = false;
     const n = 5;
     const discount = 1 - Math.min(0.8, this.player.stats.freeShop || 0);
-    const pactPriceMul = this.run.isFatedTrial ? this.run.trialModifiers.shopPrices : 1;
+    const pactPriceMul = this.run.trialModifiers && this.run.trialModifiers.shopPrices || 1;
     const stock = rng.shuffle(D.SHOP_ITEMS).slice(0, n - 2);
     stock.push({id:'s_forge_'+this.regionIndex+'_'+this.chamberIndex,name:'Hephaestus’ Temper',icon:'relic:r_hammer',cost:95+this.regionIndex*18,
       desc:'Temper your current weapon with a permanent run upgrade.',kind:'forge'});
     if (K.Gear) {
       const level = K.Gear.itemLevelAtDepth(this.regionIndex, this.chamberIndex);
       const slot = rng.pick(K.Gear.SLOTS);
-      const gear = K.Gear.generate(slot, level, rng);
+      const gear = K.Gear.generate(slot, level, rng, null, K.Gear.rewardContext(this.run,region.id,false));
       if (gear) {
         const factor = K.Gear.RARITIES[gear.rarity].factor;
         stock.push({ id:'s_gear_' + gear.id, name:gear.name, icon:'gear:' + slot, cost:Math.max(60, Math.floor((65 + level * 7) * factor)),
@@ -864,7 +872,7 @@
   Game.prototype.spawnBoss = function (region, bossId) {
     const id = bossId || region.boss, c = this.roomDef && this.roomDef.condition;
     const mods = c ? { hpMul:c.hpMul, dmgMul:c.dmgMul, spdMul:c.spdMul } : {};
-    if (this.run.isFatedTrial) {
+    if (this.run.trialModifiers) {
       mods.hpMul = (mods.hpMul || 1) * this.run.trialModifiers.enemyHealth;
       mods.dmgMul = (mods.dmgMul || 1) * this.run.trialModifiers.enemyDamage;
       mods.attackTempoMul = this.run.trialModifiers.enemyTempo;
@@ -892,7 +900,7 @@
       mods.dmgMul = (mods.dmgMul || 1) * c.dmgMul;
       mods.spdMul = (mods.spdMul || 1) * c.spdMul;
     }
-    if (this.run.isFatedTrial && !mods.ally) {
+    if (this.run.trialModifiers && !mods.ally) {
       mods.hpMul = (mods.hpMul || 1) * this.run.trialModifiers.enemyHealth;
       mods.dmgMul = (mods.dmgMul || 1) * this.run.trialModifiers.enemyDamage;
       mods.attackTempoMul = this.run.trialModifiers.enemyTempo;
@@ -903,9 +911,15 @@
     return e;
   };
 
+  Game.prototype.countActiveHostiles = function () {
+    let n = 0;
+    for (const e of E.enemies) if (e && !e.ally && !e.dead && e.hp > 0) n++;
+    return n;
+  };
+
   Game.prototype.summonFor = function (src, id, count) {
     for (let i = 0; i < count; i++) {
-      if (E.enemies.filter(e => e && !e.ally && !e.dead && e.hp > 0).length >= 22) break;
+      if (this.countActiveHostiles() >= 22) break;
       const a = Math.random() * TAU, r = 60 + Math.random() * 40;
       const q = this.clampToArena(src.x + Math.cos(a) * r, src.y + Math.sin(a) * r, 30);
       const e = this.addEnemy(id, q.x, q.y, { tier: this.regionIndex });
@@ -915,7 +929,7 @@
   };
   Game.prototype.summonAt = function (x, y, id, count, spread) {
     for (let i = 0; i < count; i++) {
-      if (E.enemies.filter(e => e && !e.ally && !e.dead && e.hp > 0).length >= 22) break;
+      if (this.countActiveHostiles() >= 22) break;
       const a = Math.random() * TAU, r = 60 + Math.random() * (spread || 120);
       const q = this.clampToArena(x + Math.cos(a) * r, y + Math.sin(a) * r, 30);
       const e = this.addEnemy(id, q.x, q.y, { tier: this.regionIndex });
@@ -979,6 +993,8 @@
   Game.prototype.damageEnemy = function (e, amount, opts) {
     if (!e || e.dead || e.hp <= 0) return 0;
     opts = opts || {};
+    amount = num(amount);
+    if (!(amount > 0)) return 0;
     const playerProjectile = opts.proj && opts.proj.owner === this.player;
     const playerHit = opts.player === this.player || playerProjectile;
     if (playerHit && e.statuses && e.statuses.bleed && this.player && this.player.stats.bleedAmp) amount *= 1 + this.player.stats.bleedAmp;
@@ -1113,7 +1129,7 @@
   Game.prototype.awardGearDrop = function () {
     if (!K.Gear || !this.run) return false;
     const level = K.Gear.itemLevelAtDepth(this.regionIndex, this.chamberIndex);
-    const item = K.Gear.generate(this.run.rng.pick(K.Gear.SLOTS), level, this.run.rng);
+    const item = K.Gear.generate(this.run.rng.pick(K.Gear.SLOTS), level, this.run.rng, null, K.Gear.rewardContext(this.run,this.region().id,!!(this.roomDef && this.roomDef.isBoss)));
     if (!item) return false;
     const result = K.Gear.add(item);
     this.toast(result && result.duplicate ? 'DUPLICATE RELIC FORGED INTO SALVAGE' : 'ARMORY — ' + item.name, '#e0b355', true);
@@ -1584,7 +1600,7 @@
     } else if (it.kind === 'haggle') {
       it.used=true;const success=this.run.rng.chance(0.68);
       if(success){this.interactables.filter(x=>x.kind==='shop'&&!x.used).forEach(x=>x.cost=Math.max(8,Math.floor(x.cost*0.65)));this.toast('CHARON ACCEPTS — remaining wares 35% cheaper.','#e0b355',true);}
-      else {this.player.hp=Math.max(1,this.player.hp-Math.ceil(this.player.stats.maxHp*0.08));this.toast('THE FERRyman DECLINES — the Styx takes 8% life.','#e2564a',true);}
+      else {this.player.hp=Math.max(1,this.player.hp-Math.ceil(this.player.stats.maxHp*0.08));this.toast('THE FERRYMAN DECLINES — the Styx takes 8% life.','#e2564a',true);}
       K.Audio.sfx(success?'coin':'hurt');
     } else if (it.kind === 'healthTrade') {
       it.used=true;const cost=Math.max(12,Math.ceil(this.player.stats.maxHp*0.18));
@@ -1783,7 +1799,7 @@
     opts = opts || {};
     if (this.pendingReward) return;             /* one offer at a time */
     const baseCount = opts.count === undefined ? 3 + (this.player.stats.extraReward || 0) : Math.max(1, opts.count | 0);
-    const count = Math.max(1, baseCount - (this.run.isFatedTrial ? this.run.trialModifiers.boonOfferPenalty : 0));
+    const count = Math.max(1, Math.min(6,baseCount + (this.run.endgameOptions && this.run.endgameOptions.draftOptions || 0)) - (this.run.trialModifiers && this.run.trialModifiers.boonOfferPenalty || 0));
     const skipBonus = opts.skipBonus || 30;
     this.pendingReward = {
       kind: opts.kind || 'boon',
@@ -1899,7 +1915,7 @@
     const picks = rng.shuffle(pool).slice(0, count || 3).map(r => ({ id: r.id, kind: 'relic' }));
     if (includeGear && K.Gear) {
       const level = K.Gear.itemLevelAtDepth(this.regionIndex, this.chamberIndex);
-      const slot = rng.pick(K.Gear.SLOTS), gear = K.Gear.generate(slot, level, rng);
+      const slot = rng.pick(K.Gear.SLOTS), gear = K.Gear.generate(slot, level, rng, null, K.Gear.rewardContext(run,this.region().id,!!(this.roomDef && this.roomDef.isBoss)));
       if (gear) picks.push({ id:'gear:' + gear.id, kind:'gear', item:gear });
     }
     if (!picks.length) { /* all relics owned — the Fates pay in coin instead */
@@ -1963,8 +1979,7 @@
   /* ---------------- chamber clear / progression ---------------- */
   Game.prototype.checkRoomClear = function () {
     if (this.roomDef.cleared || this.pendingSpawns.length) return;
-    const hostile = E.enemies.filter(e => !e.ally && !e.dead && e.hp > 0).length;
-    if (hostile > 0) return;
+    if (this.countActiveHostiles() > 0) return;
     this.roomDef.cleared = true; this.roomClearT = 0;
     const st = this.player.stats;
     if (st.healRoom) this.player.heal(st.maxHp * st.healRoom, this);
@@ -2306,9 +2321,11 @@
     const p = this.player;
     if (!p) return;
 
+    /* Music layer derives from a single pass over the enemy list; no per-frame array. */
     if(this.roomDef&&!this.practiceMode){
-      const hostiles=E.enemies.filter(e=>e&&!e.dead&&!e.ally&&e.hp>0);
-      const layer=this.roomDef.isBoss?'boss':(hostiles.some(e=>e.isMiniBoss)?'miniboss':(hostiles.length?'combat':'calm'));
+      let hostiles=0,miniboss=false;
+      for(const e of E.enemies)if(e&&!e.dead&&!e.ally&&e.hp>0){hostiles++;if(e.isMiniBoss)miniboss=true;}
+      const layer=this.roomDef.isBoss?'boss':(miniboss?'miniboss':(hostiles?'combat':'calm'));
       if(layer!==this._audioLayer){K.Audio.setMusicLayer(layer);this._audioLayer=layer;}
     }
 

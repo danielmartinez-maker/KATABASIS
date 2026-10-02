@@ -61,17 +61,17 @@ test('The displayed boss tribute reroll button actually consumes a reroll', () =
 });
 test('The Unseen Wealth allows a free purchase with zero carried Obols', () => {
   reset(); G.run.addBoon('leg_hades','legendary'); G.recalcStats();
-  G.enterChamber(1,{type:'shop'}); G.run.obols = 0;
-  const offer = G.interactables.find(x => x.kind === 'shop'); G.doInteract(offer);
+  G.spawnShop(G.region()); G.run.obols = 0;
+  const offer = G.interactables.find(x => x.kind === 'shop'); assert.ok(offer, 'Charon has no wares'); G.doInteract(offer);
   assert.strictEqual(offer.used, true); assert.strictEqual(G.run.obols, 0);
 });
 test('The Unseen Wealth refreshes its free purchase at every Charon visit', () => {
   reset(); G.run.addBoon('leg_hades','legendary'); G.recalcStats();
-  G.enterChamber(1,{type:'shop'}); G.run.obols = 1000;
+  G.spawnShop(G.region()); G.run.obols = 1000;
   G.doInteract(G.interactables.find(x => x.kind === 'shop'));
   assert.strictEqual(G.run.obols, 1000);
-  G.enterChamber(2,{type:'shop'});
-  G.doInteract(G.interactables.find(x => x.kind === 'shop'));
+  G.spawnShop(G.region());
+  G.doInteract(G.interactables.filter(x => x.kind === 'shop' && !x.used)[0]);
   assert.strictEqual(G.run.obols, 1000, 'free purchase remained spent across visits');
 });
 test('Delayed lightning cannot strike enemies in a later chamber', () => {

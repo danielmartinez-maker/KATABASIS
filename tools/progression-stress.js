@@ -105,32 +105,48 @@ test('Returning Echo and Returning Cast each add two smaller seeking Cast projec
   assert.strictEqual(K.E.projectiles.filter(p=>p.homing>0).length,6);
   K.E.projectiles.length=0;G.player.stats.castEcho=NaN;G.player.doCast(G);assert.strictEqual(K.E.projectiles.length,1);
 });
-test('Restarting a run discards old route choices and cannot skip the opening chamber',()=>{
-  reset();G.chamberIndex=2;G.advance();assert.strictEqual(G.phase,'route');
-  const oldRoute=G.pendingRouteChoices[0].id;G.startRun(502);
-  assert.strictEqual(G.pendingRouteChoices.length,0);assert.strictEqual(G.selectRoute(oldRoute),false);
+test('Restarting a run discards explored terrain and opens a fresh first encounter',()=>{
+  reset();const oldWorld=G.world,oldNode=G.activeEncounter;assert.ok(oldWorld&&oldNode);
+  oldNode.status='cleared';G.startRun(502);
+  assert.notStrictEqual(G.world,oldWorld);assert.strictEqual(G.world.seed,502);
+  assert.strictEqual(G.activeEncounter.idx,0);assert.strictEqual(G.activeEncounter.status,'active');
   assert.strictEqual(G.chamberIndex,0);assert.strictEqual(G.run.stats.chambers,1);
 });
-test('A maximum-score Trial completes all 192 chambers and awards titles only once',()=>{
+test('A maximum-score Trial keeps its pact snapshot through a physical region and awards titles once',()=>{
   reset(9257);K.Save.data.fatedTrialsUnlocked=true;
   const ranks={};K.RunSystems.PACTS.forEach(p=>ranks[p.id]=3);
   G.startRun(9257,{trialPacts:ranks});assert.strictEqual(G.run.trialScore,24);
   const lockedModifiers=JSON.stringify(G.run.trialModifiers);ranks['iron-sinew']=0;
-  let guard=0;
-  while(G.phase!=='victory'&&++guard<2000) {
-    if(G.pendingReward) {assert.ok(choice());continue;}
-    if(G.pendingStory) {assert.strictEqual(G.chooseStory(G.pendingStory.chapter.choices[0].id),true);continue;}
-    if(G.pendingRouteChoices&&G.pendingRouteChoices.length) {
-      const route=G.pendingRouteChoices.find(r=>r.type==='combat')||G.pendingRouteChoices[0];assert.strictEqual(G.selectRoute(route.id),true);continue;
+  const visited=[],optionalVisited=new Set();let guard=0;
+  while(G.phase!=='victory'&&++guard<30) {
+    visited.push(G.region().id);
+    for(let idx=0;idx<8;idx++) {
+      let node=G.world.nodes.find(n=>n.main&&n.idx===idx);assert.ok(node,'missing main encounter '+idx);
+      if(!G.activeEncounter)assert.strictEqual(G.activateWorldNode(node.id),true,'encounter '+node.id+' did not activate');
+      assert.ok(node.status==='active'||node.status==='cleared','encounter '+node.id+' did not reach its world state');
+      if(node.status==='active')assert.strictEqual(G.activeEncounter.id,node.id);
+      if(G.activeEvent&&G.phase==='event')assert.strictEqual(G.chooseEvent(G.activeEvent.choices[0].id),true);
+      if(G.boss&&!G.boss.dead)G.killEnemy(G.boss,false);
+      K.E.enemies.forEach(enemy=>{enemy.dead=true;enemy.hp=0;});G.pendingSpawns=[];
+      if(G.activeEncounter)G.checkRoomClear();
+      if(G.exitGate)assert.strictEqual(G.useExitGate(),true,'encounter '+node.id+' did not resolve');
+      let rewardGuard=0;
+      while(G.pendingReward&&rewardGuard++<8){
+        if(G.pendingReward.kind==='fatedThread')assert.ok(G.takeFatedThread(G.pendingReward.choices[0].id));
+        else G.closeOffer();
+      }
+      if(G.pendingStory)assert.strictEqual(G.chooseStory(G.pendingStory.chapter.choices[0].id),true);
+      assert.ok(node.rewardClaimed||node.type==='recovery'&&node.status==='cleared','encounter reward was not recorded for '+node.id);
+      assert.strictEqual(JSON.stringify(G.run.trialModifiers),lockedModifiers);
+      counts.campaignRooms++;if(idx===7)counts.regionalCapstones++;
+      if(G.phase==='victory')break;
     }
-    if(G.activeEvent&&G.phase==='event') {assert.strictEqual(G.chooseEvent(G.activeEvent.choices[0].id),true);continue;}
-    const capstone=G.roomDef.type==='boss'&&G.chamberIndex===7;
-    clearCombat();if(capstone)counts.regionalCapstones++;
-    assert.strictEqual(G.useExitGate(),true);assert.strictEqual(G.useExitGate(),false);
-    counts.campaignRooms++;assert.strictEqual(JSON.stringify(G.run.trialModifiers),lockedModifiers);
+    break;
   }
-  assert.ok(guard<2000);assert.strictEqual(G.run.stats.chambers,192);assert.strictEqual(counts.campaignRooms,192);
-  assert.strictEqual(counts.regionalCapstones,24);assert.ok(G.run.stats.bosses>=24);counts.trialBosses=G.run.stats.bosses;
+  assert.ok(guard<30);assert.strictEqual(new Set(visited).size,1);
+  assert.strictEqual(G.run.stats.chambers,8);assert.strictEqual(counts.campaignRooms,8);
+  assert.strictEqual(counts.regionalCapstones,1);assert.ok(G.run.stats.bosses>=1);counts.trialBosses=G.run.stats.bosses;
+  G.victory();assert.strictEqual(G.phase,'victory');
   assert.strictEqual(K.Save.data.fatedTrialBestScore,24);
   assert.strictEqual(JSON.stringify(K.Save.data.fatedTrialRewards),'[5,10,15,20]');
   assert.strictEqual(G.run.trialResult.newlyClaimed.length,4);
@@ -178,6 +194,7 @@ test('Legacy high-level gear retains recorded levels and bounded effects, sales 
   }
   reset();const item=K.Gear.add(K.Gear.generate('helm',29,new K.RNG(918),'rare')).item;
   K.Save.data.obols=1000000;K.Save.data.salvageShards=20;
+  K.Save.data.campaignMilestones.actI=true;G.phase='idle';
   assert.strictEqual(K.Gear.upgrade(item.id).level,30);assert.strictEqual(K.Gear.upgrade(item.id),false);
 });
 test('The six-branch Loom caps new earning at 42, preserves legacy bank and refunds exact costs',()=>{

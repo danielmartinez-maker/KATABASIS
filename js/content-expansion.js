@@ -2,6 +2,8 @@
   'use strict';
   const K = window.K;
   const D = K.DATA;
+  if (D.CONTENT_EXPANDED) return;
+  D.CONTENT_EXPANDED = true;
   const copy = value => JSON.parse(JSON.stringify(value));
   D.BASE_CONTENT_COUNTS = D.BASE_CONTENT_COUNTS || {
     fightableEnemyFamilies:Object.keys(D.ENEMIES).filter(id => !D.ENEMIES[id].summon && !D.ENEMIES[id].generatedVariant).length,
@@ -479,13 +481,14 @@
   const order = ['tartarus','styx','acheron','asphodel','punishment','lethe_garden','elysium','mourning','forge','labyrinth','knossos','aegean','aeaea','colchis','gigantomachy','delphi','pelion','arcadia','thebes','marathon','mycenae','olympus_approach','olympus','typhon_core'];
   const additions = Object.create(null);
   newRegions.forEach(region => { additions[region.id] = region; });
-  D.REGIONS = order.map(id => additions[id] || originalRegions[id]).filter(Boolean);
+  D.REGIONS = order.map(id => { const r = additions[id] || originalRegions[id]; if (!r) throw new Error('Unknown region in campaign order: ' + id); return r; });
   const catalogEnemyIds = Object.keys(D.ENEMIES).filter(id => D.ENEMIES[id].catalogCreature);
   catalogEnemyIds.forEach((id, i) => {
     const region = D.REGIONS[i % D.REGIONS.length];
     const def = D.ENEMIES[id];
     def.regionHome = region.id;
     def.desc = def.name + ' haunts ' + region.name + ', where it once guarded a sacred road. As a ' + def.ai + ' threat, it punishes careless approach and leaves a painted likeness in the bestiary.';
+    def.bestiaryLore = 'The shades call it ' + def.name.toLowerCase() + '. In life it was bound to ' + region.name + '; death has kept the shape and sharpened the grievance.';
     region.enemies.push(id);
     if (i % 5 === 0) region.elites.push(id);
   });

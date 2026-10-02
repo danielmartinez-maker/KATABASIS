@@ -44,10 +44,19 @@
     const ok=await busy; busy=null;
     if (!ok) {
       dirty=true; status(false,'Your progress could not be saved. Keep this page open and download a backup.');
+      try { localStorage.setItem('katabasis.save.v1', JSON.stringify(K.Save.data).slice(0, 4000000)); } catch (error) {}
       return false;
     }
     if (dirty) return P.flush();
     status(false,null); return true;
+  };
+  P.clearDatabase = function () {
+    if (!db) return;
+    try {
+      const tx=db.transaction('progress','readwrite');
+      tx.objectStore('progress').delete('save');
+      try { localStorage.removeItem(MARKER); } catch (error) {}
+    } catch (error) {}
   };
   P.init = async function () {
     K.Save.load();

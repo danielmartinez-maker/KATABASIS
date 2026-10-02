@@ -4,6 +4,7 @@ const {K,G,storage,windowShim,documentShim,releaseAll}=require('./debug-harness'
 const tests=[]; const test=(name,fn)=>tests.push({name,fn});
 function reset(){ storage.clear(); K.Save.load(); G.startRun(36549); releaseAll(); }
 function addGear(slot,fx){ const item=K.Gear.generate(slot,1,new K.RNG(7283),'common'); item.baseEffects=fx; const result=K.Gear.add(item); assert.ok(result.added); return result.item; }
+function withConfirm(answer,fn){ const prior=windowShim.confirm; windowShim.confirm=()=>answer; try{ return fn(); }finally{ windowShim.confirm=prior; } }
 test('Equipping and removing extra-life gear cannot refill a spent revival',()=>{
   reset(); const starter=K.Save.data.equippedGear.weapon, item=addGear('weapon',{deathDefy:1});
   K.Gear.equip(item.id,'weapon'); G.player.hp=0; G.die(); assert.strictEqual(G.run.deathDefy,0);
@@ -83,9 +84,27 @@ test('Victory and death are recorded only once per run',()=>{
   assert.strictEqual(K.Save.data.deaths,1); assert.strictEqual(K.Save.data.totalTime,50);
 });
 test('Abandoning a run records the ended descent without creating a Nemesis',()=>{
-  reset(); G.run.stats.time=31; documentShim.getElementById('btn-abandon').click();
+  reset(); G.run.stats.time=31;
+  /* Abandoning is confirmed, so the dialog must be answered affirmatively here. */
+  withConfirm(true,()=>documentShim.getElementById('btn-abandon').click());
   assert.strictEqual(K.Save.data.deaths,1); assert.strictEqual(K.Save.data.totalTime,31);
   assert.strictEqual(G.player.dead,true); assert.strictEqual(K.Save.data.nemeses.length,0);
+});
+test('Abandoning a run keeps it active when the confirmation is declined',()=>{
+  reset(); G.run.stats.time=31;
+  withConfirm(false,()=>documentShim.getElementById('btn-abandon').click());
+  assert.strictEqual(K.Save.data.deaths,0); assert.strictEqual(G.phase,'playing');
+  assert.strictEqual(G.player.dead,false);
+});
+test('Exiting practice clears its progress warning from the next descent',()=>{
+  reset(); G.startPractice({seed:36550});
+  assert.ok(G.toasts.some(t=>t.text.startsWith('PRACTICE —')));
+  G.exitPractice();
+  assert.ok(!G.toasts.some(t=>t.text.startsWith('PRACTICE —')));
+});
+test('A new descent does not replay notices from the previous run',()=>{
+  reset(); G.toast('Stale run notice','#fff',true); G.startRun(36551);
+  assert.ok(!G.toasts.some(t=>t.text==='Stale run notice'));
 });
 
 let failed=0;

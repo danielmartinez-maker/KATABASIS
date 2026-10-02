@@ -1,0 +1,2012 @@
+{
+  "version": 1,
+  "approvalStatus": "roster-approved",
+  "date": "2026-10-02",
+  "total": 53,
+  "boonEligible": 48,
+  "artOnly": 5,
+  "sourceOfTruth": "53 stable deity IDs with packaged offline WebP posters and one distinct full-resolution PNG master for every identity.",
+  "entries": [
+    {
+      "id": "zeus",
+      "displayName": "ZEUS",
+      "epithet": "King of the Olympians",
+      "tradition": "greek",
+      "domain": "Sky & Thunder",
+      "symbols": [
+        "eagle",
+        "thunderbolt"
+      ],
+      "paletteAccent": "#f5e07a",
+      "silhouettePose": "Broad aged silhouette, raised bronze thunderbolt",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Slow bolt glow",
+        "cloak edge drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.zeus.poster",
+      "loopAssetId": "portrait.greek.zeus.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/zeus.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 0
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ZEUS, King of the Olympians. Broad aged silhouette, raised bronze thunderbolt. Signature symbols: eagle; thunderbolt. Accent: #f5e07a.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 1,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "hera",
+      "displayName": "HERA",
+      "epithet": "Queen of Olympus",
+      "tradition": "greek",
+      "domain": "Marriage & Sovereignty",
+      "symbols": [
+        "peacock feather",
+        "royal diadem"
+      ],
+      "paletteAccent": "#d7a8d6",
+      "silhouettePose": "Upright dark-haired sovereign with feather fan",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Peacock eye shimmer",
+        "veil edge drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.hera.poster",
+      "loopAssetId": "portrait.greek.hera.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/hera.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 1
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HERA, Queen of Olympus. Upright dark-haired sovereign with feather fan. Signature symbols: peacock feather; royal diadem. Accent: #d7a8d6.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 2,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "poseidon",
+      "displayName": "POSEIDON",
+      "epithet": "Earth-Shaker",
+      "tradition": "greek",
+      "domain": "Sea & Earthquake",
+      "symbols": [
+        "trident",
+        "sea horse"
+      ],
+      "paletteAccent": "#5fd0d8",
+      "silhouettePose": "Salt-bearded figure turning a long trident",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Trident water curl",
+        "damp hair sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.poseidon.poster",
+      "loopAssetId": "portrait.greek.poseidon.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/poseidon.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 2
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. POSEIDON, Earth-Shaker. Salt-bearded figure turning a long trident. Signature symbols: trident; sea horse. Accent: #5fd0d8.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 3,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "demeter",
+      "displayName": "DEMETER",
+      "epithet": "Bringer of Harvest",
+      "tradition": "greek",
+      "domain": "Grain & Winter",
+      "symbols": [
+        "wheat",
+        "sickle"
+      ],
+      "paletteAccent": "#d8cf7a",
+      "silhouettePose": "Mature harvest figure cradling a sheaf",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Wheat-head sway",
+        "faint frost sparkle"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.demeter.poster",
+      "loopAssetId": "portrait.greek.demeter.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/demeter.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 3
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. DEMETER, Bringer of Harvest. Mature harvest figure cradling a sheaf. Signature symbols: wheat; sickle. Accent: #d8cf7a.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 4,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "athena",
+      "displayName": "ATHENA",
+      "epithet": "Bright-Eyed",
+      "tradition": "greek",
+      "domain": "Wisdom & War",
+      "symbols": [
+        "owl",
+        "olive branch"
+      ],
+      "paletteAccent": "#cfd6e2",
+      "silhouettePose": "Armored strategist in angular helm with owl",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Owl eye glint",
+        "olive leaf sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.athena.poster",
+      "loopAssetId": "portrait.greek.athena.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/athena.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 4
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ATHENA, Bright-Eyed. Armored strategist in angular helm with owl. Signature symbols: owl; olive branch. Accent: #cfd6e2.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 5,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "apollo",
+      "displayName": "APOLLO",
+      "epithet": "Far-Shooter",
+      "tradition": "greek",
+      "domain": "Light, Music & Prophecy",
+      "symbols": [
+        "lyre",
+        "laurel"
+      ],
+      "paletteAccent": "#f5d56a",
+      "silhouettePose": "Laurel-crowned musician with a vertical lyre",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Gold-string shimmer",
+        "laurel leaf sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.apollo.poster",
+      "loopAssetId": "portrait.greek.apollo.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/apollo.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 5
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. APOLLO, Far-Shooter. Laurel-crowned musician with a vertical lyre. Signature symbols: lyre; laurel. Accent: #f5d56a.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 6,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "artemis",
+      "displayName": "ARTEMIS",
+      "epithet": "Arrow-Pouring",
+      "tradition": "greek",
+      "domain": "The Hunt & the Moon",
+      "symbols": [
+        "bow",
+        "crescent"
+      ],
+      "paletteAccent": "#9be07a",
+      "silhouettePose": "Alert huntress with a crescent bow across her shoulder",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Bowstring glint",
+        "silver hair edge drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.artemis.poster",
+      "loopAssetId": "portrait.greek.artemis.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/artemis.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 6
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ARTEMIS, Arrow-Pouring. Alert huntress with a crescent bow across her shoulder. Signature symbols: bow; crescent. Accent: #9be07a.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 7,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "ares",
+      "displayName": "ARES",
+      "epithet": "Sacker of Cities",
+      "tradition": "greek",
+      "domain": "Bloodlust & Ruin",
+      "symbols": [
+        "spear",
+        "red helm"
+      ],
+      "paletteAccent": "#e2564a",
+      "silhouettePose": "Heavy warrior silhouette with a diagonal spear",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Ember pulse on spear",
+        "cloak edge drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.ares.poster",
+      "loopAssetId": "portrait.greek.ares.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/ares.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 7
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ARES, Sacker of Cities. Heavy warrior silhouette with a diagonal spear. Signature symbols: spear; red helm. Accent: #e2564a.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 8,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "aphrodite",
+      "displayName": "APHRODITE",
+      "epithet": "Foam-Born",
+      "tradition": "greek",
+      "domain": "Desire & Discord",
+      "symbols": [
+        "shell",
+        "rose"
+      ],
+      "paletteAccent": "#f08bb4",
+      "silhouettePose": "Foam-lit figure holding a rose above a shell",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Petal drift",
+        "shell pearlescent glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.aphrodite.poster",
+      "loopAssetId": "portrait.greek.aphrodite.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/aphrodite.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 8
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. APHRODITE, Foam-Born. Foam-lit figure holding a rose above a shell. Signature symbols: shell; rose. Accent: #f08bb4.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 9,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "hephaestus",
+      "displayName": "HEPHAESTUS",
+      "epithet": "The Smith",
+      "tradition": "greek",
+      "domain": "Forge & Flame",
+      "symbols": [
+        "hammer",
+        "anvil"
+      ],
+      "paletteAccent": "#f0a04a",
+      "silhouettePose": "Soot-marked smith resting a hammer on one shoulder",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Forge ember glow",
+        "smoke curl"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.hephaestus.poster",
+      "loopAssetId": "portrait.greek.hephaestus.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/hephaestus.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 9
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HEPHAESTUS, The Smith. Soot-marked smith resting a hammer on one shoulder. Signature symbols: hammer; anvil. Accent: #f0a04a.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 10,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "hermes",
+      "displayName": "HERMES",
+      "epithet": "Guide of Souls",
+      "tradition": "greek",
+      "domain": "Speed & Thievery",
+      "symbols": [
+        "winged sandals",
+        "caduceus"
+      ],
+      "paletteAccent": "#8fe3c8",
+      "silhouettePose": "Lean traveler with staff and forward-tilted shoulders",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Small wing flutter",
+        "scarf sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.hermes.poster",
+      "loopAssetId": "portrait.greek.hermes.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/hermes.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 10
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HERMES, Guide of Souls. Lean traveler with staff and forward-tilted shoulders. Signature symbols: winged sandals; caduceus. Accent: #8fe3c8.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 11,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "hestia",
+      "displayName": "HESTIA",
+      "epithet": "Keeper of the Hearth",
+      "tradition": "greek",
+      "domain": "Hearth & Home",
+      "symbols": [
+        "hearth flame",
+        "offering bowl"
+      ],
+      "paletteAccent": "#e6a56d",
+      "silhouettePose": "Quiet seated keeper sheltering a flame in a bowl",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Sheltered flame sway",
+        "warm cloth glow"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.hestia.poster",
+      "loopAssetId": "portrait.greek.hestia.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/hestia.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 11
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HESTIA, Keeper of the Hearth. Quiet seated keeper sheltering a flame in a bowl. Signature symbols: hearth flame; offering bowl. Accent: #e6a56d.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 12,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "dionysus",
+      "displayName": "DIONYSUS",
+      "epithet": "Twice-Born",
+      "tradition": "greek",
+      "domain": "Wine & Madness",
+      "symbols": [
+        "grapes",
+        "thyrsus"
+      ],
+      "paletteAccent": "#c07ad8",
+      "silhouettePose": "Relaxed vine-crowned reveler holding a thyrsus",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Vine leaf sway",
+        "cup reflection glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.dionysus.poster",
+      "loopAssetId": "portrait.greek.dionysus.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/dionysus.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 12
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. DIONYSUS, Twice-Born. Relaxed vine-crowned reveler holding a thyrsus. Signature symbols: grapes; thyrsus. Accent: #c07ad8.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 13,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "hades",
+      "displayName": "HADES",
+      "epithet": "The Unseen",
+      "tradition": "greek",
+      "domain": "The Dead & Riches",
+      "symbols": [
+        "bident",
+        "obsidian crown"
+      ],
+      "paletteAccent": "#9a7ad8",
+      "silhouettePose": "Severe king framed by a forked obsidian staff",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Gem eye glint",
+        "faint underworld mist"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.hades.poster",
+      "loopAssetId": "portrait.greek.hades.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/hades.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 13
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HADES, The Unseen. Severe king framed by a forked obsidian staff. Signature symbols: bident; obsidian crown. Accent: #9a7ad8.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 14,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "chaos",
+      "displayName": "CHAOS",
+      "epithet": "The Void Before",
+      "tradition": "greek",
+      "domain": "Primordial Nothing",
+      "symbols": [
+        "dark aperture",
+        "star dust"
+      ],
+      "paletteAccent": "#d05ad0",
+      "silhouettePose": "Unfixed primordial face emerging from a dark aperture",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Slow aperture flow",
+        "isolated star shimmer"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.chaos.poster",
+      "loopAssetId": "portrait.greek.chaos.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/chaos.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 14
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. CHAOS, The Void Before. Unfixed primordial face emerging from a dark aperture. Signature symbols: dark aperture; star dust. Accent: #d05ad0.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 15,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "persephone",
+      "displayName": "PERSEPHONE",
+      "epithet": "Queen Below",
+      "tradition": "greek",
+      "domain": "Spring & the Underworld",
+      "symbols": [
+        "pomegranate",
+        "narcissus"
+      ],
+      "paletteAccent": "#cc8fb9",
+      "silhouettePose": "Queen with a pomegranate cupped near her heart",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Petal sway",
+        "seed glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.persephone.poster",
+      "loopAssetId": "portrait.greek.persephone.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/persephone.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 15
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. PERSEPHONE, Queen Below. Queen with a pomegranate cupped near her heart. Signature symbols: pomegranate; narcissus. Accent: #cc8fb9.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 16,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "hecate",
+      "displayName": "HECATE",
+      "epithet": "Torch-Bearer",
+      "tradition": "greek",
+      "domain": "Crossroads & Witchcraft",
+      "symbols": [
+        "paired torches",
+        "key"
+      ],
+      "paletteAccent": "#a88cdf",
+      "silhouettePose": "Three-quarter witch holding paired torches at different heights",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Torch flicker",
+        "key glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.hecate.poster",
+      "loopAssetId": "portrait.greek.hecate.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/hecate.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 16
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HECATE, Torch-Bearer. Three-quarter witch holding paired torches at different heights. Signature symbols: paired torches; key. Accent: #a88cdf.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 17,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "nyx",
+      "displayName": "NYX",
+      "epithet": "Night Incarnate",
+      "tradition": "greek",
+      "domain": "Night & Primordial Dark",
+      "symbols": [
+        "star veil",
+        "black wings"
+      ],
+      "paletteAccent": "#756aaf",
+      "silhouettePose": "Vast night veil outlining a still celestial face",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Slow star-field drift",
+        "veil sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.nyx.poster",
+      "loopAssetId": "portrait.greek.nyx.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/nyx.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 17
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. NYX, Night Incarnate. Vast night veil outlining a still celestial face. Signature symbols: star veil; black wings. Accent: #756aaf.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 18,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "thanatos",
+      "displayName": "THANATOS",
+      "epithet": "Gentle Death",
+      "tradition": "greek",
+      "domain": "Death & Release",
+      "symbols": [
+        "inverted torch",
+        "dark wings"
+      ],
+      "paletteAccent": "#8b9bab",
+      "silhouettePose": "Reserved winged youth with a lowered torch",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Feather edge sway",
+        "soft torch glow"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.thanatos.poster",
+      "loopAssetId": "portrait.greek.thanatos.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/thanatos.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 18
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. THANATOS, Gentle Death. Reserved winged youth with a lowered torch. Signature symbols: inverted torch; dark wings. Accent: #8b9bab.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 19,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "hypnos",
+      "displayName": "HYPNOS",
+      "epithet": "Soft-Sleep",
+      "tradition": "greek",
+      "domain": "Sleep & Dreams",
+      "symbols": [
+        "poppy",
+        "winged temple"
+      ],
+      "paletteAccent": "#91a7ca",
+      "silhouettePose": "Reclining dreamer with poppies and one temple wing",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Poppy petal sway",
+        "eyelid glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.hypnos.poster",
+      "loopAssetId": "portrait.greek.hypnos.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/hypnos.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 19
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HYPNOS, Soft-Sleep. Reclining dreamer with poppies and one temple wing. Signature symbols: poppy; winged temple. Accent: #91a7ca.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 20,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "charon",
+      "displayName": "CHARON",
+      "epithet": "The Ferryman",
+      "tradition": "greek",
+      "domain": "Ferries & Passage",
+      "symbols": [
+        "oar",
+        "fare coin"
+      ],
+      "paletteAccent": "#827b71",
+      "silhouettePose": "Hooded river elder with a long weathered oar",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "River reflection ripple",
+        "lantern sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.charon.poster",
+      "loopAssetId": "portrait.greek.charon.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/charon.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 20
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. CHARON, The Ferryman. Hooded river elder with a long weathered oar. Signature symbols: oar; fare coin. Accent: #827b71.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 21,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "nemesis",
+      "displayName": "NEMESIS",
+      "epithet": "She Who Rebalances",
+      "tradition": "greek",
+      "domain": "Retribution & Balance",
+      "symbols": [
+        "balance",
+        "measuring rod"
+      ],
+      "paletteAccent": "#c56f62",
+      "silhouettePose": "Direct-eyed judge holding a balance at chest height",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Balance chain drift",
+        "metal glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.nemesis.poster",
+      "loopAssetId": "portrait.greek.nemesis.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/nemesis.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 21
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. NEMESIS, She Who Rebalances. Direct-eyed judge holding a balance at chest height. Signature symbols: balance; measuring rod. Accent: #c56f62.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 22,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "nike",
+      "displayName": "NIKE",
+      "epithet": "Winged Victory",
+      "tradition": "greek",
+      "domain": "Victory & Contest",
+      "symbols": [
+        "victory wreath",
+        "wings"
+      ],
+      "paletteAccent": "#e0bb62",
+      "silhouettePose": "Forward-reaching winged figure offering a small wreath",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Feather sway",
+        "wreath shimmer"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.nike.poster",
+      "loopAssetId": "portrait.greek.nike.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/nike.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 22
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. NIKE, Winged Victory. Forward-reaching winged figure offering a small wreath. Signature symbols: victory wreath; wings. Accent: #e0bb62.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 23,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "iris",
+      "displayName": "IRIS",
+      "epithet": "Rainbow Messenger",
+      "tradition": "greek",
+      "domain": "Messages & Rainbows",
+      "symbols": [
+        "rainbow ribbon",
+        "herald staff"
+      ],
+      "paletteAccent": "#9acbe0",
+      "silhouettePose": "Messenger sweeping a curved ribbon beside her face",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Restrained ribbon drift",
+        "staff glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.iris.poster",
+      "loopAssetId": "portrait.greek.iris.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/iris.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 23
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. IRIS, Rainbow Messenger. Messenger sweeping a curved ribbon beside her face. Signature symbols: rainbow ribbon; herald staff. Accent: #9acbe0.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 24,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "hebe",
+      "displayName": "HEBE",
+      "epithet": "Cup-Bearer of Youth",
+      "tradition": "greek",
+      "domain": "Youth & Renewal",
+      "symbols": [
+        "cup",
+        "ivy"
+      ],
+      "paletteAccent": "#d5b6dd",
+      "silhouettePose": "Youthful cup bearer in an open balanced stance",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Cup reflection shimmer",
+        "ivy sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.hebe.poster",
+      "loopAssetId": "portrait.greek.hebe.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/hebe.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 24
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HEBE, Cup-Bearer of Youth. Youthful cup bearer in an open balanced stance. Signature symbols: cup; ivy. Accent: #d5b6dd.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 25,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "asclepius",
+      "displayName": "ASCLEPIUS",
+      "epithet": "Physician of the Gods",
+      "tradition": "greek",
+      "domain": "Medicine & Healing",
+      "symbols": [
+        "serpent staff",
+        "medicine bowl"
+      ],
+      "paletteAccent": "#83b7a1",
+      "silhouettePose": "Bearded healer with one serpent climbing his staff",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Serpent head sway",
+        "bowl reflection"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.asclepius.poster",
+      "loopAssetId": "portrait.greek.asclepius.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/asclepius.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 25
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ASCLEPIUS, Physician of the Gods. Bearded healer with one serpent climbing his staff. Signature symbols: serpent staff; medicine bowl. Accent: #83b7a1.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 26,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "pan",
+      "displayName": "PAN",
+      "epithet": "Lord of the Wild",
+      "tradition": "greek",
+      "domain": "Wild Places & Panic",
+      "symbols": [
+        "reed pipes",
+        "goat horns"
+      ],
+      "paletteAccent": "#99a36f",
+      "silhouettePose": "Rugged horned wild figure raising reed pipes",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Reed tassel sway",
+        "leaf movement"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.pan.poster",
+      "loopAssetId": "portrait.greek.pan.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/pan.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 26
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. PAN, Lord of the Wild. Rugged horned wild figure raising reed pipes. Signature symbols: reed pipes; goat horns. Accent: #99a36f.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 27,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "eros",
+      "displayName": "EROS",
+      "epithet": "The Unavoidable",
+      "tradition": "greek",
+      "domain": "Desire & Creative Force",
+      "symbols": [
+        "bow",
+        "small wings"
+      ],
+      "paletteAccent": "#df93ac",
+      "silhouettePose": "Winged archer with a heart-shaped bow curve",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Feather edge flutter",
+        "arrow glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.eros.poster",
+      "loopAssetId": "portrait.greek.eros.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/eros.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 27
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. EROS, The Unavoidable. Winged archer with a heart-shaped bow curve. Signature symbols: bow; small wings. Accent: #df93ac.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 28,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "eris",
+      "displayName": "ERIS",
+      "epithet": "Bringer of Strife",
+      "tradition": "greek",
+      "domain": "Discord & Rivalry",
+      "symbols": [
+        "golden apple",
+        "torn veil"
+      ],
+      "paletteAccent": "#d17860",
+      "silhouettePose": "Sharp smiling figure extending a single golden apple",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Apple gleam",
+        "torn veil drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.eris.poster",
+      "loopAssetId": "portrait.greek.eris.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/eris.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 28
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ERIS, Bringer of Strife. Sharp smiling figure extending a single golden apple. Signature symbols: golden apple; torn veil. Accent: #d17860.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 29,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "gaia",
+      "displayName": "GAIA",
+      "epithet": "Earth Mother",
+      "tradition": "greek",
+      "domain": "Earth & Ancestry",
+      "symbols": [
+        "root crown",
+        "earth bowl"
+      ],
+      "paletteAccent": "#91ae78",
+      "silhouettePose": "Broad earthen mother with root-crowned hair",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Root leaf sway",
+        "soil ember glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.gaia.poster",
+      "loopAssetId": "portrait.greek.gaia.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/gaia.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 29
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. GAIA, Earth Mother. Broad earthen mother with root-crowned hair. Signature symbols: root crown; earth bowl. Accent: #91ae78.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 30,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "kronos",
+      "displayName": "KRONOS",
+      "epithet": "The Titan of Time",
+      "tradition": "greek",
+      "domain": "Time & the Titans",
+      "symbols": [
+        "sickle",
+        "weathered stone"
+      ],
+      "paletteAccent": "#ad805e",
+      "silhouettePose": "Ancient Titan gripping a curved sickle in profile",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Sickle patina shimmer",
+        "dust drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.kronos.poster",
+      "loopAssetId": "portrait.greek.kronos.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/kronos.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 30
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. KRONOS, The Titan of Time. Ancient Titan gripping a curved sickle in profile. Signature symbols: sickle; weathered stone. Accent: #ad805e.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 31,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "rhea",
+      "displayName": "RHEA",
+      "epithet": "Mother of the Gods",
+      "tradition": "greek",
+      "domain": "Motherhood & Mountains",
+      "symbols": [
+        "lion",
+        "mountain diadem"
+      ],
+      "paletteAccent": "#be9b73",
+      "silhouettePose": "Protective mountain mother with a lion at her shoulder",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Lion mane edge sway",
+        "diadem glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.rhea.poster",
+      "loopAssetId": "portrait.greek.rhea.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/rhea.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 31
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. RHEA, Mother of the Gods. Protective mountain mother with a lion at her shoulder. Signature symbols: lion; mountain diadem. Accent: #be9b73.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 32,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "themis",
+      "displayName": "THEMIS",
+      "epithet": "Voice of Divine Law",
+      "tradition": "greek",
+      "domain": "Law & Right Order",
+      "symbols": [
+        "scales",
+        "law tablets"
+      ],
+      "paletteAccent": "#c9b37a",
+      "silhouettePose": "Calm lawgiver with square tablets and level scales",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Scale chain drift",
+        "tablet edge glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.themis.poster",
+      "loopAssetId": "portrait.greek.themis.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/themis.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 32
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. THEMIS, Voice of Divine Law. Calm lawgiver with square tablets and level scales. Signature symbols: scales; law tablets. Accent: #c9b37a.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 33,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "tyche",
+      "displayName": "TYCHE",
+      "epithet": "Lady of Fortune",
+      "tradition": "greek",
+      "domain": "Fortune & Chance",
+      "symbols": [
+        "cornucopia",
+        "wheel"
+      ],
+      "paletteAccent": "#dfbf72",
+      "silhouettePose": "Fortune keeper holding a tilted cornucopia beside a wheel",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Small coin gleam",
+        "robe edge sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.tyche.poster",
+      "loopAssetId": "portrait.greek.tyche.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/tyche.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 33
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. TYCHE, Lady of Fortune. Fortune keeper holding a tilted cornucopia beside a wheel. Signature symbols: cornucopia; wheel. Accent: #dfbf72.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 34,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "morpheus",
+      "displayName": "MORPHEUS",
+      "epithet": "Shaper of Dreams",
+      "tradition": "greek",
+      "domain": "Dreams & Visions",
+      "symbols": [
+        "butterfly",
+        "dream veil"
+      ],
+      "paletteAccent": "#8aa9bb",
+      "silhouettePose": "Narrow winged dream shaper under a translucent veil",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Butterfly wing sway",
+        "veil drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.morpheus.poster",
+      "loopAssetId": "portrait.greek.morpheus.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/morpheus.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 34
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. MORPHEUS, Shaper of Dreams. Narrow winged dream shaper under a translucent veil. Signature symbols: butterfly; dream veil. Accent: #8aa9bb.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 35,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "moirai",
+      "displayName": "THE MOIRAI",
+      "epithet": "The Three Fates",
+      "tradition": "greek",
+      "domain": "Fate & the Thread",
+      "symbols": [
+        "single thread",
+        "distaff",
+        "shears"
+      ],
+      "paletteAccent": "#c9b7a0",
+      "silhouettePose": "One central fate face with three hands holding one thread",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Thread tension shimmer",
+        "shears glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.moirai.poster",
+      "loopAssetId": "portrait.greek.moirai.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/moirai.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 35
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. THE MOIRAI, The Three Fates. One central fate face with three hands holding one thread. Signature symbols: single thread; distaff; shears. Accent: #c9b7a0.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 36,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "amphitrite",
+      "displayName": "AMPHITRITE",
+      "epithet": "Queen of the Sea",
+      "tradition": "greek",
+      "domain": "Sea & Tides",
+      "symbols": [
+        "shell diadem",
+        "sea veil"
+      ],
+      "paletteAccent": "#79bdc4",
+      "silhouettePose": "Sea queen with a high shell crown and flowing veil",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Sea veil ripple",
+        "shell glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.amphitrite.poster",
+      "loopAssetId": "portrait.greek.amphitrite.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/amphitrite.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 36
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. AMPHITRITE, Queen of the Sea. Sea queen with a high shell crown and flowing veil. Signature symbols: shell diadem; sea veil. Accent: #79bdc4.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 37,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "triton",
+      "displayName": "TRITON",
+      "epithet": "Trumpeter of the Deep",
+      "tradition": "greek",
+      "domain": "Sea & Sea-Calls",
+      "symbols": [
+        "conch",
+        "coral"
+      ],
+      "paletteAccent": "#70b8c9",
+      "silhouettePose": "Broad sea herald blowing a spiral conch",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Water bead movement",
+        "conch reflection"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.triton.poster",
+      "loopAssetId": "portrait.greek.triton.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/triton.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 37
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. TRITON, Trumpeter of the Deep. Broad sea herald blowing a spiral conch. Signature symbols: conch; coral. Accent: #70b8c9.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 38,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "boreas",
+      "displayName": "BOREAS",
+      "epithet": "North Wind",
+      "tradition": "greek",
+      "domain": "Winter & the North Wind",
+      "symbols": [
+        "winter breath",
+        "dark wings"
+      ],
+      "paletteAccent": "#9bbbd2",
+      "silhouettePose": "Bearded north wind leaning into a fur mantle",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Cold breath drift",
+        "mantle sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.boreas.poster",
+      "loopAssetId": "portrait.greek.boreas.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/boreas.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 38
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. BOREAS, North Wind. Bearded north wind leaning into a fur mantle. Signature symbols: winter breath; dark wings. Accent: #9bbbd2.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 39,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "aeolus",
+      "displayName": "AEOLUS",
+      "epithet": "Keeper of the Winds",
+      "tradition": "greek",
+      "domain": "Winds & Their Vault",
+      "symbols": [
+        "sealed wind jar",
+        "knotted rope"
+      ],
+      "paletteAccent": "#a8c2bb",
+      "silhouettePose": "Vault keeper holding a sealed jar close to his torso",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Rope tassel sway",
+        "restrained cloud drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.aeolus.poster",
+      "loopAssetId": "portrait.greek.aeolus.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/aeolus.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 39
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. AEOLUS, Keeper of the Winds. Vault keeper holding a sealed jar close to his torso. Signature symbols: sealed wind jar; knotted rope. Accent: #a8c2bb.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 40,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "selene",
+      "displayName": "SELENE",
+      "epithet": "Moon in Her Chariot",
+      "tradition": "greek",
+      "domain": "Moon & Night Journeys",
+      "symbols": [
+        "crescent diadem",
+        "chariot rein"
+      ],
+      "paletteAccent": "#d2c9e9",
+      "silhouettePose": "Silver-haired moon driver holding a curved rein",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Moon edge glow",
+        "hair sway"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.selene.poster",
+      "loopAssetId": "portrait.greek.selene.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/selene.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 40
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. SELENE, Moon in Her Chariot. Silver-haired moon driver holding a curved rein. Signature symbols: crescent diadem; chariot rein. Accent: #d2c9e9.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 41,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "helios",
+      "displayName": "HELIOS",
+      "epithet": "All-Seeing Sun",
+      "tradition": "greek",
+      "domain": "Sun & Witness",
+      "symbols": [
+        "sun diadem",
+        "horse rein"
+      ],
+      "paletteAccent": "#f0ac53",
+      "silhouettePose": "Radiant witness with a narrow sun diadem and taut rein",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Restrained sun shimmer",
+        "rein tassel drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.helios.poster",
+      "loopAssetId": "portrait.greek.helios.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/helios.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 41
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HELIOS, All-Seeing Sun. Radiant witness with a narrow sun diadem and taut rein. Signature symbols: sun diadem; horse rein. Accent: #f0ac53.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 42,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "eos",
+      "displayName": "EOS",
+      "epithet": "Dawn-Bringer",
+      "tradition": "greek",
+      "domain": "Dawn & New Beginnings",
+      "symbols": [
+        "dawn veil",
+        "dew vessel"
+      ],
+      "paletteAccent": "#e89e8c",
+      "silhouettePose": "Dawn figure opening a pale rose veil around her face",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Veil edge drift",
+        "dew glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.eos.poster",
+      "loopAssetId": "portrait.greek.eos.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/eos.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 42
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. EOS, Dawn-Bringer. Dawn figure opening a pale rose veil around her face. Signature symbols: dawn veil; dew vessel. Accent: #e89e8c.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 43,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "harmonia",
+      "displayName": "HARMONIA",
+      "epithet": "Peacemaker",
+      "tradition": "greek",
+      "domain": "Harmony & Concord",
+      "symbols": [
+        "joined rings",
+        "lyre"
+      ],
+      "paletteAccent": "#d8a6a9",
+      "silhouettePose": "Centered peacemaker joining two metal rings",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Ring contact gleam",
+        "lyre-string shimmer"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.harmonia.poster",
+      "loopAssetId": "portrait.greek.harmonia.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/harmonia.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 43
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. HARMONIA, Peacemaker. Centered peacemaker joining two metal rings. Signature symbols: joined rings; lyre. Accent: #d8a6a9.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 44,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "prometheus",
+      "displayName": "PROMETHEUS",
+      "epithet": "Bearer of Fire",
+      "tradition": "greek",
+      "domain": "Forethought & Mankind",
+      "symbols": [
+        "stolen flame",
+        "broken chain"
+      ],
+      "paletteAccent": "#df794e",
+      "silhouettePose": "Weathered bearer lifting a small flame past broken chains",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Flame flicker",
+        "chain glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.prometheus.poster",
+      "loopAssetId": "portrait.greek.prometheus.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/prometheus.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 44
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. PROMETHEUS, Bearer of Fire. Weathered bearer lifting a small flame past broken chains. Signature symbols: stolen flame; broken chain. Accent: #df794e.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 45,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "atlas",
+      "displayName": "ATLAS",
+      "epithet": "The Sky-Bearer",
+      "tradition": "greek",
+      "domain": "Endurance & the Heavens",
+      "symbols": [
+        "star vault",
+        "shoulder stone"
+      ],
+      "paletteAccent": "#8293bd",
+      "silhouettePose": "Bent but resolute bearer lifting a dark celestial vault",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Slow star shimmer",
+        "suspended dust"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.atlas.poster",
+      "loopAssetId": "portrait.greek.atlas.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/atlas.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 45
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ATLAS, The Sky-Bearer. Bent but resolute bearer lifting a dark celestial vault. Signature symbols: star vault; shoulder stone. Accent: #8293bd.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 46,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "styx",
+      "displayName": "STYX",
+      "epithet": "Oath-River",
+      "tradition": "greek",
+      "domain": "Oaths & the Underworld River",
+      "symbols": [
+        "oath bowl",
+        "black river"
+      ],
+      "paletteAccent": "#6db5bd",
+      "silhouettePose": "Veiled oath keeper holding dark water in a stone bowl",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Black-water ripple",
+        "silver edge glint"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.styx.poster",
+      "loopAssetId": "portrait.greek.styx.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/styx.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 46
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. STYX, Oath-River. Veiled oath keeper holding dark water in a stone bowl. Signature symbols: oath bowl; black river. Accent: #6db5bd.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 47,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "phobos",
+      "displayName": "PHOBOS",
+      "epithet": "The Shape of Fear",
+      "tradition": "greek",
+      "domain": "Fear & Rout",
+      "symbols": [
+        "fear mask",
+        "shield"
+      ],
+      "paletteAccent": "#a66d70",
+      "silhouettePose": "Armored figure lifting a cracked mask beside one eye",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Mask eye glint",
+        "smoke edge drift"
+      ],
+      "hasBoonContent": true,
+      "runEligible": true,
+      "portraitAssetId": "portrait.greek.phobos.poster",
+      "loopAssetId": "portrait.greek.phobos.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/phobos.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": {
+        "assetId": "ui.deities",
+        "cell": 47
+      },
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. PHOBOS, The Shape of Fear. Armored figure lifting a cracked mask beside one eye. Signature symbols: fear mask; shield. Accent: #a66d70.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 48,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "mnemosyne",
+      "displayName": "MNEMOSYNE",
+      "epithet": "Keeper of Memory",
+      "tradition": "greek",
+      "domain": "Memory & Remembrance",
+      "symbols": [
+        "memory tablets",
+        "spring water"
+      ],
+      "paletteAccent": "#9eaeae",
+      "silhouettePose": "Mature witness reading one tablet over a shallow spring",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Water reflection ripple",
+        "tablet edge gleam"
+      ],
+      "hasBoonContent": false,
+      "runEligible": false,
+      "portraitAssetId": "portrait.greek.mnemosyne.poster",
+      "loopAssetId": "portrait.greek.mnemosyne.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/mnemosyne.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": null,
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. MNEMOSYNE, Keeper of Memory. Mature witness reading one tablet over a shallow spring. Signature symbols: memory tablets; spring water. Accent: #9eaeae.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 49,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "leto",
+      "displayName": "LETO",
+      "epithet": "The Sheltering Mother",
+      "tradition": "greek",
+      "domain": "Motherhood & Sanctuary",
+      "symbols": [
+        "palm branch",
+        "protective veil"
+      ],
+      "paletteAccent": "#baa58b",
+      "silhouettePose": "Travel-worn mother sheltering her face beneath a palm",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Palm leaf sway",
+        "veil edge drift"
+      ],
+      "hasBoonContent": false,
+      "runEligible": false,
+      "portraitAssetId": "portrait.greek.leto.poster",
+      "loopAssetId": "portrait.greek.leto.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/leto.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": null,
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. LETO, The Sheltering Mother. Travel-worn mother sheltering her face beneath a palm. Signature symbols: palm branch; protective veil. Accent: #baa58b.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 50,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "oceanus",
+      "displayName": "OCEANUS",
+      "epithet": "The Encircling River",
+      "tradition": "greek",
+      "domain": "The Encircling Waters",
+      "symbols": [
+        "river horns",
+        "ocean vessel"
+      ],
+      "paletteAccent": "#6b9eac",
+      "silhouettePose": "Horned elder pouring a narrow stream from a stone vessel",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Small stream flow",
+        "beard edge sway"
+      ],
+      "hasBoonContent": false,
+      "runEligible": false,
+      "portraitAssetId": "portrait.greek.oceanus.poster",
+      "loopAssetId": "portrait.greek.oceanus.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/oceanus.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": null,
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. OCEANUS, The Encircling River. Horned elder pouring a narrow stream from a stone vessel. Signature symbols: river horns; ocean vessel. Accent: #6b9eac.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 51,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "tethys",
+      "displayName": "TETHYS",
+      "epithet": "Mother of the Rivers",
+      "tradition": "greek",
+      "domain": "Fresh Waters & Nourishment",
+      "symbols": [
+        "freshwater vessel",
+        "winged brow"
+      ],
+      "paletteAccent": "#83b6b0",
+      "silhouettePose": "River mother with a winged brow and two freshwater vessels",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Water surface ripple",
+        "brow feather sway"
+      ],
+      "hasBoonContent": false,
+      "runEligible": false,
+      "portraitAssetId": "portrait.greek.tethys.poster",
+      "loopAssetId": "portrait.greek.tethys.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/tethys.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": null,
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. TETHYS, Mother of the Rivers. River mother with a winged brow and two freshwater vessels. Signature symbols: freshwater vessel; winged brow. Accent: #83b6b0.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 52,
+      "assetSource": "generated-master"
+    },
+    {
+      "id": "ananke",
+      "displayName": "ANANKE",
+      "epithet": "The Inescapable",
+      "tradition": "greek",
+      "domain": "Necessity & Constraint",
+      "symbols": [
+        "spindle",
+        "enclosing coil"
+      ],
+      "paletteAccent": "#b39d91",
+      "silhouettePose": "Stern necessity figure holding a spindle within one coil",
+      "cropSafeNotes": "Keep the face, hands and first signature symbol inside the central 65 percent of the cover; inspect a square 72px card crop and a 320px Codex crop.",
+      "animationCues": [
+        "Slow thread glint",
+        "coil edge shimmer"
+      ],
+      "hasBoonContent": false,
+      "runEligible": false,
+      "portraitAssetId": "portrait.greek.ananke.poster",
+      "loopAssetId": "portrait.greek.ananke.loop",
+      "approvalStatus": "roster-approved",
+      "approvalReference": "User blanket approval in the implementation chat, 2026-10-02",
+      "approvedStillReference": "assets/deities/posters/ananke.webp",
+      "artStatus": "packaged-poster",
+      "legacyPoster": null,
+      "generationBrief": "Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ANANKE, The Inescapable. Stern necessity figure holding a spindle within one coil. Signature symbols: spindle; enclosing coil. Accent: #b39d91.",
+      "loopTarget": {
+        "frames": 6,
+        "durationSeconds": 2,
+        "motionTreatment": "runtime-poster"
+      },
+      "reviewIndex": 53,
+      "assetSource": "generated-master"
+    }
+  ],
+  "approvalReference": "User blanket approval in implementation chat, 2026-10-02"
+}

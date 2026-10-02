@@ -8,7 +8,8 @@ function check(name,clipAvailable,catalog){
  const originalClip=K.Assets.drawEnemyClip,originalCell=K.Assets.drawCell;let clips=0,fallbacks=0;
  K.Assets.drawEnemyClip=function(){clips++;return clipAvailable;};
  K.Assets.drawCell=function(...args){if(args[1]==='actor.enemy.shade')fallbacks++;return originalCell.apply(this,args);};
- try{K.R.draw(G.ctx,G,1/60);assert.equal(clips,1,'enemy animation was not considered');assert.equal(fallbacks,clipAvailable?0:1,'authored and fallback art overlapped');tests.push({name,ok:true});console.log('PASS '+name);}
+ const stub={globalAlpha:1,save(){},restore(){},translate(){},rotate(){},scale(){},drawImage(){}};
+ try{K.R.worldHelpers.actor(stub,G,enemy);assert.equal(clips,1,'enemy animation was not considered');assert.equal(fallbacks,clipAvailable?0:1,'authored and fallback art overlapped');tests.push({name,ok:true});console.log('PASS '+name);}
  catch(error){tests.push({name,ok:false,error:error.message});console.error('FAIL '+name+': '+error.message);}
  finally{K.Assets.drawEnemyClip=originalClip;K.Assets.drawCell=originalCell;}
 }

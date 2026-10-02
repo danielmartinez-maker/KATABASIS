@@ -135,9 +135,9 @@
     const bought = (save.paragonNodes || []).map(id => NODES[id]).filter(n => n && n.id !== ROOT_ID);
     if (!bought.length) return false;
     const cost = API.respecCost(save), refunded = bought.reduce((sum, n) => safeAdd(sum, n.cost), 0);
-    if (save.obols < cost) return false;
+    if (!Number.isSafeInteger(save.obols) || save.obols < cost) return false;
     save.obols -= cost;
-    save.paragonPoints = safeAdd(save.paragonPoints, refunded);
+    save.paragonPoints = Math.min(MAX_SPENDABLE_POINTS, safeAdd(save.paragonPoints, refunded));
     save.paragonNodes = [ROOT_ID];
     writeAndRecalc();
     return { cost, refunded };

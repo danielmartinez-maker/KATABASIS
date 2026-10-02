@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const K={};const document={};
+if(fs.existsSync('js/overhaul-ui.js'))vm.runInNewContext(fs.readFileSync('js/overhaul-ui.js','utf8'),{window:{K},document});
+assert.ok(K.OverhaulUI,'Missing exploration UI');
+const world={bounds:{x:-40,y:-40,w:1000,h:1000},tileSize:80,revealed:{'0,0':true},cells:[{x:0,y:0,walkable:true},{x:800,y:800,walkable:true}],nodes:[{id:'known',x:0,y:0,type:'recovery',discovered:true},{id:'secret',x:800,y:800,type:'cache',discovered:false}],entry:{x:0,y:0},capstone:{id:'boss',x:900,y:900,type:'boss'}};
+const model=K.OverhaulUI.mapModel({world,player:{x:0,y:0}});
+assert.equal(model.cells.length,1,'unvisited terrain must stay hidden');
+assert.equal(model.markers.some(m=>m.id==='secret'),false,'secret destination must not leak');
+assert.equal(model.markers.some(m=>m.id==='boss'),true,'known capstone objective stays readable');
+assert.equal(model.markers.some(m=>m.id==='known'),true);
+console.log('OVERHAUL UI: visited terrain, secret concealment and objective markers passed');

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<base href="../../" />
+<title>Katabasis deity portrait review</title>
+<style>
+:root{color-scheme:dark;font-family:Georgia,serif;background:#171411;color:#ece0ca}*{box-sizing:border-box}body{margin:0;padding:28px;max-width:1460px;margin-inline:auto}h1{font-size:32px;color:#dcc091;margin:0 0 10px}p{line-height:1.5;max-width:980px}.toolbar{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin:20px 0;padding:14px;border-block:1px solid #564632}input,select,button{font:inherit;padding:8px;background:#28211b;border:1px solid #7b6344;color:#ece0ca}button{cursor:pointer}#status{color:#c1ac88}.pilot{display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:24px}.pilot article{padding:18px;background:#221c17;border:1px solid #665236}.pilot h2{margin-top:0}.pilot-row{display:flex;align-items:start;gap:16px;flex-wrap:wrap}.large .deity-portrait{width:240px;height:300px}.small .deity-portrait{width:72px;height:72px}.static .deity-portrait{width:110px;height:138px}.caption{font-size:12px;color:#bba88b;display:block;margin:8px 0}.roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px;margin-top:25px}.roster-card{border:1px solid #4b3d2e;background:#211a16;padding:14px;overflow:hidden}.roster-card .deity-portrait{width:110px;height:138px;float:left;margin:0 12px 8px 0}.roster-card h3{margin:0 0 6px;font-size:17px}.roster-card p{font-size:13px;margin:5px 0}.roster-card details{clear:both;font-size:13px}.roster-card summary{cursor:pointer;color:#d6be95}.swatch{display:inline-block;width:10px;height:10px;margin-right:5px}.deity-portrait{display:inline-block;position:relative;width:100%;height:100%;overflow:hidden;isolation:isolate;border-radius:3px;background:#211b17;vertical-align:middle}.portrait-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 35%;background-repeat:no-repeat}.portrait-motion .portrait-poster{animation:portrait-breathe 2s ease-in-out infinite;will-change:transform,filter}.portrait-motion::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 45% 40%,var(--portrait-accent),transparent 65%);opacity:.035;mix-blend-mode:screen;animation:portrait-light 2s ease-in-out infinite;pointer-events:none}.portrait-sheet{opacity:0;animation:portrait-sheet var(--portrait-duration,2s) steps(var(--portrait-frames,6)) infinite}.portrait-sheet-active .portrait-sheet{opacity:1}.portrait-missing-label,.portrait-loading-label,.portrait-error-label{position:absolute;inset:auto 0 0;padding:7px;font:11px/1.2 system-ui;background:#302820;color:#e8d7bb}.portrait-unavailable .portrait-missing-label{inset:0;display:flex;align-items:center;justify-content:center;text-align:center}.portrait-error-label{background:#522e24}.deity-portrait-group{display:flex;gap:5px}.deity-portrait-group.paired .deity-portrait{flex:1;min-width:0}.review-static .portrait-poster,.review-static .deity-portrait::after{animation:none!important}.review-static .portrait-sheet{opacity:0!important}@keyframes portrait-breathe{0%,100%{transform:scale(1.01) translateY(0);filter:brightness(1)}50%{transform:scale(1.022) translateY(-.65%);filter:brightness(1.025)}}@keyframes portrait-light{0%,100%{opacity:.025}50%{opacity:.065}}@keyframes portrait-sheet{from{background-position:0 0}to{background-position:100% 0}}@media(prefers-reduced-motion:reduce){.portrait-poster,.deity-portrait::after,.portrait-sheet{animation:none!important}.portrait-sheet{opacity:0!important}}@media(max-width:700px){body{padding:18px}.pilot{grid-template-columns:1fr}.large .deity-portrait{width:200px;height:250px}}
+</style>
+</head>
+<body>
+<h1>Katabasis — 53 deity covers</h1>
+<p>The 48 current boon-god IDs are preserved. Mnemosyne, Leto, Oceanus, Tethys and Ananke are art-only additions. The user’s blanket approval authorizes this roster and asset production. The offline pack exposes one 320×400 WebP poster and one full-resolution master for all 53 IDs. Every poster is drawn from its own identity-specific original master. The five art-only additions stay outside boon pools.</p>
+<p>Motion pilot: one original cover with slow light and cloth-like drift, compared with a six-frame sprite treatment when an authored sheet is registered. Static posters are used for persistent HUD chips, hidden surfaces and reduced-motion preferences.</p>
+<div class="toolbar"><label>Find a deity <input id="search" type="search" /></label><label><input id="static" type="checkbox" /> Static poster comparison</label><label>Show <select id="filter"><option value="all">All 53</option><option value="boon">Existing boon gods</option><option value="art">Five art-only additions</option><option value="ready">Packaged posters</option></select></label><span id="status"></span></div>
+<section id="pilot" class="pilot" aria-label="Storm and sea pilot"></section>
+<main id="roster" class="roster"></main>
+<script>window.K={};</script>
+<script src="js/data.js"></script><script src="js/content-expansion.js"></script>
+<script src="js/asset-manifest.js"></script><script src="js/assets.js"></script><script src="js/portraits.js"></script>
+<script>
+/* The review page is a standalone consumer; gameplay is never booted. */
+(function(){
+  const P=K.Portraits;
+  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function render(){
+    const staticView=document.getElementById('static').checked,query=document.getElementById('search').value.trim().toLowerCase(),filter=document.getElementById('filter').value;
+    document.body.classList.toggle('review-static',staticView);
+    const produced=P.roster.filter(record=>['approved','pilot'].includes(P.assetStatus(record.id).state));
+    document.getElementById('status').textContent=produced.length+' / 53 packaged portraits available';
+    document.getElementById('pilot').innerHTML=['zeus','poseidon'].map(id=>'<article><h2>'+escape(P.byId[id].displayName)+'</h2><div class="pilot-row"><div class="large">'+P.html(id,{surface:staticView?'hud':'codex'})+'<span class="caption">240 × 300 detail view</span></div><div class="small">'+P.html(id,{surface:staticView?'hud':'reward'})+'<span class="caption">72px compact card</span></div><div class="static">'+P.html(id,{surface:'hud'})+'<span class="caption">Static HUD poster</span></div></div><p>'+escape(P.byId[id].animationCues.join(' · '))+'</p></article>').join('');
+    document.getElementById('roster').innerHTML=P.roster.filter(record=>(!query || (record.displayName+' '+record.id+' '+record.domain).toLowerCase().includes(query)) && (filter==='all' || filter==='boon' && record.hasBoonContent || filter==='art' && !record.hasBoonContent || filter==='ready' && produced.includes(record))).map(record=>'<article class="roster-card">'+P.html(record.id,{surface:staticView?'hud':'codex'})+'<h3>'+record.reviewIndex+'. '+escape(record.displayName)+'</h3><p>'+escape(record.epithet)+'</p><p>'+escape(record.domain)+'</p><p><span class="swatch" style="background:'+record.paletteAccent+'"></span>'+record.paletteAccent+' · '+(record.hasBoonContent?'Existing boon god':'Art only')+'</p><p>'+escape(record.symbols.join(' · '))+'</p><p>'+escape(P.assetStatus(record.id).state)+'</p><details><summary>Generation record</summary><p>'+escape(record.silhouettePose)+'</p><p>'+escape(record.cropSafeNotes)+'</p><p>'+escape(record.animationCues.join(' · '))+'</p><p>'+escape(record.generationBrief)+'</p></details></article>').join('');
+    P.refresh();
+  }
+  document.getElementById('search').addEventListener('input',render);document.getElementById('filter').addEventListener('change',render);document.getElementById('static').addEventListener('change',render);
+  render();P.install();
+})();
+</script>
+</body>
+</html>

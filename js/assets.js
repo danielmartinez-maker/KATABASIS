@@ -9,8 +9,24 @@
   let loaded = false;
   let loadPromise = null;
   function cssAssetClass(id) { return 'art-' + String(id).replace(/[^a-zA-Z0-9_-]/g, '-'); }
+  /* Some engines leave decode() pending forever for detached images. The bitmap is
+     already in memory once onload fires, so fall through after a grace period
+     instead of freezing the loading screen. */
+  const DECODE_GRACE_MS = 2500;
   function decodeImage(img) {
-    return Promise.resolve().then(() => typeof img.decode === 'function' ? img.decode() : undefined);
+    return Promise.resolve().then(() => {
+      if (typeof img.decode !== 'function') return undefined;
+      /* Test harnesses and paranoia: without timers, trust decode() as before. */
+      if (typeof setTimeout !== 'function' || typeof clearTimeout !== 'function') return img.decode();
+      return new Promise((resolve, reject) => {
+        let settled = false;
+        const timer = setTimeout(() => { if (!settled) { settled = true; resolve(); } }, DECODE_GRACE_MS);
+        img.decode().then(
+          () => { if (!settled) { settled = true; clearTimeout(timer); resolve(); } },
+          (error) => { if (!settled) { settled = true; clearTimeout(timer); reject(error); } }
+        );
+      });
+    });
   }
 
   function manifest() { return window.KATABASIS_ASSET_MANIFEST || {}; }
@@ -77,6 +93,7 @@
     return new URL(src, document.baseURI).href;
   };
   A.entry = function (id) { return manifest()[id] || null; };
+  A.image = function (id) { return getImage(id); };
   A.enemyAnimationKey = function (sourceId, sourceCell, clipId) {
     const visualId = String(sourceId).replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'unknown';
     const cellSuffix = sourceCell === null || sourceCell === undefined ? '' : '-cell-' + String(Math.max(0, Math.floor(sourceCell))).padStart(3, '0');
@@ -109,6 +126,11 @@
     const rect = e.frameRects && e.frameRects[n];
     if (rect && rect.w > 0 && rect.h > 0) {
       const o = opt || {};
+      if(!o.rot && !o.flipX){
+        const prev=ctx.globalAlpha;ctx.globalAlpha*=o.alpha === undefined ? 1 : o.alpha;
+        ctx.drawImage(im, rect.x, rect.y, rect.w, rect.h, x-w / 2, y-h / 2, w, h);
+        ctx.globalAlpha=prev;return true;
+      }
       ctx.save();
       ctx.globalAlpha *= o.alpha === undefined ? 1 : o.alpha;
       ctx.translate(x, y);
@@ -129,6 +151,11 @@
     const cx = Math.max(0, Math.min(cols - 1, col || 0));
     const cy = Math.max(0, Math.min(rows - 1, row || 0));
     const o = opt || {};
+    if(!o.rot && !o.flipX){
+      const prev=ctx.globalAlpha;ctx.globalAlpha*=o.alpha === undefined ? 1 : o.alpha;
+      ctx.drawImage(im, cx * sw, cy * sh, sw, sh, x-w / 2, y-h / 2, w, h);
+      ctx.globalAlpha=prev;return true;
+    }
     ctx.save();
     ctx.globalAlpha *= o.alpha === undefined ? 1 : o.alpha;
     ctx.translate(x, y);
@@ -153,25 +180,27 @@
     const ratio = Math.max(w / im.naturalWidth, h / im.naturalHeight);
     const sw = w / ratio, sh = h / ratio;
     const sx = (im.naturalWidth - sw) / 2, sy = (im.naturalHeight - sh) / 2;
-    ctx.save();
-    ctx.globalAlpha *= opt && opt.alpha !== undefined ? opt.alpha : 1;
+    const alpha=opt && opt.alpha !== undefined ? opt.alpha : 1;
+    if(alpha===1){ctx.drawImage(im, sx, sy, sw, sh, x, y, w, h);return true;}
+    const prev=ctx.globalAlpha;ctx.globalAlpha*=alpha;
     ctx.drawImage(im, sx, sy, sw, sh, x, y, w, h);
-    ctx.restore();
+    ctx.globalAlpha=prev;
     return true;
   };
 
   A.drawImage = function (ctx, id, x, y, w, h, opt) {
     const im = getImage(id);
     if (!im) return false;
-    ctx.save();
-    ctx.globalAlpha *= opt && opt.alpha !== undefined ? opt.alpha : 1;
+    const alpha=opt && opt.alpha !== undefined ? opt.alpha : 1;
+    if(alpha===1){ctx.drawImage(im, x, y, w, h);return true;}
+    const prev=ctx.globalAlpha;ctx.globalAlpha*=alpha;
     ctx.drawImage(im, x, y, w, h);
-    ctx.restore();
+    ctx.globalAlpha=prev;
     return true;
   };
 
   const gods = ['zeus','poseidon','athena','ares','aphrodite','artemis','dionysus','hephaestus','hermes','demeter','hades','chaos'];
-  const relics = ['r_lyre','r_fleece','r_sandal','r_apple','r_aegis','r_pom','r_key','r_hammer','r_fang','r_mirror','r_torch','r_dice','r_wreath','r_anvil','r_ambrosia','r_thread'];
+  const relics = ['r_lyre','r_fleece','r_sandal','r_apple','r_aegis','r_pom','r_key','r_hammer','r_fang','r_mirror','r_torch','r_dice','r_wreath','r_anvil','r_ambrosia','r_thread','r_hydra_heart','r_sunwheel','r_icarian_spurs','r_orpheus_lyre','r_aegis_memory','r_atlas_anvil'];
   const specialRelics = {
     r_owl: { id: 'ui.gods', cell: 2 },
     r_coin: { id: 'ui.icons', cell: 0 },
@@ -209,7 +238,7 @@
     if (s.indexOf('enemy:') === 0) { const raw = s.slice(6), D = K.DATA || {}, def = D.ENEMIES && D.ENEMIES[raw]; return { id: 'actor.enemy.' + (def && (def.visualKey || def.sourceId) || raw), cell: def && def.visualCell || 0 }; }
     if (s.indexOf('ally:') === 0) return { id: 'actor.ally.' + s.slice(5), cell: 0 };
     if (s.indexOf('boss:') === 0) { const raw = s.slice(5), D = K.DATA || {}, def = D.BOSSES && D.BOSSES[raw]; return { id: 'actor.boss.' + (def && (def.visualKey || def.sourceId) || raw), cell: 0 }; }
-    if (s.indexOf('region:') === 0) { const parts = s.slice(7).split(':'), aliases = { acheron:'styx', lethe_garden:'mourning', knossos:'labyrinth', aeaea:'aegean', colchis:'aegean', typhon_core:'gigantomachy', delphi:'olympus_approach', pelion:'elysium', arcadia:'asphodel', thebes:'labyrinth', marathon:'gigantomachy', mycenae:'forge' }, id = 'region.' + (aliases[parts[0]] || parts[0]) + '.props'; if (manifest()[id]) { const cells = { combat:0, elite:5, treasure:9, shop:14, event:3, challenge:11, optionalboss:2, boss:6 }; return { id, cell: cells[parts[1]] === undefined ? 0 : cells[parts[1]] }; } }
+    if (s.indexOf('region:') === 0) { const parts = s.slice(7).split(':'), aliases = { acheron:'styx', lethe_garden:'mourning', knossos:'labyrinth', aeaea:'aegean', colchis:'aegean', typhon_core:'gigantomachy', delphi:'olympus_approach', pelion:'elysium', arcadia:'asphodel', thebes:'labyrinth', marathon:'gigantomachy', mycenae:'forge', ancient_greece:'elysium', atlantis:'aegean' }, id = 'region.' + (aliases[parts[0]] || parts[0]) + '.props'; if (manifest()[id]) { const cells = { combat:0, elite:5, treasure:9, shop:14, event:3, challenge:11, optionalboss:2, boss:6 }; return { id, cell: cells[parts[1]] === undefined ? 0 : cells[parts[1]] }; } }
     if (s.indexOf('relic:') === 0) {
       const relicId = s.slice(6);
       const D = K.DATA || {}, def = D.relicById && D.relicById[relicId];
@@ -259,6 +288,7 @@
   };
 
   A.iconHtml = function (key, cls, label) {
+    if (K.Portraits && String(key).startsWith('god:')) return K.Portraits.html(String(key).slice(4),{surface:/tray|chip|pip/.test(cls||'')?'hud':'codex',className:cls||''});
     const ref = iconAsset(key);
     const e = manifest()[ref.id] || manifest()['ui.relics'];
     const id = manifest()[ref.id] ? ref.id : 'ui.relics';

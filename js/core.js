@@ -132,7 +132,11 @@
       const kd = (e) => {
         const c = e.code || e.key;
         const target = e.target;
-        if (c === 'Tab' || (target && (target.isContentEditable || ['INPUT','TEXTAREA','SELECT'].indexOf(target.tagName) >= 0))) return;
+        const inField = !!(target && (target.isContentEditable || ['INPUT','TEXTAREA','SELECT'].indexOf(target.tagName) >= 0));
+        // Escape must always reach global handlers (e.g. closing Codex search).
+        if (c !== 'Escape' && c !== 'Tab' && inField) return;
+        // Tab is reserved for native keyboard navigation and is never a game action.
+        if (c === 'Tab') return;
         const semanticAction = target && (target.tagName === 'BUTTON' || (target.closest && target.closest('button, a[href], [role="button"]')));
         if (semanticAction && (c === 'Space' || c === 'Enter')) return;
         if (!this.keys[c]) { this.pressed[c] = true; this.anyKeyEdge = true; }
@@ -230,7 +234,7 @@
   };
   K.Camera.prototype.addShake = function (amt) { this.shake = Math.min(60, this.shake + amt); };
   K.Camera.prototype.toWorld = function (sx, sy) {
-    return { x: (sx - K.W / 2) / this.zoom + this.x - this.ox, y: (sy - K.H / 2) / this.zoom + this.y - this.oy };
+    return { x: (sx - K.W / 2) / this.zoom + this.x, y: (sy - K.H / 2) / this.zoom + this.y };
   };
   K.Camera.prototype.apply = function (ctx) {
     ctx.translate(K.W / 2, K.H / 2);
@@ -240,12 +244,14 @@
 
   /* ---------------- Audio ---------------- */
   const Audio2 = {
-    ctx: null, master: null, sfxGain: null,
+    ctx: null, master: null, sfxGain: null, musicGain: null,
     enabled: true, started: false, muted: false,
-    _last: Object.create(null), _musicRegion: null, _currentTrack: null, _audio: null, _layer: 'calm',
+    _last: Object.create(null), _musicRegion: null, _currentTrack: null, _musicSource: null, _musicBuffer: null, _layer: 'calm',
     _musicBaseVolume: 0.72,
 
-    /* The five existing region cue numbers now select the supplied recordings. */
+    /* The five existing region cue numbers now select the supplied recordings.
+       Cues 3 and 4 intentionally share Nike_Kratei; cue 0 is reserved.
+       Region `track` in data.js is legacy; only `music` is read. */
     MUSIC_CUE_TRACKS: [0, 1, 2, 3, 3],
     TRACKS: [
       { id: 'Hades_Kalei_Psyche', name: 'Hades Kalei Psyche', src: 'assets/audio/Hades_Kalei_Psyche.mp3' },
@@ -266,7 +272,16 @@
         this.sfxGain = this.ctx.createGain();
         this.sfxGain.gain.value = 0.5;
         this.sfxGain.connect(this.master);
+        this.musicGain = this.ctx.createGain();
+        this.musicGain.gain.value = 1;
+        this.musicGain.connect(this.master);
       } catch (e) { this.enabled = false; }
+      if (!this._bootResumeBound) {
+        this._bootResumeBound = true;
+        const resume = () => { this.resume(); document.removeEventListener('pointerdown', resume); document.removeEventListener('keydown', resume); };
+        document.addEventListener('pointerdown', resume, { once: true, passive: true });
+        document.addEventListener('keydown', resume, { once: true, passive: true });
+      }
     },
     resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
     setMuted(m) {
@@ -276,11 +291,15 @@
     },
     toggleMute() { this.setMuted(!this.muted); return this.muted; },
 
-    /* throttle identical sounds so swarms don't clip */
+    /* throttle identical sounds so swarms don't clip -- allow up to 3 concurrent per name */
     gate(name, ms) {
       const t = performance.now();
-      if (this._last[name] && t - this._last[name] < ms) return false;
-      this._last[name] = t; return true;
+      const arr = this._last[name] || [];
+      const recent = arr.filter(ts => t - ts < ms);
+      if (recent.length >= 3) return false;
+      recent.push(t);
+      this._last[name] = recent;
+      return true;
     },
 
     _tone(o) {
@@ -403,27 +422,49 @@
       return { calm: 0.60, combat: 0.78, miniboss: 0.88, boss: 1.0 }[this._layer] || 0.60;
     },
     _applyMusicVolume() {
-      if (this._audio) this._audio.volume = this.muted ? 0 : this._musicBaseVolume * this._layerVolume();
+      if (this._musicSource && this._musicGain) {
+        this._musicGain.gain.value = this.muted ? 0 : this._musicBaseVolume * this._layerVolume();
+      }
     },
     _playMusicTrack(tr) {
       if (!tr) return;
       this.boot();
-      if (this._currentTrack && this._currentTrack.id === tr.id && this._audio && !this._audio.paused) {
+      if (!this.ctx || !this.musicGain) return;
+      if (this._currentTrack && this._currentTrack.id === tr.id && this._musicSource) {
         this._applyMusicVolume();
         return;
       }
       this.stopMusic();
       const embedded = window.KATABASIS_AUDIO_DATA && window.KATABASIS_AUDIO_DATA[tr.id];
       const src = embedded || tr.src;
-      if (!src || typeof window.Audio !== 'function') return;
-      const audio = new window.Audio(src);
-      audio.loop = true;
-      audio.preload = 'auto';
-      this._audio = audio;
-      this._currentTrack = tr;
-      this._applyMusicVolume();
-      const started = audio.play();
-      if (started && typeof started.catch === 'function') started.catch(() => {});
+      if (!src) return;
+      const loadAndPlay = (arrayBuffer) => {
+        if (!this.ctx) return;
+        this.ctx.decodeAudioData(arrayBuffer, (buffer) => {
+          if (!this.ctx || this._currentTrack?.id !== tr.id) return;
+          const source = this.ctx.createBufferSource();
+          source.buffer = buffer;
+          source.loop = true;
+          source.connect(this.musicGain);
+          this._musicSource = source;
+          this._musicBuffer = buffer;
+          this._currentTrack = tr;
+          this._applyMusicVolume();
+          try { source.start(0); } catch (e) { console.warn('[Audio] music start failed:', e.message); }
+        }, (e) => { console.warn('[Audio] decode failed:', e.message); });
+      };
+      if (embedded && embedded instanceof ArrayBuffer) {
+        loadAndPlay(embedded);
+      } else if (typeof src === 'string' && src.startsWith('data:')) {
+        const base64 = src.split(',')[1];
+        const binary = atob(base64);
+        const len = binary.length;
+        const buf = new Uint8Array(len);
+        for (let i = 0; i < len; i++) buf[i] = binary.charCodeAt(i);
+        loadAndPlay(buf.buffer);
+      } else {
+        fetch(src, { credentials: 'omit' }).then(r => r.arrayBuffer()).then(loadAndPlay).catch(e => console.warn('[Audio] fetch failed:', e.message));
+      }
     },
     playTrack(idx) {
       const trackIndex = ((Math.floor(Number(idx) || 0) % this.TRACKS.length) + this.TRACKS.length) % this.TRACKS.length;
@@ -431,13 +472,13 @@
       this._playMusicTrack(this.TRACKS[trackIndex]);
     },
     stopMusic() {
-      const audio = this._audio;
-      this._audio = null;
+      if (this._musicSource) {
+        try { this._musicSource.stop(); } catch (e) {}
+        this._musicSource.disconnect();
+        this._musicSource = null;
+      }
+      this._musicBuffer = null;
       this._currentTrack = null;
-      if (!audio) return;
-      audio.pause();
-      audio.removeAttribute('src');
-      audio.load();
     },
     playRegion(region, layer) {
       if (!region) return;
@@ -518,7 +559,15 @@
         }
       } catch (e) { d = null; }
       if (!d || typeof d !== 'object' || Array.isArray(d)) d = {};
+      if (d.__proto__) delete d.__proto__;
+      if (d.equippedGear && typeof d.equippedGear === 'object' && d.equippedGear.__proto__) delete d.equippedGear.__proto__;
       this.data = Object.assign(this.defaults(), d || {});
+      if (!this.data.campaignMilestones || typeof this.data.campaignMilestones !== 'object' || Array.isArray(this.data.campaignMilestones)) this.data.campaignMilestones = { firstCapstone:false, actI:false, actII:false, campaignVictory:false };
+      if (!this.data.endgamePreferences || typeof this.data.endgamePreferences !== 'object' || Array.isArray(this.data.endgamePreferences)) this.data.endgamePreferences = {};
+      if (!Array.isArray(this.data.unlockedWeapons)) this.data.unlockedWeapons = ['xiphos'];
+      if (typeof this.data.weapon !== 'string') this.data.weapon = 'xiphos';
+      if (!Array.isArray(this.data.unlockedHeroes)) this.data.unlockedHeroes = ['perseus'];
+      if (typeof this.data.selectedHero !== 'string') this.data.selectedHero = 'perseus';
       ['obols','runs','wins','deaths','deepest','bestRegion','kills','bossKills','elites'].forEach(k => { this.data[k] = savedNumber(this.data[k], 0, true); });
       const updatedAt = savedNumber(this.data.storageUpdatedAt, 0, true);
       this.data.storageUpdatedAt = updatedAt < Number.MAX_SAFE_INTEGER ? updatedAt : 0;
@@ -537,6 +586,8 @@
       if (K.Gear && K.Gear.normalizeSave) K.Gear.normalizeSave(this.data);
       if (K.Paragon && K.Paragon.normalizeSave) K.Paragon.normalizeSave(this.data);
       if (K.RunSystems && K.RunSystems.normalizeSave) K.RunSystems.normalizeSave(this.data);
+      if (K.Endgame && K.Endgame.normalizeSave) K.Endgame.normalizeSave(this.data);
+      if (K.Mythology && K.Mythology.normalizeSave) K.Mythology.normalizeSave(this.data);
       if (!this.data.meta || typeof this.data.meta !== 'object' || Array.isArray(this.data.meta)) this.data.meta = {};
       Object.keys(this.data.meta).forEach(id => {
         const definition = K.DATA && K.DATA.metaById[id];
@@ -545,7 +596,8 @@
       ['seenBoons', 'seenEnemies', 'seenRelics', 'seenGods'].forEach(k => {
         if (!this.data[k] || typeof this.data[k] !== 'object' || Array.isArray(this.data[k])) this.data[k] = {};
       });
-      ['killChronicle','nemeses','nemesisLog','campaignArchive'].forEach(k => { this.data[k] = savedRecords(this.data[k]); });
+      ['killChronicle','nemeses','nemesisLog','campaignArchive'].forEach(k => { this.data[k] = savedRecords(this.data[k]).slice(0, k === 'killChronicle' ? 500 : k === 'campaignArchive' ? 100 : 200); });
+      if (Array.isArray(this.data.gearInventory) && this.data.gearInventory.length > 500) this.data.gearInventory = this.data.gearInventory.slice(0, 500);
       this.data.campaignArchive.forEach(record => { record.voices = savedRecords(record.voices); });
       this.data.nemeses.forEach(record => {
         if (!K.DATA || typeof record.sourceId !== 'string' || !K.DATA.ENEMIES[record.sourceId]) record.sourceId = 'shade';
@@ -580,6 +632,7 @@
     clear() {
       try { localStorage.removeItem(SAVE_KEY); localStorage.removeItem('katabasis.progress.backend.v2'); } catch (e) {}
       if(K.Persistence)K.Persistence.recoveryBlocked=false;
+      if(K.Persistence && K.Persistence.clearDatabase) { try { K.Persistence.clearDatabase(); } catch (e) {} }
       this.load(this.defaults()); this.write();
     }
   };
@@ -590,18 +643,37 @@
     this.max = max || 2200;
     this.list = [];
   };
+  // Pre-allocated pool to avoid per-frame object creation
+  K.Particles.prototype._pool = [];
   K.Particles.prototype.spawn = function (o) {
     if (this.list.length >= this.max) this.list.shift();
-    this.list.push(Object.assign({
+    const p = this._pool.length ? this._pool.pop() : {};
+    Object.assign(p, {
       x: 0, y: 0, vx: 0, vy: 0, life: 0.5, max: 0.5, size: 3, color: '#fff',
       drag: 0.92, grav: 0, glow: false, shape: 'circle', rot: 0, vrot: 0, fade: true, add: false, layer: 0
-    }, o));
+    }, o);
+    this.list.push(p);
   };
   K.Particles.prototype.burst = function (x, y, n, fn) {
     for (let i = 0; i < n; i++) this.spawn(fn(i));
   };
+  K.Particles.prototype._recycle = function () {
+    this._pool = [];
+    for (let i = this.list.length - 1; i >= 0; i--) {
+      const p = this.list[i];
+      if (p.life <= 0) {
+        this.list.splice(i, 1);
+        this._pool.push(p);
+      }
+    }
+    // Keep remaining list entries, clear _pool for next frame
+    this._pool.length = 0;
+  };
   K.Particles.prototype.update = function (dt) {
     const l = this.list;
+    // Recycle dead particles into pool first
+    this._recycle();
+    // Now update living particles
     for (let i = l.length - 1; i >= 0; i--) {
       const p = l[i];
       p.life -= dt;
@@ -628,6 +700,9 @@
         size * 4, size * 3.4, { alpha, rot: p.rot || 0 });
     }
   };
-  K.Particles.prototype.clear = function () { this.list.length = 0; };
+  K.Particles.prototype.clear = function () {
+    this.list.length = 0;
+    this._pool.length = 0;
+  };
 
 })();

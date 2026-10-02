@@ -12955,5 +12955,496 @@
         "h": 280
       }
     ]
+  },
+  "portrait.greek.zeus.poster": {
+    "src": "assets/deities/posters/zeus.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "zeus"
+  },
+  "portrait.greek.hera.poster": {
+    "src": "assets/deities/posters/hera.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "hera"
+  },
+  "portrait.greek.poseidon.poster": {
+    "src": "assets/deities/posters/poseidon.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "poseidon"
+  },
+  "portrait.greek.demeter.poster": {
+    "src": "assets/deities/posters/demeter.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "demeter"
+  },
+  "portrait.greek.athena.poster": {
+    "src": "assets/deities/posters/athena.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "athena"
+  },
+  "portrait.greek.apollo.poster": {
+    "src": "assets/deities/posters/apollo.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "apollo"
+  },
+  "portrait.greek.artemis.poster": {
+    "src": "assets/deities/posters/artemis.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "artemis"
+  },
+  "portrait.greek.ares.poster": {
+    "src": "assets/deities/posters/ares.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "ares"
+  },
+  "portrait.greek.aphrodite.poster": {
+    "src": "assets/deities/posters/aphrodite.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "aphrodite"
+  },
+  "portrait.greek.hephaestus.poster": {
+    "src": "assets/deities/posters/hephaestus.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "hephaestus"
+  },
+  "portrait.greek.hermes.poster": {
+    "src": "assets/deities/posters/hermes.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "hermes"
+  },
+  "portrait.greek.hestia.poster": {
+    "src": "assets/deities/posters/hestia.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "hestia"
+  },
+  "portrait.greek.dionysus.poster": {
+    "src": "assets/deities/posters/dionysus.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "dionysus"
+  },
+  "portrait.greek.hades.poster": {
+    "src": "assets/deities/posters/hades.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "hades"
+  },
+  "portrait.greek.chaos.poster": {
+    "src": "assets/deities/posters/chaos.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "chaos"
+  },
+  "portrait.greek.persephone.poster": {
+    "src": "assets/deities/posters/persephone.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "persephone"
+  },
+  "portrait.greek.hecate.poster": {
+    "src": "assets/deities/posters/hecate.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "hecate"
+  },
+  "portrait.greek.nyx.poster": {
+    "src": "assets/deities/posters/nyx.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "nyx"
+  },
+  "portrait.greek.thanatos.poster": {
+    "src": "assets/deities/posters/thanatos.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "thanatos"
+  },
+  "portrait.greek.hypnos.poster": {
+    "src": "assets/deities/posters/hypnos.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "hypnos"
+  },
+  "portrait.greek.charon.poster": {
+    "src": "assets/deities/posters/charon.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "charon"
+  },
+  "portrait.greek.nemesis.poster": {
+    "src": "assets/deities/posters/nemesis.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "nemesis"
+  },
+  "portrait.greek.nike.poster": {
+    "src": "assets/deities/posters/nike.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "nike"
+  },
+  "portrait.greek.iris.poster": {
+    "src": "assets/deities/posters/iris.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "iris"
+  },
+  "portrait.greek.hebe.poster": {
+    "src": "assets/deities/posters/hebe.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "hebe"
+  },
+  "portrait.greek.asclepius.poster": {
+    "src": "assets/deities/posters/asclepius.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "asclepius"
+  },
+  "portrait.greek.pan.poster": {
+    "src": "assets/deities/posters/pan.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "pan"
+  },
+  "portrait.greek.eros.poster": {
+    "src": "assets/deities/posters/eros.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "eros"
+  },
+  "portrait.greek.eris.poster": {
+    "src": "assets/deities/posters/eris.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "eris"
+  },
+  "portrait.greek.gaia.poster": {
+    "src": "assets/deities/posters/gaia.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "gaia"
+  },
+  "portrait.greek.kronos.poster": {
+    "src": "assets/deities/posters/kronos.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "kronos"
+  },
+  "portrait.greek.rhea.poster": {
+    "src": "assets/deities/posters/rhea.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "rhea"
+  },
+  "portrait.greek.themis.poster": {
+    "src": "assets/deities/posters/themis.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "themis"
+  },
+  "portrait.greek.tyche.poster": {
+    "src": "assets/deities/posters/tyche.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "tyche"
+  },
+  "portrait.greek.morpheus.poster": {
+    "src": "assets/deities/posters/morpheus.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "morpheus"
+  },
+  "portrait.greek.moirai.poster": {
+    "src": "assets/deities/posters/moirai.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "moirai"
+  },
+  "portrait.greek.amphitrite.poster": {
+    "src": "assets/deities/posters/amphitrite.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "amphitrite"
+  },
+  "portrait.greek.triton.poster": {
+    "src": "assets/deities/posters/triton.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "triton"
+  },
+  "portrait.greek.boreas.poster": {
+    "src": "assets/deities/posters/boreas.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "boreas"
+  },
+  "portrait.greek.aeolus.poster": {
+    "src": "assets/deities/posters/aeolus.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "aeolus"
+  },
+  "portrait.greek.selene.poster": {
+    "src": "assets/deities/posters/selene.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "selene"
+  },
+  "portrait.greek.helios.poster": {
+    "src": "assets/deities/posters/helios.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "helios"
+  },
+  "portrait.greek.eos.poster": {
+    "src": "assets/deities/posters/eos.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "eos"
+  },
+  "portrait.greek.harmonia.poster": {
+    "src": "assets/deities/posters/harmonia.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "harmonia"
+  },
+  "portrait.greek.prometheus.poster": {
+    "src": "assets/deities/posters/prometheus.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "prometheus"
+  },
+  "portrait.greek.atlas.poster": {
+    "src": "assets/deities/posters/atlas.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "atlas"
+  },
+  "portrait.greek.styx.poster": {
+    "src": "assets/deities/posters/styx.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "styx"
+  },
+  "portrait.greek.phobos.poster": {
+    "src": "assets/deities/posters/phobos.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "phobos"
+  },
+  "portrait.greek.mnemosyne.poster": {
+    "src": "assets/deities/posters/mnemosyne.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "mnemosyne"
+  },
+  "portrait.greek.leto.poster": {
+    "src": "assets/deities/posters/leto.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "leto"
+  },
+  "portrait.greek.oceanus.poster": {
+    "src": "assets/deities/posters/oceanus.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "oceanus"
+  },
+  "portrait.greek.tethys.poster": {
+    "src": "assets/deities/posters/tethys.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "tethys"
+  },
+  "portrait.greek.ananke.poster": {
+    "src": "assets/deities/posters/ananke.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "deity-portrait",
+    "reviewed": true,
+    "motionTreatment": "runtime",
+    "deityId": "ananke"
+  },
+  "region.ancient_greece.backdrop": {
+    "src": "assets/regions/ancient_greece/backdrop.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "region-backdrop",
+    "source": "fields"
+  },
+  "region.atlantis.backdrop": {
+    "src": "assets/regions/atlantis/backdrop.webp",
+    "cols": 1,
+    "rows": 1,
+    "kind": "region-backdrop",
+    "source": "aegean"
   }
 }

@@ -23,7 +23,7 @@ function renderOffer(id, rarity, current) {
   assert.strictEqual(wrap.children.length, 1, 'offer UI did not render exactly one boon card');
   return wrap.children[0].innerHTML;
 }
-function renderCodexBoon(id) {
+async function renderCodexBoon(id) {
   reset(73103);
   K.Save.data.seenBoons[id] = true;
   const body = documentShim.getElementById('codex-body');
@@ -33,6 +33,7 @@ function renderCodexBoon(id) {
   search.value = D.boonById[id].name;
   body.children.length = 0;
   search.dispatch('input', {target:search});
+  await new Promise(resolve => setTimeout(resolve, 175));
   assert.strictEqual(body.children.length, 1, 'Codex did not render one boon-result grid');
   const card = body.children[0].children.find(item => item.innerHTML.includes('<h4>' + D.boonById[id].name + '</h4>'));
   assert.ok(card, 'Codex search did not render the exact source boon');
@@ -176,10 +177,10 @@ test('first Cast bonus previews the real neutral multiplier of one', () => {
   assert.doesNotMatch(html,/Cast damage multiplier<\/span><strong>×0 →/);
 });
 
-test('boon upgrade and Codex render the same resolved Rare-to-Heroic values', () => {
+test('boon upgrade and Codex render the same resolved Rare-to-Heroic values', async () => {
   const upgrade = renderOffer('z_strike', 'heroic', 'rare');
   assert.match(upgrade, /\+45\.5% → \+73\.5%/);
-  const codex = renderCodexBoon('z_strike');
+  const codex = await renderCodexBoon('z_strike');
   assert.match(codex, /\+45\.5% attack damage/);
   assert.match(codex, /Attack damage bonus<\/span><strong>\+45\.5%/);
 });
@@ -237,11 +238,13 @@ test('boon catalog documentation reports the runtime counts', () => {
   assert.ok(readme.includes('840 special entries from 42 families'), 'README special boon count is stale');
 });
 
-let failures = 0;
-for (const item of tests) {
-  try { item.fn(); console.log('PASS ' + item.name); }
-  catch (error) { failures++; console.error('FAIL ' + item.name + '\n  ' + error.message); }
-}
-console.log((tests.length - failures) + '/' + tests.length + ' boon regressions passed');
-if (failures) process.exitCode = 1;
+(async () => {
+  let failures = 0;
+  for (const item of tests) {
+    try { await item.fn(); console.log('PASS ' + item.name); }
+    catch (error) { failures++; console.error('FAIL ' + item.name + '\n  ' + error.message); }
+  }
+  console.log((tests.length - failures) + '/' + tests.length + ' boon regressions passed');
+  if (failures) process.exitCode = 1;
+})();
 

@@ -2,15 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+<meta name="theme-color" content="#0b0908" />
 <title>KATABASIS — A Descent Through Myth</title>
 <link rel="stylesheet" href="css/style.css" />
 <link rel="icon" href="assets/ui/favicon.webp" />
 </head>
 <body>
-<div id="asset-loading">Loading generated image art…</div>
+<a class="skip-link" href="#atlas-nav">Skip to campaign navigation</a>
+<noscript><p class="noscript-notice">KATABASIS needs JavaScript to play. Enable JavaScript and reload.</p></noscript>
+<div id="asset-loading" role="status" aria-live="polite">Loading generated image art…</div>
 <div id="stage">
-  <canvas id="game"></canvas>
+  <canvas id="game" tabindex="-1" aria-label="Katabasis combat arena. Gameplay uses keyboard and mouse; menus provide all actions."></canvas>
 
   <!-- ===================== HUD ===================== -->
   <div id="hud" class="hidden">
@@ -32,24 +35,24 @@
       <div id="run-status" class="run-status" aria-live="polite"></div>
 
       <div id="right-stack">
-      <div id="obol-count"><span class="obol-glyph"></span> <span id="obol-num">0</span></div>
-        <div id="dash-pips"></div>
+      <div id="obol-count"><span class="obol-glyph" aria-hidden="true"></span> <span id="obol-num">0</span><span class="visually-hidden"> obols</span></div>
+        <div id="dash-pips" role="status" aria-label="Dash charges"></div>
         <div id="trial-hud-status" class="trial-hud-status" aria-live="polite"></div>
-        <div id="power-status" class="power-status hidden" aria-label="Active build powers"></div>
+        <div id="power-status" class="power-status hidden" aria-label="Active build powers" aria-live="polite"></div>
       </div>
     </div>
 
-    <div id="boss-bar-wrap" class="hidden">
+    <div id="boss-bar-wrap" class="hidden" role="status" aria-label="Boss health">
       <div id="boss-name">THE NEMEAN LION</div>
-      <div class="bar-wrap boss"><div id="boss-bar" class="bar"></div></div>
-      <div id="boss-stage-readout"><span id="boss-stage-pips"></span><span id="boss-stage-name"></span></div>
+      <div class="bar-wrap boss"><div id="boss-bar" class="bar" role="progressbar" aria-label="Boss health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"></div></div>
+      <div id="boss-stage-readout"><span id="boss-stage-pips" aria-hidden="true"></span><span id="boss-stage-name"></span><span id="boss-rage-badge" class="boss-rage-badge" hidden>ENRAGED</span></div>
       <div id="boss-sub"></div>
     </div>
 
-    <div id="boon-tray"></div>
-    <div id="relic-tray"></div>
+    <div id="boon-tray" aria-label="Active boons"></div>
+    <div id="relic-tray" aria-label="Active relics"></div>
 
-    <div id="ability-bar">
+    <div id="ability-bar" role="group" aria-label="Combat abilities and cooldowns">
       <div class="ability" id="ab-attack"><div class="ab-key">LMB</div><div class="ab-name">Strike</div><div class="ab-cd"><i></i></div></div>
       <div class="ability" id="ab-guard"><div class="ab-key">RMB</div><div class="ab-name">Guard</div><div class="ab-cd"><i></i></div></div>
       <div class="ability" id="ab-cast"><div class="ab-key">F</div><div class="ab-name">Cast</div><div class="ab-cd"><i></i></div></div>
@@ -60,8 +63,15 @@
       <div class="ability" id="ab-ascend"><div class="ab-key">T</div><div class="ab-name">Ascend</div><div class="ab-cd"><i></i></div></div>
     </div>
 
-    <div id="toasts"></div>
-    <div id="interact-hint" class="hidden">[E]</div>
+    <div id="toasts" aria-live="polite" aria-atomic="false" aria-label="Battle messages"></div>
+    <div id="interact-hint" class="hidden" role="status" aria-live="polite"><span class="hint-key" aria-hidden="true">E</span> <span id="interact-label"></span></div>
+    <div id="touch-controls" class="hidden" aria-label="Touch combat controls">
+      <button type="button" id="touch-dash" class="touch-btn">DASH</button>
+      <button type="button" id="touch-guard" class="touch-btn">GUARD</button>
+      <button type="button" id="touch-cast" class="touch-btn">CAST</button>
+      <button type="button" id="touch-interact" class="touch-btn">TAKE / E</button>
+      <button type="button" id="touch-pause" class="touch-btn" aria-label="Pause game">II</button>
+    </div>
   </div>
 
   <!-- ===================== MENUS ===================== -->
@@ -133,7 +143,7 @@
     </section>
   </div>
 
-  <div id="screen-room" class="screen hidden">
+  <div id="screen-room" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="room-title">
     <div class="room-panel">
       <div class="meander thin"></div>
       <div id="room-kicker">CHAMBER I</div>
@@ -172,7 +182,7 @@
     <div class="cutscene-letterbox bottom" aria-hidden="true"></div>
   </div>
 
-  <div id="screen-reward" class="screen hidden">
+  <div id="screen-reward" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="reward-title">
     <div class="room-panel wide">
       <div class="meander thin"></div>
       <div id="reward-kicker">THE GODS OFFER</div>
@@ -186,7 +196,7 @@
     </div>
   </div>
 
-  <div id="screen-gameover" class="screen hidden">
+  <div id="screen-gameover" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="go-title">
     <div class="room-panel">
       <div class="meander thin"></div>
       <h2 id="go-title">YOU ARE DEAD</h2>
@@ -204,7 +214,7 @@
     </div>
   </div>
 
-  <div id="screen-victory" class="screen hidden">
+  <div id="screen-victory" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="vic-title">
     <div class="room-panel">
       <div class="meander thin"></div>
       <h2 id="vic-title">THE SUMMIT BREAKS</h2>
@@ -220,22 +230,22 @@
     </div>
   </div>
 
-  <div id="screen-codex" class="screen hidden">
+  <div id="screen-codex" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="codex-title">
     <div class="room-panel wide tall">
       <div class="meander thin"></div>
-      <h2>CODEX</h2>
-      <div id="codex-tabs" class="tabs"></div>
-      <div class="codex-tools"><input id="codex-search" type="search" placeholder="Search the codex" aria-label="Search the codex"/><select id="codex-build-filter" aria-label="Filter boons by build power"><option value="all">All build powers</option></select><span id="codex-count"></span><button id="codex-prev" class="btn small">PREVIOUS</button><button id="codex-next" class="btn small">NEXT</button></div>
+      <h2 id="codex-title">CODEX</h2>
+      <div id="codex-tabs" class="tabs" role="group" aria-label="Codex sections"></div>
+      <div class="codex-tools"><input id="codex-search" type="search" placeholder="Search the codex" aria-label="Search the codex" aria-controls="codex-body" autocomplete="off"/><select id="codex-build-filter" aria-label="Filter boons by build power"><option value="all">All build powers</option></select><span id="codex-count" role="status" aria-live="polite"></span><button id="codex-prev" class="btn small">PREVIOUS</button><button id="codex-next" class="btn small">NEXT</button></div>
       <div class="codex-workspace"><div id="codex-body" class="codex-body"></div><aside id="codex-inspector" class="codex-inspector" aria-label="Selected codex entry" aria-live="polite"></aside></div>
       <div class="title-buttons"><button id="btn-codex-back" class="btn">BACK</button></div>
       <div class="meander thin"></div>
     </div>
   </div>
 
-  <div id="screen-meta" class="screen hidden">
+  <div id="screen-meta" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="meta-title">
     <div class="room-panel wide tall">
       <div class="meander thin"></div>
-      <h2>THE MIRROR OF NYX</h2>
+      <h2 id="meta-title">THE MIRROR OF NYX</h2>
       <p class="sub">Reflections bought with obols persist beyond death.</p>
       <div id="meta-obols" class="meta-obols">0 Obols</div>
       <div id="meta-list" class="meta-list"></div>
@@ -247,10 +257,10 @@
     </div>
   </div>
 
-  <div id="screen-help" class="screen hidden">
+  <div id="screen-help" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
     <div class="room-panel wide tall">
       <div class="meander thin"></div>
-      <h2>HOW TO DESCEND</h2>
+      <h2 id="help-title">HOW TO DESCEND</h2>
       <div class="help-body">
         <div class="help-col">
           <h3>Controls</h3>
@@ -268,6 +278,7 @@
             <li><b>E</b> — interact / take / pass a gate</li>
             <li><b>Story</b> — Enter / Space / → advance; ESC skip to choice</li>
             <li><b>ESC</b> — pause &nbsp;·&nbsp; <b>M</b> — mute</li>
+            <li><b>Tab</b> — moves keyboard focus (never remapped); on touch, use the on-screen DASH / GUARD / CAST / TAKE buttons. Touch aims with one finger; movement needs a keyboard.</li>
           </ul>
         </div>
         <div class="help-col">
@@ -288,9 +299,9 @@
     </div>
   </div>
 
-  <div id="screen-pause" class="screen hidden">
+  <div id="screen-pause" class="screen hidden" role="dialog" aria-modal="true" aria-labelledby="pause-title">
     <div class="pause-panel">
-      <h2>PAUSED</h2>
+      <h2 id="pause-title">PAUSED</h2>
       <div id="pause-run-info"></div>
       <div class="title-buttons">
         <button id="btn-resume" class="btn primary">RESUME</button>
@@ -375,6 +386,7 @@
 <script src="js/persistence.js"></script>
 <script src="js/data.js"></script>
 <script src="js/content-expansion.js"></script>
+<script src="js/world.js"></script>
 <script src="js/gear.js"></script>
 <script src="js/paragon.js"></script>
 <script src="js/run-systems.js"></script>
@@ -384,7 +396,13 @@
 <script src="js/entities.js"></script>
 <script src="js/game.js"></script>
 <script src="js/build-powers.js"></script>
+<script src="js/endgame.js"></script>
+<script src="js/mythology.js"></script>
+<script src="js/portraits.js"></script>
+<script src="js/world-runtime.js"></script>
 <script src="js/render.js"></script>
+<script src="js/world-renderer.js"></script>
+<script src="js/overhaul-ui.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@
   const A = K.Assets;
 
   const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
+  const ctx = K.WorldRenderer ? K.WorldRenderer.create(canvas) : null;
   let G = null;
   /* 'play' means no menu is covering the canvas. */
   let screen = 'play';
@@ -61,30 +61,42 @@
   }
 
   /* ---------------- resize ---------------- */
+  let resizeT = null;
   function resize() {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     K.dpr = dpr;
-    K.W = Math.floor(window.innerWidth);
-    K.H = Math.floor(window.innerHeight);
+    const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+    const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    K.W = Math.floor(vw);
+    K.H = Math.floor(vh);
     canvas.width = Math.floor(K.W * dpr);
     canvas.height = Math.floor(K.H * dpr);
     canvas.style.width = K.W + 'px';
     canvas.style.height = K.H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     if (G && G.cam) {
       G.cam.tzoom = U.clamp(Math.min(K.W / 1180, K.H / 830), 0.68, 1.35);
       if (G.cam.zoom === 1) G.cam.zoom = G.cam.tzoom;
     }
   }
-  window.addEventListener('resize', resize);
+  function scheduleResize() { if (resizeT) return; resizeT = setTimeout(() => { resizeT = null; resize(); }, 80); }
+  window.addEventListener('resize', scheduleResize);
+  if (window.visualViewport) { window.visualViewport.addEventListener('resize', scheduleResize); }
+  window.addEventListener('orientationchange', scheduleResize);
 
   /* ---------------- screen management ---------------- */
   const SCREENS = ['screen-title', 'screen-room', 'screen-cutscene', 'screen-reward', 'screen-gameover',
-    'screen-victory', 'screen-codex', 'screen-meta', 'screen-help', 'screen-pause', 'screen-armory', 'screen-paragon','screen-heroes','screen-practice','screen-trials'];
+    'screen-victory', 'screen-codex', 'screen-meta', 'screen-help', 'screen-pause', 'screen-armory', 'screen-paragon','screen-heroes','screen-practice','screen-trials',
+    'screen-world-map','screen-modifiers','screen-market','screen-house'];
 
   /* keepHud: menus that should stay legible over the world (death, victory)
      leave the HUD in place; the title screen hides it. */
+  let lastFocused = null;
   function showScreen(id, keepHud) {
+    if (id && (!lastFocused || !document.getElementById(id) || !document.getElementById(id).contains(lastFocused))) {
+      const active = document.activeElement;
+      if (active && active !== document.body) { try { lastFocused = active; } catch (e) { lastFocused = null; } }
+    }
     K.Input.playing = !id;
     K.Input.reset();
     SCREENS.forEach(s => { const el = document.getElementById(s); if (el) el.classList.add('hidden'); });
@@ -94,18 +106,78 @@
     }
     const veil = document.getElementById('veil');
     const showVeil = !!id && id !== 'screen-pause';
-    veil.classList.toggle('on', showVeil);
-    veil.classList.toggle('title', id === 'screen-title');
+    if (veil) {
+      veil.classList.toggle('on', showVeil);
+      veil.classList.toggle('title', id === 'screen-title');
+    }
     const hideHud = !!id && id !== 'screen-pause' && !keepHud;
-    document.getElementById('hud').classList.toggle('hidden', hideHud || !G || G.phase === 'idle');
+    const hudEl = document.getElementById('hud');
+    if (hudEl) hudEl.classList.toggle('hidden', hideHud || !G || G.phase === 'idle');
     screen = id || 'play';
     if (id === 'screen-title') atlasReturnScreen = 'screen-title';
     syncAtlasFrame(id);
+    syncTouchControls();
     if (id && document.getElementById(id)) {
-      const el = document.getElementById(id), target = el.querySelector('button:not([disabled]), input, select');
-      if (target) target.focus({preventScroll:true});
+      const el = document.getElementById(id);
+      const target = el.querySelector('button:not([disabled]), input, select') || el.querySelector('[role="button"][tabindex="0"]') || el.querySelector('h2, h3');
+      const restore = lastFocused && el.contains(lastFocused) ? lastFocused : null;
+      const focusTarget = restore || target;
+      if (focusTarget) {
+        if (restore || focusTarget.tagName === 'H2' || focusTarget.tagName === 'H3') { if (!focusTarget.hasAttribute('tabindex')) focusTarget.setAttribute('tabindex', '-1'); }
+        try { focusTarget.focus({preventScroll:true}); } catch (e) { /* focus is best-effort */ }
+      }
+      if (restore) lastFocused = null;
     }
   }
+  /* Hysteresis avoids the interact hint flickering while strafing at the radius edge. */
+  let nearInteractSticky = null;
+  function currentInteract() {
+    if (G && G.nearInteract) { nearInteractSticky = G.nearInteract; return G.nearInteract; }
+    if (!G || !nearInteractSticky || nearInteractSticky.used) { nearInteractSticky = null; return null; }
+    if (!G.player) { nearInteractSticky = null; return null; }
+    const d = U.dist(G.player.x, G.player.y, nearInteractSticky.x, nearInteractSticky.y);
+    if (d > 96) { nearInteractSticky = null; return null; }
+    return nearInteractSticky;
+  }
+  /* The label element is always present after boot; keep an explicit guard for safety. */
+  (function ensureInteractLabel() {
+    if (document.getElementById('interact-label')) return;
+    const hint = document.getElementById('interact-hint');
+    if (!hint) return;
+    hint.innerHTML = '<span class="hint-key" aria-hidden="true">E</span> <span id="interact-label"></span>';
+  })();
+  function syncTouchControls() {
+    const bar = document.getElementById('touch-controls');
+    if (!bar) return;
+    const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const live = coarse && (!screen || screen === 'play') && !!G && !!G.player && !G.player.dead;
+    bar.classList.toggle('hidden', !live);
+  }
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key !== 'Tab' || !screen || screen === 'play') return;
+    const host = document.getElementById(screen);
+    if (!host || host.classList.contains('hidden')) return;
+    const items = Array.from(host.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex="0"]'))
+      .filter(el => el.offsetParent !== null);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+    else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+  });
+  /* Arrow-key roving across choice cards: →/↓ next, ←/↑ previous. */
+  document.addEventListener('keydown', (ev) => {
+    const t = ev.target;
+    if (!t || !t.classList || !t.classList.contains('card')) return;
+    if (['ArrowRight','ArrowDown','ArrowLeft','ArrowUp'].indexOf(ev.key) < 0) return;
+    const wrap = t.parentElement;
+    if (!wrap) return;
+    const cards = Array.from(wrap.querySelectorAll('.card[tabindex="0"]'));
+    const i = cards.indexOf(t);
+    if (i < 0) return;
+    ev.preventDefault();
+    const next = (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') ? cards[(i + 1) % cards.length] : cards[(i - 1 + cards.length) % cards.length];
+    if (next) next.focus();
+  });
 
   /* ---------------- HUD ---------------- */
   const hud = {
@@ -130,14 +202,24 @@
   };
   const cache = { hp: -1, shield: -1, obols: -1, region: '', room: '', boss: -1, bossStage: '', boons: 0, relics: 0, dash: [] };
   let seenToasts = {};
+  let hudFrameCount = 0;
+  const HUD_UPDATE_INTERVAL = 2; // Update HUD every 2 frames to reduce DOM overhead
+  const powerStatusEl = document.getElementById('power-status');
+  const hintEl = document.getElementById('interact-hint');
+  let slowTextT = 1;
 
-  function updateHUD() {
+  function updateHUD(dt) {
     if (!G || !G.player) return;
     const p = G.player, st = p.stats;
-    const powerStatus=document.getElementById('power-status'),active=K.BuildPowers && K.BuildPowers.activeEffects && K.BuildPowers.activeEffects(p);
-    const powerLines=[];if(active && active.dashStrike)powerLines.push('Next Strike +' + Math.round(active.dashStrike.bonus*100) + '% · ' + active.dashStrike.remaining.toFixed(1) + ' s');
-    if(active && active.killHaste)powerLines.push('Attack speed +' + Math.round(active.killHaste.bonus*100) + '% · ' + active.killHaste.remaining.toFixed(1) + ' s');
-    if(powerStatus){powerStatus.classList.toggle('hidden',!powerLines.length);const text=powerLines.join(' | ');if(powerStatus.textContent!==text)powerStatus.textContent=text;}
+    slowTextT = dt === undefined ? 1 : slowTextT + dt;
+    const slowDue = slowTextT >= 0.25;
+    if (slowDue) slowTextT = 0;
+    if (slowDue && powerStatusEl) {
+      const active=K.BuildPowers && K.BuildPowers.activeEffects && K.BuildPowers.activeEffects(p);
+      const powerLines=[];if(active && active.dashStrike)powerLines.push('Next Strike +' + Math.round(active.dashStrike.bonus*100) + '% · ' + active.dashStrike.remaining.toFixed(1) + ' s');
+      if(active && active.killHaste)powerLines.push('Attack speed +' + Math.round(active.killHaste.bonus*100) + '% · ' + active.killHaste.remaining.toFixed(1) + ' s');
+      powerStatusEl.classList.toggle('hidden',!powerLines.length);const text=powerLines.join(' | ');if(powerStatusEl.textContent!==text)powerStatusEl.textContent=text;
+    }
     const frac = U.clamp(p.hp / st.maxHp, 0, 1);
     if (Math.abs(frac - cache.hp) > 0.001) {
       cache.hp = frac;
@@ -174,11 +256,11 @@
       if (p.statuses.weaken) pip(A.iconHtml('🌀', 'pip-art') + ' WEAKENED', 'petrify');
     }
     const reg = G.region ? G.region() : D.REGIONS[0];
-    if (hud.actStatus) {
+    if (hud.actStatus && slowDue) {
       const act = G.regionIndex < 8 ? 'I' : G.regionIndex < 16 ? 'II' : 'III';
       const inAct = (G.regionIndex % 8) + 1;
       const milestone = G.regionIndex < 8 ? 'Thread at region 8' : G.regionIndex < 16 ? 'Thread at region 16' : 'Final capstone';
-      const actText = 'ACT ' + act + ' · REGION ' + inAct + '/8 · CHAMBER ' + (G.chamberIndex + 1) + '/8 · ' + milestone;
+      const actText = reg.optionalDestination ? 'GREEK EXPEDITION · ENCOUNTER ' + (G.chamberIndex + 1) + '/8' : 'ACT ' + act + ' · REGION ' + inAct + '/8 · ENCOUNTER ' + (G.chamberIndex + 1) + '/8 · ' + milestone;
       if (hud.actStatus.textContent !== actText) hud.actStatus.textContent = actText;
     }
     if (cache.region !== reg.id) {
@@ -191,7 +273,7 @@
 
     const ob = G.run.obols;
     if (ob !== cache.obols) { cache.obols = ob; hud.obolNum.textContent = U.comma(ob); }
-    if(hud.runStatus){
+    if(hud.runStatus && slowDue){
       const q=G.run.quest,sy=G.run.activeSynergies||[];
       const favorIds=Object.keys(G.run.godFavor||{}).sort((a,b)=>(G.run.godFavor[b]||0)-(G.run.godFavor[a]||0));
       const favorId=favorIds.length?favorIds[0]:null, favorText=favorId?' · Favor: '+D.GODS[favorId].name+' '+(G.run.godFavor[favorId]>0?'+':'')+G.run.godFavor[favorId]:'';
@@ -202,7 +284,7 @@
         (sy.length?'Synergy: '+sy.map(x=>x.name).join(', ')+'  ·  ':'')+'Second wind '+G.run.deathDefy+'/'+G.run.deathDefyMax+favorText);
       if(hud.runStatus.textContent!==status)hud.runStatus.textContent=status;
     }
-    if (hud.trialStatus) {
+    if (hud.trialStatus && slowDue) {
       const active = G.run.isFatedTrial ? Object.keys(G.run.trialPacts).map(id => { const pact=K.RunSystems.PACTS.find(x=>x.id===id); return pact ? pact.name+' '+G.run.trialPacts[id] : ''; }).filter(Boolean).join(' · ') : '';
       const text = G.run.isFatedTrial ? 'FATED TRIAL · SCORE '+G.run.trialScore+'<br>'+active : '';
       if (hud.trialStatus.innerHTML !== text) hud.trialStatus.innerHTML = text;
@@ -215,18 +297,26 @@
       for (let i = 0; i < st.dashMax; i++) {
         const d = document.createElement('i');
         if (i < dc) d.className = 'on';
+        d.setAttribute('aria-hidden', 'true');
         hud.dashPips.appendChild(d);
       }
+      hud.dashPips.setAttribute('aria-label', 'Dash charges ' + dc + ' of ' + st.dashMax);
     }
 
     /* boss bar */
     if (G.boss && !G.boss.dead) {
       hud.bossWrap.classList.remove('hidden');
       const bf = U.clamp(G.boss.hp / G.boss.maxHp, 0, 1);
-      if (Math.abs(bf - cache.boss) > 0.002) {
+      const enraged = G.boss.phase >= 2;
+      if (Math.abs(bf - cache.boss) > 0.002 || cache.bossRage !== enraged) {
         cache.boss = bf;
+        cache.bossRage = enraged;
         hud.bossBar.style.transform = 'scaleX(' + bf + ')';
-        hud.bossBar.classList.toggle('rage', G.boss.phase >= 2);
+        hud.bossBar.classList.toggle('rage', enraged);
+        hud.bossBar.setAttribute('aria-valuenow', String(Math.round(bf * 100)));
+        hud.bossBar.setAttribute('aria-valuetext', G.boss.def.name + ' ' + Math.round(bf * 100) + ' percent' + (enraged ? ', enraged' : ''));
+        const badge = document.getElementById('boss-rage-badge');
+        if (badge) badge.hidden = !enraged;
       }
       if (cache.bossName !== G.boss.def.name) {
         cache.bossName = G.boss.def.name;
@@ -329,27 +419,43 @@
   }
 
   /* Toasts are keyed so expired ones are removed by identity, not by guesswork. */
+  const dismissedToasts = {};
   function syncToasts() {
     if (!G) return;
     const live = Object.create(null);
     G.toasts.forEach(t => {
       live[t.id] = 1;
-      if (!seenToasts[t.id]) {
+      if (!seenToasts[t.id] && !dismissedToasts[t.id]) {
         const d = document.createElement('div');
         d.className = 'toast' + (t.big ? ' big' : '');
         d.style.setProperty('--accent', t.color);
         d.textContent = t.text;
+        d.title = t.text + ' — click to dismiss';
+        d.addEventListener('click', () => {
+          dismissedToasts[t.id] = 1;
+          delete seenToasts[t.id];
+          if (d.parentNode) {
+            d.classList.add('fade');
+            setTimeout(() => { if (d.parentNode) d.parentNode.removeChild(d); }, 450);
+          }
+        });
         hud.toasts.appendChild(d);
         seenToasts[t.id] = d;
+        /* cap the visible stack: oldest fades first, newest stays readable */
+        while (hud.toasts.children.length > 4) {
+          const oldest = hud.toasts.firstElementChild;
+          if (oldest) oldest.remove();
+        }
       }
     });
     Object.keys(seenToasts).forEach(id => {
       if (!live[id]) {
         const el = seenToasts[id];
-        if (el && el.parentNode) el.parentNode.removeChild(el);
+        if (el && el.parentNode) { el.classList.add('fade'); setTimeout(((node) => () => { if (node.parentNode) node.parentNode.removeChild(node); })(el), 450); }
         delete seenToasts[id];
       }
     });
+    Object.keys(dismissedToasts).forEach(id => { if (!live[id]) delete dismissedToasts[id]; });
   }
 
   function buildRoomTrack() {
@@ -487,7 +593,7 @@
         desc:choice.desc + (choice.reply ? '<br/><em>' + choice.reply + '</em>' : ''),
         accent:affinity ? D.GODS[affinity].color : '#f0cf5e',
         rarity:i ? 'rare' : 'epic', extra:' room campaign-choice cutscene-choice',
-        onClick:() => G.chooseStory(choice.id)
+        onClick:() => activeCampaignStory.optional ? G.chooseMythScene(choice.id) : G.chooseStory(choice.id)
       });
       choiceCard.tabIndex = 0;
       choiceCard.setAttribute('role', 'button');
@@ -515,11 +621,13 @@
     campaignVoiceIndex = 0;
     campaignScenePhase = 'lines';
     const chapter = pending.chapter, region = G.region();
-    document.getElementById('cutscene-kicker').textContent = 'CAMPAIGN · CHAPTER ' + (pending.chapterIndex + 1) + ' OF ' + D.CAMPAIGN_STORY.length + ' · ' + region.name;
+    document.getElementById('cutscene-kicker').textContent = pending.optional ? 'DIVINE ENCOUNTER · ' + region.name : 'CAMPAIGN · CHAPTER ' + (pending.chapterIndex + 1) + ' OF ' + D.CAMPAIGN_STORY.length + ' · ' + region.name;
     document.getElementById('cutscene-title').textContent = chapter.title;
     document.getElementById('cutscene-intro').textContent = chapter.intro;
     const backdrop = document.getElementById('cutscene-backdrop');
-    backdrop.src = A.url('region.' + region.id + '.backdrop');
+    const backdropKey = 'region.' + region.id + '.backdrop';
+    const fallbackBackdrop = 'region.' + ({ancient_greece:'elysium',atlantis:'aegean'}[region.id] || region.artFamily || 'tartarus') + '.backdrop';
+    backdrop.src = A.url(A.entry(backdropKey) ? backdropKey : fallbackBackdrop);
     backdrop.alt = region.name + ' — campaign scene';
     document.getElementById('cutscene-choices').innerHTML = '';
     document.getElementById('cutscene-next').classList.remove('hidden');
@@ -534,7 +642,8 @@
     c.className = 'card rarity-' + (opts.rarity || 'common') + (opts.extra || '') + (opts.disabled ? ' disabled' : '');
     if (opts.accent) c.style.setProperty('--accent', opts.accent);
     let html = '';
-    if (opts.icon) html += '<div class="card-icon">' + A.iconHtml(opts.icon, 'card-icon-art') + '</div>';
+    if (opts.portraitMarkup) html += '<div class="card-icon divine-cover">' + opts.portraitMarkup + '</div>';
+    else if (opts.icon) html += '<div class="card-icon">' + (K.Portraits && opts.icon.startsWith('god:') ? K.Portraits.html(opts.icon.slice(4),{surface:'reward',className:'card-icon-art'}) : A.iconHtml(opts.icon, 'card-icon-art')) + '</div>';
     if (opts.god) html += '<div class="god">' + opts.god + '</div>';
     html += '<h4>' + opts.title + '</h4>';
     if (opts.descHtml) html += '<div class="card-desc">' + opts.descHtml + '</div>';
@@ -548,12 +657,13 @@
     if (opts.onClick) {
       c.setAttribute('role','button');
       c.setAttribute('aria-disabled',String(!!opts.disabled));
-      if (!opts.disabled) {
-        c.tabIndex = 0;
-        c.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); c.click(); } });
-      }
+      /* Disabled cards stay focusable so keyboard and screen readers can review the reason. */
+      c.tabIndex = 0;
+      if (opts.disabled && (opts.locked || opts.cost !== undefined)) c.title = String(opts.locked || ('Requires ' + opts.cost + ' obols')).replace(/<[^>]*>/g, '');
+      c.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar' || ev.code === 'Space') { ev.preventDefault(); if (!opts.disabled) c.click(); } });
     }
     if (!opts.disabled && opts.onClick) c.addEventListener('click', () => { K.Audio.sfx('ui'); opts.onClick(); });
+    else if (opts.disabled && opts.onClick) c.addEventListener('click', () => { K.Audio.sfx('ui2'); });
     return c;
   }
 
@@ -618,7 +728,7 @@
       btn.setAttribute('aria-label', item.name + ', ' + item.rarity + ', level ' + item.level + (mastered ? ', legacy mastered, effective level ' + gear.MAX_POWER_LEVEL : '') + (equipped ? ', equipped' : ''));
       btn.innerHTML = A.iconHtml('gear:' + item.slot) + '<span><strong>' + escapeHtml(item.name) + '</strong><small>' + escapeHtml(item.rarity.toUpperCase()) + ' · Lv ' + item.level + (mastered ? ' · LEGACY / MASTERED' : '') + (equipped ? ' · EQUIPPED' : '') + '</small></span>';
       btn.style.setProperty('--accent', ({common:'#b6a68a',rare:'#6fb2e8',epic:'#c58ce8',heroic:'#e8a24a',legendary:'#f0cf5e'})[item.rarity] || '#b6a68a');
-      btn.addEventListener('click', () => { armorySelectedId = item.id; armoryMessage = ''; renderArmory(); const active = Array.from(document.querySelectorAll('#armory-collection .armory-item')).find(x => x.getAttribute('aria-label').startsWith(item.name + ',')); if (active) active.focus(); });
+      btn.addEventListener('click', () => { armorySelectedId = item.id; armoryMessage = ''; renderArmory(); const active = document.querySelector('#armory-collection .armory-item[aria-pressed="true"]'); if (active) active.focus(); });
       list.appendChild(btn);
     });
     const item = save.gearInventory.find(x => x.id === armorySelectedId) || null;
@@ -649,12 +759,16 @@
       '<p>' + escapeHtml((item.affixes || []).map(a => a.name).join(' · ') || 'No secondary affixes') + '</p>' +
       '<div class="gear-stat-list">' + fxMarkup(item.baseEffects) + (item.affixes || []).map(a => fxMarkup(a.fx)).join('') + '</div>';
     comparison.innerHTML = equipped ? '<p class="armory-empty">This piece is already equipped.</p>' : previewGearEffects(item);
-    const cost = gear.upgradeCost(item), canUpgrade = Number.isFinite(cost) && save.obols >= cost && save.salvageShards >= 1;
+    const reinforcePreview = gear.reinforcementPreview && gear.reinforcementPreview(item.id);
+    const cost = gear.upgradeCost(item), canUpgrade = reinforcePreview ? reinforcePreview.ok : Number.isFinite(cost) && save.obols >= cost && save.salvageShards >= 1;
     equip.disabled = equipped; upgrade.disabled = !canUpgrade; sell.disabled = equipped; salvage.disabled = equipped;
     upgrade.title = effectiveLevel >= gear.MAX_POWER_LEVEL ? 'This item has reached its level 30 power cap.' : 'Upgrade costs ' + U.comma(cost) + ' Obols and 1 salvage shard.';
     sell.title = equipped ? 'Unequip this piece before selling it.' : 'Sell for ' + U.comma(gear.sellValue(item)) + ' Obols.';
     salvage.title = equipped ? 'Unequip this piece before salvaging it.' : 'Salvage for ' + gear.RARITIES[item.rarity].salvage + ' shard(s).';
     status.textContent = armoryMessage || (mastered ? 'Legacy item retained. Combat effects, upgrade cost, and sale value use the level 30 cap.' : effectiveLevel >= gear.MAX_POWER_LEVEL ? 'Mastered · level 30 is the final effective power level.' : (equipped ? 'Equipped · selling and salvage locked.' : (!canUpgrade ? 'Upgrade needs ' + U.comma(cost) + ' Obols and 1 salvage shard.' : '')));
+    upgrade.innerHTML = 'UPGRADE';
+    if (reinforcePreview && !reinforcePreview.ok && !armoryMessage) status.textContent = reinforcePreview.reason;
+    if (K.OverhaulUI) K.OverhaulUI.workbench(item);
   }
 
   function openArmory(returnScreen) {
@@ -706,7 +820,7 @@
     const branch = api.BRANCHES[node.branch];
     const owned = save.paragonNodes.includes(node.id), available = api.canBuy(node.id, save);
     document.getElementById('paragon-selected-art').innerHTML = A.iconHtml(node.branch === 'root' ? 'branch:ares' : 'branch:' + node.branch);
-    document.getElementById('paragon-node-state').textContent = owned ? 'WOVEN' : (available ? 'READY TO WEAVE' : 'FATE SEALED');
+    document.getElementById('paragon-node-state').textContent = owned ? 'WOVEN' : (available ? 'READY TO WEAVE' : 'FATE SEALED — SEE REQUIREMENT BELOW');
     document.getElementById('paragon-selected-title').textContent = node.name;
     document.getElementById('paragon-node-description').textContent = node.id === api.ROOT_ID ? 'The first thread, freely granted. Choose a path through the six Olympian domains.' : branch.name + ' · ' + branch.theme + (node.keystone ? ' · Keystone' : ' · Tier ' + node.tier);
     document.getElementById('paragon-node-effects').innerHTML = fxMarkup(node.fx);
@@ -714,11 +828,13 @@
     const buy = document.getElementById('paragon-buy'); buy.disabled = !available; buy.textContent = node.id === api.ROOT_ID ? 'ROOT NODE' : (owned ? 'ALREADY WOVEN' : 'WEAVE NODE · ' + node.cost + ' POINT' + (node.cost === 1 ? '' : 'S'));
     const bought = save.paragonNodes.filter(id => id !== api.ROOT_ID).length, respecCost = api.respecCost(save);
     const respec = document.getElementById('paragon-respec'); respec.disabled = !save.paragonUnlocked || bought === 0 || save.obols < respecCost;
+    respec.textContent = bought ? 'MIRROR RESPEC · ' + U.comma(respecCost) + ' OBOLS' : 'MIRROR RESPEC · NO NODES WOVEN';
     document.getElementById('paragon-respec-info').textContent = bought ? 'Refund ' + bought + ' nodes for ' + U.comma(respecCost) + ' Obols. Current balance: ' + U.comma(save.obols) + '.' : 'No purchased nodes to refund.';
   }
   function openParagon(returnScreen) {
     paragonReturnScreen = returnScreen; rememberAtlasOrigin(returnScreen); renderParagon(); showScreen('screen-paragon');
-    document.getElementById('paragon-tree').querySelector('.paragon-node').focus();
+    const firstNode = document.getElementById('paragon-tree').querySelector('.paragon-node');
+    if (firstNode) firstNode.focus();
   }
   function closeParagon() {
     showScreen(paragonReturnScreen, paragonReturnScreen !== 'screen-title');
@@ -788,7 +904,9 @@
       btnSkip.classList.remove('hidden');
       btnRr.disabled = reward.rerolls <= 0;
       rr.textContent = '(' + reward.rerolls + ')';
-      document.getElementById('skip-bonus').innerHTML = '(+' + Math.round(reward.skipBonus || 30) + ' ' + A.iconHtml('coin', 'currency-icon') + ')';
+      btnRr.setAttribute('aria-label', reward.rerolls > 0 ? 'Reroll boon choices, ' + reward.rerolls + ' left' : 'No rerolls left');
+      document.getElementById('skip-bonus').innerHTML = '(+' + Math.round(reward.skipBonus || 30) + ' ' + A.iconHtml('coin', 'currency-icon') + ', +8 max life, heal 20)';
+      btnSkip.setAttribute('aria-label', 'Refuse the gods: gain obols, maximum life, and healing instead of a boon');
       reward.choices.forEach(ch => {
         const b = D.boonById[ch.id];
         const g = D.GODS[b.god];
@@ -799,6 +917,7 @@
         wrap.appendChild(cardEl({
           title: b.name, god: g.name + ' · ' + g.domain + ' · ' + b.slot.toUpperCase(),
           icon: 'god:' + b.god, accent: g.color, rarity: ch.rarity,
+          portraitMarkup: K.Portraits ? K.Portraits.boonHtml(b,{surface:'reward',className:'card-cover-art'}) : '',
           desc: fmtBoon(b, ch.rarity),
           rarityLabel: rar.name,
           owned: isOwned ? 'Upgrade ' + D.RARITY[cur].name + ' → ' + D.RARITY[boonResultRarity(b, cur, ch.rarity)].name : '',
@@ -1066,6 +1185,8 @@
     showScreen(null);
     if (G.phase === 'reward') G.phase = 'playing';
     updateHUD();
+    const canvas = document.getElementById('game');
+    if (canvas && typeof canvas.focus === 'function' && !document.activeElement?.closest?.('button,input,select')) { try { canvas.focus({preventScroll:true}); } catch (e) {} }
   }
 
   /* ---------------- room choice (after a cleared chamber) ---------------- */
@@ -1275,20 +1396,22 @@
     if (codexTab === 'gods') {
       const grid = document.createElement('div'); grid.className = 'codex-grid';
       const runFavor = G && G.run ? (G.run.godFavor || {}) : {};
-      const orderedGods = (D.OLYMPIANS || []).concat(Object.keys(D.GODS).filter(gid => !(D.OLYMPIANS || []).includes(gid)));
-      orderedGods.filter(gid => !codexQuery.trim() || (D.GODS[gid].name + ' ' + D.GODS[gid].domain + ' ' + D.GODS[gid].title).toLowerCase().includes(codexQuery.trim().toLowerCase())).forEach(gid => {
-        const g = D.GODS[gid], met = !!K.Save.data.seenGods[gid], el = document.createElement('button'); el.type = 'button';
+      const deityIds = K.Portraits ? K.Portraits.roster.map(r=>r.id) : Object.keys(D.GODS);
+      const deityInfo = gid => D.GODS[gid] || (K.Portraits && K.Portraits.byId[gid] ? {id:gid,name:K.Portraits.byId[gid].displayName,domain:K.Portraits.byId[gid].domain,title:K.Portraits.byId[gid].epithet,color:K.Portraits.byId[gid].paletteAccent,group:'Greek · Portrait archive',blurb:'A figure of the Greek tradition. This archive entry does not grant boons.'} : null);
+      const orderedGods = (D.OLYMPIANS || []).concat(deityIds.filter(gid => !(D.OLYMPIANS || []).includes(gid)));
+      orderedGods.filter(gid => !codexQuery.trim() || (deityInfo(gid).name + ' ' + deityInfo(gid).domain + ' ' + deityInfo(gid).title).toLowerCase().includes(codexQuery.trim().toLowerCase())).forEach(gid => {
+        const g = deityInfo(gid), met = !!K.Save.data.seenGods[gid], el = document.createElement('button'); el.type = 'button';
         const favor = runFavor[gid] || 0;
         const relation = favor >= 7 ? 'Favored' : favor > 0 ? 'Welcomed' : favor <= -7 ? 'Opposed' : favor < 0 ? 'Wary' : 'Unproven';
         el.className = 'codex-entry'; el.style.setProperty('--accent', g.color);
-        el.innerHTML = A.iconHtml('god:' + gid, 'codex-art') + '<h4>' + g.name + '</h4><div class="src">' + (g.group || 'Immortals') + ' · ' + g.title + ' · ' + g.domain + '</div><p>' + g.blurb + '</p><div class="note">' + (met ? 'Known to you' : 'Not yet encountered') + ' · Current run: ' + relation + ' (' + (favor > 0 ? '+' : '') + favor + ' favor)</div>';
+        el.innerHTML = (K.Portraits ? K.Portraits.html(gid,{surface:'codex',className:'codex-art'}) : A.iconHtml('god:' + gid, 'codex-art')) + '<h4>' + g.name + '</h4><div class="src">' + (g.group || 'Immortals') + ' · ' + g.title + ' · ' + g.domain + '</div><p>' + g.blurb + '</p><div class="note">' + (!D.GODS[gid] ? 'Portrait archive · No boon mechanics' : (met ? 'Known to you' : 'Not yet encountered') + ' · Current run: ' + relation + ' (' + (favor > 0 ? '+' : '') + favor + ' favor)') + '</div>';
         el.addEventListener('click', () => { codexSelectedKey = 'god:' + gid; selectCodexEntry(el, {type:'god',item:g,key:gid}, true); });
         el.setAttribute('data-codex-key','god:' + gid); grid.appendChild(el);
         if (grid.children.length === 1) { codexSelectedKey = 'god:' + gid; selectCodexEntry(el, {type:'god',item:g,key:gid}, true); }
       });
       if (!grid.children.length && inspector) inspector.innerHTML = '<h3>No entries found</h3><p>Try another name or category.</p>';
       const note = document.createElement('p'); note.className = 'codex-note'; note.textContent = 'Olympian Thirteen: this court includes both Hestia and Dionysus. Ancient lists vary; favor changes through choices, offerings, trials, and boons.';
-      body.appendChild(note); body.appendChild(grid); counter.textContent = Object.keys(D.GODS).length + ' deities · ' + D.OLYMPIANS.length + ' Olympians'; prev.disabled = true; next.disabled = true; return;
+      body.appendChild(note); body.appendChild(grid); counter.textContent = deityIds.length + ' portraits · ' + Object.keys(D.GODS).length + ' boon-granting deities · ' + D.OLYMPIANS.length + ' Olympians'; prev.disabled = true; next.disabled = true; return;
     }
     let records = [];
     if (codexTab === 'boons') records = D.BOONS.map(b => ({ type:'boon', item:b, key:b.id, text:b.name + ' ' + b.desc }));
@@ -1314,7 +1437,7 @@
       else if (rec.type === 'relic') { icon = 'relic:' + item.id; el.style.setProperty('--accent', item.color || '#e0b355'); src = 'Relic' + (item.generatedVariant ? ' · ' + item.variantId : ''); desc = known ? item.desc : 'You have not found this.'; }
       else if (rec.type === 'enemy') { icon = 'enemy:' + item.id; el.style.setProperty('--accent', item.color || '#b6a68a'); src = 'Threat ' + item.score + ' / 5 · ' + item.hp + ' HP' + (item.generatedVariant ? ' · ' + item.variantId : ''); desc = known ? item.desc : 'You have not met this thing.'; }
       else { icon = 'boss:' + item.id; el.style.setProperty('--accent', '#f0cf5e'); src = item.title + ' · ' + item.hp + ' HP' + (item.generatedVariant ? ' · ' + item.variantId : ''); desc = item.desc; }
-      el.innerHTML = A.iconHtml(icon, 'codex-art') + '<h4>' + item.name + '</h4><div class="src">' + src + '</div><p>' + desc + '</p>' + boonNumbers;
+      el.innerHTML = (rec.type==='boon'&&K.Portraits ? K.Portraits.boonHtml(item,{surface:'codex',className:'codex-art'}) : A.iconHtml(icon, 'codex-art')) + '<h4>' + item.name + '</h4><div class="src">' + src + '</div><p>' + desc + '</p>' + boonNumbers;
       el.setAttribute('data-codex-key',rec.type + ':' + rec.key);
       el.addEventListener('click', () => { codexSelectedKey = rec.type + ':' + rec.key; selectCodexEntry(el, rec, known); });
       grid.appendChild(el);
@@ -1322,7 +1445,8 @@
     });
     body.appendChild(grid);
     if (!shown.length && inspector) inspector.innerHTML = '<h3>No entries found</h3><p>Try another name or category.</p>';
-    counter.textContent = records.length ? 'Showing ' + (start + 1) + '–' + Math.min(start + pageSize, records.length) + ' of ' + records.length : 'No entries found';
+    const filterWord = (codexBuildFilter && codexBuildFilter !== 'all') ? ', filtered by ' + codexBuildFilter : '';
+    counter.textContent = records.length ? 'Showing ' + (start + 1) + '–' + Math.min(start + pageSize, records.length) + ' of ' + records.length + filterWord : 'No entries found' + (filterWord ? ' for this filter' : '');
     prev.disabled = codexPage <= 0; next.disabled = codexPage >= pages - 1;
   }
 
@@ -1352,14 +1476,19 @@
       const afford = K.Save.data.obols >= cost;
       const d = document.createElement('div');
       d.className = 'meta-item' + (maxed ? ' maxed' : (afford ? '' : ' cant'));
-      let pips = '<div class="pips">';
+      d.setAttribute('role', 'button');
+      d.tabIndex = maxed ? -1 : 0;
+      const reason = maxed ? 'Maximum rank' : afford ? U.comma(cost) + ' obols' : 'Needs ' + U.comma(cost) + ' obols';
+      d.setAttribute('aria-label', m.name + ', rank ' + lv + ' of ' + m.max + ', ' + reason + '. ' + m.desc);
+      d.setAttribute('aria-disabled', String(maxed || !afford));
+      let pips = '<div class="pips" aria-hidden="true">';
       for (let i = 0; i < m.max; i++) pips += '<i class="' + (i < lv ? 'on' : '') + '"></i>';
       pips += '</div>';
       d.innerHTML = '<div class="meta-icon">' + A.iconHtml(m.icon, 'meta-icon-art') + '</div><div class="meta-body"><h4>' + m.name + '</h4>' +
         '<p>' + m.desc + '</p>' + pips + '</div>' +
         '<div class="meta-cost">' + (maxed ? 'MAX' : A.iconHtml('coin', 'currency-icon') + ' ' + U.comma(cost)) + '</div>';
       if (!maxed) {
-        d.addEventListener('click', () => {
+        const buy = () => {
           if (K.Save.spend(cost)) {
             K.Save.data.meta[m.id] = lv + 1;
             K.Save.write();
@@ -1367,10 +1496,13 @@
             buildMeta();
             buildMetaPreview();
           } else { K.Audio.sfx('ui2'); }
-        });
+        };
+        d.addEventListener('click', buy);
+        d.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); buy(); } });
       }
       list.appendChild(d);
     });
+    if (K.OverhaulUI) K.OverhaulUI.mirror(list, () => { buildMeta(); buildMetaPreview(); });
   }
 
   function buildMetaPreview() {
@@ -1457,7 +1589,7 @@
   function beginPractice(){K.Audio.boot();K.Audio.resume();G.startPractice({});resetRunGameUI();}
   function resetRunGameUI(){
     cache.hp=-1;cache.shield='';cache.obols=-1;cache.region='';cache.room='';cache.boss=-1;cache.bossStage='';cache.boons=-1;cache.relics=-1;cache.dash=[];
-    cache.hpGhost=1;cache.hpGhostShown=-1;hud.toasts.innerHTML='';seenToasts={};resetGameOverFlags();
+    cache.hpGhost=1;cache.hpGhostShown=-1;cache.bossRage=null;hud.toasts.innerHTML='';seenToasts={};for(const k in dismissedToasts)delete dismissedToasts[k];resetGameOverFlags();
   }
 
   /* ---------------- pause ---------------- */
@@ -1475,12 +1607,25 @@
   }
 
   /* ---------------- start / restart ---------------- */
+  let startingRun = false;
   function startRun(options) {
-    K.Audio.boot(); K.Audio.resume();
-    showScreen(null);
-    document.getElementById('hud').classList.remove('hidden');
-    resetRunGameUI();
-    G.startRun(undefined, options || {});
+    if (startingRun) return;
+    if (!ctx || ctx.lost) { if (K.OverhaulUI) K.OverhaulUI.compatibility(ctx && ctx.lost); return; }
+    if (!options && K.OverhaulUI) { K.OverhaulUI.configure(selection => startRun({modifiers:selection})); return; }
+    startingRun = true;
+    const beginButtons = ['hero-start','trial-begin','btn-again','btn-again2'].map(id => document.getElementById(id)).filter(Boolean);
+    beginButtons.forEach(b => { b.disabled = true; });
+    try {
+      K.Audio.boot(); K.Audio.resume();
+      showScreen(null);
+      document.getElementById('hud').classList.remove('hidden');
+      resetRunGameUI();
+      G.startRun(undefined, options || {});
+    } finally {
+      startingRun = false;
+      beginButtons.forEach(b => { if (b.id === 'trial-begin') return; b.disabled = false; });
+      if (typeof updateTrialSummary === 'function') { try { updateTrialSummary(); } catch (e) {} }
+    }
   }
 
   let gameOverShown = false;
@@ -1490,9 +1635,11 @@
   function hookGame() {
     G.onTransition = function (kind, data) {
       if (kind === 'route') { showRouteScreen(data);
+      } else if (['worldEncounter','worldExplore','worldMarket','worldMarketReturn','worldRegion'].includes(kind)) { showScreen(null); updateHUD();
       } else if (kind === 'event') { showEventScreen(data);
       } else if (kind === 'story') { showCampaignStory(data);
-      } else if (kind === 'storyDone' || kind === 'eventDone' || kind === 'routeSelected') { if (kind === 'storyDone') activeCampaignStory = null; showScreen(null); updateHUD();
+      } else if (kind === 'mythStory') { showCampaignStory(data);
+      } else if (kind === 'mythStoryDone' || kind === 'storyDone' || kind === 'eventDone' || kind === 'routeSelected') { if (kind === 'storyDone' || kind === 'mythStoryDone') activeCampaignStory = null; showScreen(null); updateHUD();
       } else if (kind === 'reward') {
         G.phase = 'reward';
         showRewardScreen(data);
@@ -1530,7 +1677,7 @@
       G.recalcStats();
       G.player.heal(20, G);
       K.Audio.sfx('coin');
-      G.toast('You refuse them. +' + gained + ' obols, +8 maximum life.', '#b6a68a');
+      G.toast('You refuse them. +' + gained + ' obols, +8 maximum life, heal 20.', '#b6a68a');
       G.closeOffer();
       closeToPlay();
     });
@@ -1548,7 +1695,8 @@
 
     const paused = (screen === 'screen-pause' || screen === 'screen-armory' || screen === 'screen-paragon' || screen === 'screen-codex' || screen === 'screen-meta' ||
       screen === 'screen-help' || screen === 'screen-title' || screen === 'screen-heroes' || screen === 'screen-reward' ||
-      screen === 'screen-gameover' || screen === 'screen-victory' || screen === 'screen-room' || screen === 'screen-cutscene' || screen === 'screen-trials' || screen === 'screen-practice');
+      screen === 'screen-gameover' || screen === 'screen-victory' || screen === 'screen-room' || screen === 'screen-cutscene' || screen === 'screen-trials' || screen === 'screen-practice' ||
+      screen === 'screen-world-map' || screen === 'screen-modifiers' || screen === 'screen-market' || screen === 'screen-house');
 
     if (G && G.player && !paused) {
       acc += dt;
@@ -1576,7 +1724,12 @@
       } else {
         K.R.draw(ctx, G, dt);
       }
-      if (!paused) updateHUD();
+      hudFrameCount++;
+      if (hudFrameCount >= HUD_UPDATE_INTERVAL) {
+        updateHUD(dt);
+        hudFrameCount = 0;
+      }
+      if (K.OverhaulUI) K.OverhaulUI.tick(G, screen, dt);
     } else {
       drawTitleBackdrop(ts);
     }
@@ -1584,6 +1737,7 @@
 
   function handleGlobalKeys() {
     const In = K.Input;
+    if (K.OverhaulUI && K.OverhaulUI.handleKeys(In, screen)) return;
     if (In.hit('KeyM')) {
       const m = K.Audio.toggleMute();
       K.Save.data.muted = m; K.Save.write();
@@ -1609,20 +1763,37 @@
       else if (screen === 'screen-trials') { backToAtlasOrigin('screen-title'); }
       else if (screen === 'screen-armory') { closeArmory(); }
       else if (screen === 'screen-paragon') { closeParagon(); }
+      else if (screen === 'screen-room' || screen === 'screen-reward') {
+        /* These menus require a choice; announce the requirement instead of silently ignoring Escape. */
+        const announce = document.getElementById(screen === 'screen-room' ? 'room-title' : 'reward-title');
+        if (announce) {
+          if (!announce.hasAttribute('tabindex')) announce.setAttribute('tabindex', '-1');
+          announce.focus({ preventScroll: true });
+        }
+      }
       else if (screen === 'play' && G && G.phase !== 'idle' && G.phase !== 'dead' && G.phase !== 'victory') showPause();
     }
     /* exit gate / advance */
     if (screen === 'play' && G && G.player && !G.player.dead) {
-      const hint=document.getElementById('interact-hint'),gate=G.exitGate;
+      const hint=hintEl,gate=G.exitGate;
+      const labelEl = document.getElementById('interact-label');
       const gateNear=gate&&U.dist(G.player.x,G.player.y,gate.x,gate.y)<gate.radius+40;
-      if(gateNear){hint.classList.remove('hidden');hint.textContent='[E] ONWARD';if(In.hit('KeyE'))useGate();}
-      else if(G.nearInteract){
-        const it=G.nearInteract,label=it.kind==='shop'?it.item.name:(it.kind==='arena'?['OBOL OFFERING','RESTORE LIFE','WARD','RAISE BANNER'][it.propCell]:(it.kind==='haggle'?'HAGGLE':(it.kind==='healthTrade'?'TRADE LIFE FOR COIN':it.kind.toUpperCase())));
-        hint.classList.remove('hidden');hint.textContent='[E] '+label.toUpperCase();
-      }else hint.classList.add('hidden');
+      const setHint = (label) => {
+        hint.classList.remove('hidden');
+        if (labelEl) labelEl.textContent = label;
+        else hint.textContent = '[E] ' + label;
+      };
+      if(gateNear){setHint('ONWARD');if(In.hit('KeyE'))useGate();}
+      else {
+        const it=currentInteract();
+        if(it){
+          const label=it.kind==='shop'?(it.item.name || 'WARES'):(it.kind==='arena'?(['OBOL OFFERING','RESTORATION','WARD','WAR STANDARD'][it.propCell] || 'OFFERING'):(it.kind==='haggle'?'HAGGLE':(it.kind==='healthTrade'?'BLOOD TITHE · TRADE LIFE FOR COIN':String(it.kind || 'INTERACT').toUpperCase())));
+          setHint(String(label).toUpperCase().slice(0, 60));
+        } else hint.classList.add('hidden');
+      }
+      syncTouchControls();
     } else {
-      const hint = document.getElementById('interact-hint');
-      if (hint) hint.classList.add('hidden');
+      if (hintEl) hintEl.classList.add('hidden');
     }
   }
 
@@ -1632,6 +1803,8 @@
   }
   /* The House of Hades: a colonnade, a brazier glow, and the Styx below. */
   function drawTitleBackdrop(ts) {
+    if (!ctx || ctx.lost) return;
+    ctx.beginFrame(ts / 1000, '#120f12');
     A.drawCover(ctx, 'ui.title', 0, 0, K.W, K.H);
     const t = ts / 1000;
     for (let i = 0; i < 54; i++) {
@@ -1642,6 +1815,7 @@
       A.drawFrame(ctx, 'effects.particles', frame, x, y, 9 + (i % 3) * 4, 12 + (i % 4) * 4,
         { alpha: 0.22 + 0.4 * Math.abs(Math.sin(t * 1.3 + i)), rot: t * 0.25 + i });
     }
+    ctx.flush();
   }
 
   /* ---------------- boot ---------------- */
@@ -1652,19 +1826,19 @@
     G = new K.Game(canvas, ctx);
     G.region = function () { return D.REGIONS[Math.min(D.REGIONS.length - 1, this.regionIndex || 0)]; };
     window.K.G = G;
+    if (ctx) {
+      ctx.onLost = () => { showPause(); if (K.OverhaulUI) K.OverhaulUI.compatibility(true); };
+      ctx.onRestored = () => { if (K.OverhaulUI) K.OverhaulUI.clearCompatibility(); };
+    }
     hookGame();
     resize();
+    if (K.OverhaulUI) K.OverhaulUI.bind(G,{showScreen,updateHUD,buildMetaPreview,renderArmory,showCampaignStory});
 
     /* buttons */
     const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', () => { K.Audio.boot(); K.Audio.resume(); K.Audio.sfx('ui'); fn(); }); };
-    ['cutscene-next','cutscene-skip','cutscene-review'].forEach(id => {
-      const button = document.getElementById(id);
-      button.addEventListener('keydown', ev => {
-        if (ev.code !== 'Space' || ev.repeat) return;
-        ev.preventDefault();
-        button.click();
-      });
-    });
+    // Native button Space/Enter activation is sufficient; no manual keydown->click
+    // forwarding (it double-advances dialogue where keydown preventDefault does
+    // not cancel the keyup click).
     on('cutscene-next', () => advanceCampaignCutscene());
     on('cutscene-skip', () => showCampaignChoices());
     on('cutscene-review', () => { campaignVoiceIndex = Math.max(0, activeCampaignStory.chapter.voices.length - 1); renderCampaignVoice(); document.getElementById('cutscene-next').focus(); });
@@ -1736,7 +1910,10 @@
     on('btn-go-chronicle', () => openChronicle('screen-gameover'));
     on('btn-vic-chronicle', () => openChronicle('screen-victory'));
     document.getElementById('codex-build-filter').addEventListener('change', ev => { codexBuildFilter=ev.target.value || 'all';codexPage=0;buildCodex(codexTab); });
-    document.getElementById('codex-search').addEventListener('input', ev => { codexQuery = ev.target.value || ''; codexPage = 0; buildCodex(codexTab); });
+    let codexSearchT = null;
+    const codexSearch = document.getElementById('codex-search');
+    codexSearch.addEventListener('input', ev => { codexQuery = ev.target.value || ''; codexPage = 0; if (codexSearchT) clearTimeout(codexSearchT); codexSearchT = setTimeout(() => { codexSearchT = null; buildCodex(codexTab); }, 150); });
+    codexSearch.addEventListener('keydown', ev => { if (ev.key === 'Escape') { ev.stopPropagation(); codexSearch.value = ''; codexQuery = ''; codexPage = 0; buildCodex(codexTab); } });
     document.getElementById('codex-prev').addEventListener('click', () => { codexPage = Math.max(0, codexPage - 1); buildCodex(codexTab); });
     document.getElementById('codex-next').addEventListener('click', () => { codexPage++; buildCodex(codexTab); });
     on('btn-codex-back', () => showScreen(codexReturnScreen, codexReturnScreen === 'screen-gameover' || codexReturnScreen === 'screen-victory'));
@@ -1747,6 +1924,7 @@
     on('btn-resume', () => closeToPlay());
     on('btn-abandon', () => {
       if (!G || !G.run) return;
+      if (!confirm('Abandon this descent? The run ends here; persistent Armory, Mirror and Loom progress is kept.')) return;
       G.abandon();
     });
     on('btn-reset-meta', () => {
@@ -1759,10 +1937,38 @@
     /* click anywhere on the canvas starts audio */
     canvas.addEventListener('mousedown', () => { K.Audio.boot(); K.Audio.resume(); });
 
+    /* touch action buttons: dispatch the same inputs keyboard users get */
+    const pressKey = (code, down) => {
+      try {
+        const ev = new KeyboardEvent(down ? 'keydown' : 'keyup', { code, bubbles: true, cancelable: true });
+        window.dispatchEvent(ev);
+        if (down && K.Input && !K.Input.keys[code]) { K.Input.keys[code] = true; K.Input.pressed[code] = true; K.Input.anyKeyEdge = true; }
+        if (!down && K.Input) K.Input.keys[code] = false;
+      } catch (e) { /* touch is best-effort */ }
+    };
+    const bindHold = (id, code, altMouse) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const down = (e) => { e.preventDefault(); K.Audio.boot(); K.Audio.resume(); if (altMouse === 'r' && K.Input) { K.Input.mouse.rdown = true; K.Input.mouse.rdownEdge = true; } else pressKey(code, true); };
+      const up = (e) => { if (e) e.preventDefault(); if (altMouse === 'r' && K.Input) K.Input.mouse.rdown = false; else pressKey(code, false); };
+      el.addEventListener('pointerdown', down);
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointercancel', up);
+      el.addEventListener('pointerleave', up);
+    };
+    bindHold('touch-dash', 'Space');
+    bindHold('touch-guard', null, 'r');
+    bindHold('touch-cast', 'KeyF');
+    const touchInteract = document.getElementById('touch-interact');
+    if (touchInteract) touchInteract.addEventListener('click', () => { K.Audio.boot(); K.Audio.resume(); pressKey('KeyE', true); setTimeout(() => pressKey('KeyE', false), 50); });
+    const touchPause = document.getElementById('touch-pause');
+    if (touchPause) touchPause.addEventListener('click', () => { K.Audio.boot(); K.Audio.resume(); if (screen === 'play') showPause(); else if (screen === 'screen-pause') closeToPlay(); });
+
     if (K.Persistence) {
       const showSaveStatus = state => {
         document.getElementById('save-notice').classList.toggle('hidden',!state.error);
-        document.getElementById('save-notice-text').textContent = state.error || '';
+        const backend = (K.Persistence.status && K.Persistence.status.backend) || (K.Persistence.backend) || 'browser storage';
+        document.getElementById('save-notice-text').textContent = state.error ? (state.error + ' (' + backend + '). Keep this page open; Retry Save, or Download Backup.') : '';
       };
       K.Persistence.onStatus = showSaveStatus; showSaveStatus(K.Persistence.status);
       on('save-retry', () => { K.Save.write(); K.Save.flush(); });
@@ -1794,19 +2000,38 @@
     const loading = document.getElementById('asset-loading');
     if (loading) loading.textContent = 'Preparing the image art…';
     A.load((done, total) => {
-      if (loading) loading.textContent = 'Preparing image art ' + done + ' / ' + total;
+      if (loading) {
+        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+        loading.textContent = 'Preparing image art ' + done + ' / ' + total + ' (' + pct + '%)';
+      }
     }).then(() => {
       const finish = () => {
       if (loading) loading.classList.add('hidden');
       const obol = document.querySelector('.obol-glyph');
       if (obol) obol.outerHTML = A.iconHtml('coin', 'obol-glyph');
+      try {
+        if (K.WorldRenderer && K.WorldRenderer.prewarmIds && ctx && ctx._webgl) {
+          const manifest = window.KATABASIS_ASSET_MANIFEST || {};
+          const portraits = Object.keys(manifest).filter(id => id.indexOf('portrait.') === 0);
+          K.WorldRenderer.prewarmIds(ctx, [
+            'actor.player', 'actor.player.perseus', 'actor.player.atalanta', 'actor.player.orpheus',
+            'effects.actions', 'effects.divine', 'effects.particles', 'effects.projectiles',
+            'effects.status', 'effects.dash', 'effects.calls.1', 'effects.calls.2', 'effects.calls.3',
+            'ui.icons', 'ui.deities', 'ui.relics', 'ui.gear-paragon', 'ui.meander', 'ui.panel',
+            'ui.title', 'ui.healthbar', 'region.tartarus.floor', 'region.tartarus.props', 'region.tartarus.backdrop'
+          ].concat(portraits));
+        }
+      } catch (prewarmError) { if (window.console && console.error) console.error(prewarmError); }
       boot();
       };
       if (K.Persistence && window.location) {
         if (loading) loading.textContent = 'Restoring your progress…';
-        K.Persistence.init().then(finish);
+        K.Persistence.init().then(finish, (err) => { if (window.console && console.error) console.error(err); finish(); });
       } else finish();
-    }).catch(err => { if (window.console && console.error) console.error(err); });
+    }).catch(err => {
+      if (window.console && console.error) console.error(err);
+      if (loading) { loading.classList.add('asset-error'); loading.textContent = 'The image art could not be prepared. Check your connection and reload the page — your saved progress is untouched.'; }
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadArtAndBoot);
   else loadArtAndBoot();

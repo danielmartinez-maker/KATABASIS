@@ -2,7 +2,12 @@
   {
     "name": "durable save backend",
     "result": {
-      "__err": "CDP timeout: Runtime.evaluate :: "
+      "ok": false,
+      "status": {
+        "backend": "localStorage",
+        "pending": false,
+        "error": null
+      }
     }
   }
 ]

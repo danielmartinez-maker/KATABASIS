@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "bundleBytes": 382573737,
+  "loadMs": 9575,
+  "offline": true,
+  "externalRequests": [],
+  "errors": [],
+  "performance": {
+    "boonCount": 8460,
+    "enabledPowers": 18,
+    "frames": 600,
+    "startedEnemies": 22,
+    "peakProjectiles": 33,
+    "movedEnemies": 22,
+    "simulatedSeconds": 10.000000000000078,
+    "firstFrameMs": 199.90000009536743,
+    "maxFrame": 0,
+    "medianMs": 1,
+    "p95Ms": 2.299999952316284,
+    "maxMs": 199.90000009536743,
+    "steadyMedianMs": 0.9000000953674316,
+    "steadyP95Ms": 2.0999999046325684,
+    "steadyMaxMs": 8.600000143051147,
+    "liveEnemies": 22
+  },
+  "scope": "One headless Chromium run on this machine; simulation + draw CPU timings are not a universal FPS guarantee."
+}

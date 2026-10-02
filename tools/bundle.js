@@ -17,7 +17,7 @@ const SRC_HTML = path.join(ROOT, 'index.html');
 const OUT = path.join(ROOT, 'katabasis.html');
 
 const STYLES = ['css/style.css'];
-const SCRIPTS = ['js/core.js', 'js/persistence.js', 'js/data.js', 'js/content-expansion.js', 'js/gear.js', 'js/paragon.js', 'js/run-systems.js', 'js/boon-expansion.js', 'js/asset-manifest.js', 'js/assets.js', 'js/entities.js', 'js/game.js', 'js/build-powers.js', 'js/render.js', 'js/main.js'];
+const SCRIPTS = ['js/core.js', 'js/persistence.js', 'js/data.js', 'js/content-expansion.js', 'js/world.js', 'js/gear.js', 'js/paragon.js', 'js/run-systems.js', 'js/boon-expansion.js', 'js/asset-manifest.js', 'js/assets.js', 'js/entities.js', 'js/game.js', 'js/build-powers.js', 'js/endgame.js', 'js/mythology.js', 'js/portraits.js', 'js/world-runtime.js', 'js/render.js', 'js/world-renderer.js', 'js/overhaul-ui.js', 'js/main.js'];
 
 function read(rel) {
   const p = path.join(ROOT, rel);
@@ -28,7 +28,7 @@ function listAudioFiles() {
   const dir = path.join(ROOT, 'assets', 'audio');
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir)
-    .filter(name => path.extname(name).toLowerCase() === '.mp3')
+    .filter(name => ['.mp3', '.ogg', '.wav'].includes(path.extname(name).toLowerCase()))
     .sort()
     .map(name => path.join('assets', 'audio', name));
 }
@@ -39,6 +39,42 @@ function imageMime(rel) {
   if (ext === '.png') return 'image/png';
   if (ext === '.jpg' || ext === '.jpeg') return 'image/jpeg';
   throw new Error('unsupported image type: ' + rel);
+}
+
+/* Parse WebP file header to get image dimensions. Returns {width, height} or null. */
+function getWebPDimensions(buf) {
+  if (!buf || buf.length < 32) return null;
+  if (buf[0] !== 0x52 || buf[1] !== 0x49 || buf[2] !== 0x46 || buf[3] !== 0x46) return null; // RIFF
+  if (buf[8] !== 0x57 || buf[9] !== 0x45 || buf[10] !== 0x42 || buf[11] !== 0x50) return null; // WEBP
+  let offset = 12;
+  while (offset + 8 <= buf.length) {
+    const chunkId = buf.slice(offset, offset + 4);
+    const chunkSize = buf.readUInt32LE(offset + 4);
+    if (chunkId[0] === 0x56 && chunkId[1] === 0x50 && chunkId[2] === 0x38) { // VP8
+      if (chunkId[3] === 0x58) { // VP8X (extended)
+        if (chunkSize >= 10 && offset + 18 <= buf.length) {
+          const w = buf.readUInt32LE(offset + 8) & 0x00FFFFFF;
+          const h = buf.readUInt32LE(offset + 12) & 0x00FFFFFF;
+          return { width: w + 1, height: h + 1, frameW: w + 1, frameH: h + 1 };
+        }
+      } else if (chunkId[3] === 0x4C) { // VP8L (lossless)
+        if (chunkSize >= 5 && offset + 13 <= buf.length) {
+          const bits = buf.readUInt32LE(offset + 8);
+          const w = (bits >> 0) & 0x3FFF;
+          const h = (bits >> 14) & 0x3FFF;
+          return { width: w + 1, height: h + 1, frameW: w + 1, frameH: h + 1 };
+        }
+      } else { // VP8 (lossy)
+        if (chunkSize >= 10 && offset + 18 <= buf.length) {
+          const w = buf.readUInt16LE(offset + 10) & 0x3FFF;
+          const h = buf.readUInt16LE(offset + 12) & 0x3FFF;
+          return { width: w, height: h, frameW: w, frameH: h };
+        }
+      }
+    }
+    offset += 8 + chunkSize + (chunkSize % 2);
+  }
+  return null;
 }
 
 /* Escape a closing tag so inlined code can never break out of its <script>. */
@@ -136,8 +172,27 @@ function atomicReplace(temp) {
 async function main() {
   let html = read('index.html');
 
+  /* Canonical asset manifest: assets/manifest.json is the source of truth.
+     js/asset-manifest.js is generated from it at runtime. */
   const assetManifest = JSON.parse(read('assets/manifest.json'));
   const audioFiles = listAudioFiles();
+
+  /* ---- verify image dimensions match manifest cols/rows ---- */
+  for (const [id, entry] of Object.entries(assetManifest)) {
+    if (entry.lazy) continue;
+    const file = path.join(ROOT, entry.src);
+    if (fs.existsSync(file)) {
+      const buf = fs.readFileSync(file);
+      const dims = getWebPDimensions(buf);
+      if (dims) {
+        const expectedW = (entry.cols || 1) * (dims.frameW || Math.floor(dims.width / (entry.cols || 1)));
+        const expectedH = (entry.rows || 1) * (dims.frameH || Math.floor(dims.height / (entry.rows || 1)));
+        if (dims.width !== expectedW || dims.height !== expectedH) {
+          console.warn('[Bundle] Image dimension mismatch for ' + id + ': got ' + dims.width + 'x' + dims.height + ', expected ~' + expectedW + 'x' + expectedH + ' (cols=' + entry.cols + ', rows=' + entry.rows + ')');
+        }
+      }
+    }
+  }
 
   /* ---- inline the stylesheet(s) ---- */
   STYLES.forEach(rel => {
@@ -174,11 +229,17 @@ async function main() {
 
   /* ---- verify nothing external is left ---- */
   const leftovers = [];
-  const reSrc = /<script[^>]+src=/gi;
-  const reLink = /<link[^>]+href="(?!data:)/gi;
+  const reSrc = /<script[^>]+src\s*=\s*(["']?)([^"'>\s]+)\1/gi;
+  const reLink = /<link[^>]+href\s*=\s*(["']?)((?!data:)[^"'>\s]+)\1/gi;
+  const reImport = /import\s*\(\s*(["']?)([^"')]+\.(?:js|mjs|json|css|wasm)\.?)\1\s*\)/gi;
+  const reFetch = /fetch\s*\(\s*(["'])([^"']+)\1\s*\)/gi;
+  const reCssUrl = /url\s*\(\s*(["']?)((?!data:)[^"')]+)\1\s*\)/gi;
   let m;
   while ((m = reSrc.exec(checkHtml))) leftovers.push(m[0]);
   while ((m = reLink.exec(checkHtml))) leftovers.push(m[0]);
+  while ((m = reImport.exec(checkHtml))) leftovers.push(m[0]);
+  while ((m = reFetch.exec(checkHtml))) leftovers.push(m[0]);
+  while ((m = reCssUrl.exec(checkHtml))) leftovers.push(m[0]);
   if (leftovers.length) {
     throw new Error('bundled file still references external files:\n  ' + leftovers.join('\n  '));
   }

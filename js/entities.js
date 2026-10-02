@@ -24,6 +24,10 @@
   };
   K.E = E;
 
+  /* Frame-rate independent random event: returns true with probability 1-exp(-rate*dt).
+     For small rate*dt, approximates rate*dt. Uses Poisson process semantics. */
+  function chancePerSecond(rate, dt) { return Math.random() < 1 - Math.exp(-rate * dt); }
+
   /* ============================================================
      Small helpers
      ============================================================ */
@@ -152,7 +156,7 @@
     this.rot += this.vrot * dt;
     if (this.shape === 'spear' || this.shape === 'blade' || this.shape === 'bolt') this.rot = Math.atan2(this.vy, this.vx);
 
-    if (this.trail && Math.random() < dt * 42) {
+    if (this.trail && chancePerSecond(42, dt)) {
       E.particles.spawn({
         x: this.x, y: this.y, vx: -this.vx * 0.06, vy: -this.vy * 0.06,
         life: 0.22, max: 0.22, size: this.size * 0.38, color: this.glow,
@@ -359,7 +363,7 @@
       this.vy = Math.sin(this.rushDir) * rsp;
       this.invuln = Math.max(this.invuln, dt + 0.02);
       G.playerDashDamage(this, (this.stats.damage || 15) * 1.1 * (st.rushMul || 1));
-      if (Math.random() < dt * 70) {
+      if (chancePerSecond(70, dt)) {
         E.particles.spawn({
           x: this.x, y: this.y, vx: (Math.random() - 0.5) * 50, vy: (Math.random() - 0.5) * 50,
           life: 0.34, max: 0.34, size: 6, color: '#8fe3c8', glow: true, add: true, drag: 0.86
@@ -370,7 +374,7 @@
       this.ascendT -= dt;
       this.invuln = Math.max(this.invuln, dt + 0.02);
       this.ascendFlash = Math.min(1, this.ascendFlash + dt * 4);
-      if (Math.random() < dt * 30) {
+      if (chancePerSecond(30, dt)) {
         E.particles.spawn({
           x: this.x + (Math.random() - 0.5) * 40, y: this.y + (Math.random() - 0.5) * 40,
           vx: 0, vy: -40, life: 0.7, max: 0.7, size: 3.4, color: '#ffe9a0', glow: true, add: true, drag: 0.94
@@ -418,7 +422,7 @@
         K.Audio.sfx('stone');
         ringFx(G, this.x, this.y, 30, '#ded8c8', 14);
       } else {
-        if (Math.random() < dt * 6) E.particles.spawn({ x: this.x + (Math.random() - 0.5) * 20, y: this.y + (Math.random() - 0.5) * 20, vx: 0, vy: -20, life: 0.5, max: 0.5, size: 2, color: '#b0b0b8', drag: 0.9 });
+        if (chancePerSecond(6, dt)) E.particles.spawn({ x: this.x + (Math.random() - 0.5) * 20, y: this.y + (Math.random() - 0.5) * 20, vx: 0, vy: -20, life: 0.5, max: 0.5, size: 2, color: '#b0b0b8', drag: 0.9 });
         return;
       }
     }
@@ -434,7 +438,7 @@
       const ds = 640 * st.dashDist;
       this.vx = this.dashDirX * ds;
       this.vy = this.dashDirY * ds;
-      if (st.dashTrail && Math.random() < dt * 60) {
+      if (st.dashTrail && chancePerSecond(60, dt)) {
         E.particles.spawn({
           x: this.x, y: this.y, vx: (Math.random() - 0.5) * 30, vy: (Math.random() - 0.5) * 30,
           life: 0.32, max: 0.32, size: 7, color: st.dashTrailColor || '#f5e07a', glow: true, add: true, drag: 0.88
@@ -551,7 +555,7 @@
         if (e.dead || e.ally) continue;
         if (U.dist2(this.x, this.y, e.x, e.y) < 190 * 190) G.applyStatus(e, 'slow', { amount: 0.25, dur: 0.3 });
       }
-      if (Math.random() < dt * 3) {
+      if (chancePerSecond(3, dt)) {
         E.particles.spawn({ x: this.x + (Math.random() - 0.5) * 120, y: this.y + (Math.random() - 0.5) * 120, vx: 0, vy: -22, life: 1, max: 1, size: 2.6, color: '#c07ad8', glow: true, add: true, drag: 0.96 });
       }
     }
@@ -908,7 +912,7 @@
 
   Player.prototype.doWrath = function (G) {
     const st = this.stats;
-    const cd = (G.run.weapon === 'xiphos' ? 3.4 : 3.4) * st.specialCdMul;
+    const cd = (G.run.weapon === 'xiphos' ? 3.4 : 3.4) * (st.specialCdMul || 1);
     this.specialCd = cd;
     K.Audio.sfx('explode');
     E.cam.addShake(7);
@@ -916,6 +920,7 @@
     const r = 128;
     ringFx(G, this.x, this.y, r, '#f0cf5e', 26);
     E.effects.push({ kind: 'nova', x: this.x, y: this.y, r, life: 0.34, max: 0.34, color: '#f0cf5e' });
+    let wrathHits = 0;
     for (const e of E.enemies) {
       if (e.dead || e.ally || e.hp <= 0) continue;
       const d = U.dist(this.x, this.y, e.x, e.y);
@@ -923,6 +928,7 @@
         const a = U.ang(this.x, this.y, e.x, e.y);
         G.damageEnemy(e, dmg, { source: 'wrath', x: e.x, y: e.y, dir: a, knock: 1.8, player: this });
         this.applyOnHit(e, G, false);
+        wrathHits++;
       }
     }
     if(K.RunSystems&&K.RunSystems.hasTransform(G.run,'echo_wrath')){
@@ -935,7 +941,7 @@
     }
     if (st.waveOnHit) G.playerWave(this.x, this.y, r * 1.2, (st.waveDmg || 20) * 1.4, this.aim);
     if (st.dashShield) this.addShield(st.dashShield, G);
-    if (st.darkBonus) this.heal(st.maxHp * st.darkBonus, G);
+    if (st.darkBonus && wrathHits > 0) this.heal(st.maxHp * st.darkBonus, G);
     if (st.doomOnHit) {
       for (const e of E.enemies) {
         if (e.dead || e.ally) continue;
@@ -956,7 +962,7 @@
   };
   Player.prototype.heal = function (n, G) {
     if (n <= 0) return;
-    if (G && G.run && G.run.isFatedTrial && G.run.trialModifiers) n *= G.run.trialModifiers.healing;
+    if (G && G.run && G.run.trialModifiers) n *= G.run.trialModifiers.healing;
     const before = this.hp;
     this.hp = Math.min(this.stats.maxHp, this.hp + n);
     if (this.hp > before && Math.random() < 0.5) K.Audio.sfx('heal');
@@ -1063,6 +1069,9 @@
 
   Enemy.prototype.update = function (dt, G) {
     dt = Math.min(0.08, Math.max(0, dt));
+    /* aiDt scales with attackTempoMul (from trial modifiers). This means faster enemies
+       have proportionally shorter telegraph/state timers. Player abilities use raw dt.
+       Design decision: enemy speed increase affects both movement and decision timing. */
     const aiDt = dt * (this.attackTempoMul || 1);
     this.anim += dt;
     this.spawnT = Math.max(0, this.spawnT - dt);
@@ -1243,7 +1252,7 @@
     if (this.state === 'windup') {
       this.telegraph -= dt;
       this.vx *= 0.8; this.vy *= 0.8;
-      if (Math.random() < dt * 24) {
+      if (chancePerSecond(24, dt)) {
         E.particles.spawn({ x: this.x + (Math.random() - 0.5) * 30, y: this.y + (Math.random() - 0.5) * 30, vx: 0, vy: -40, life: 0.3, max: 0.3, size: 2.6, color: '#ff8a6a', glow: true, add: true });
       }
       if (this.telegraph <= 0) {
@@ -1257,7 +1266,7 @@
     }
     if (this.state === 'charge') {
       this.vx = this.chargeVX; this.vy = this.chargeVY;
-      if (Math.random() < dt * 40) {
+      if (chancePerSecond(40, dt)) {
         E.particles.spawn({ x: this.x, y: this.y + 8, vx: (Math.random() - 0.5) * 60, vy: -20, life: 0.3, max: 0.3, size: 3, color: 'rgba(200,180,150,0.6)', drag: 0.9 });
       }
       if (this.stateT > o.chargeTime) { this.state = 'idle'; this.stateT = 0; this.atkCd = o.chargeCd; this.vx *= 0.3; this.vy *= 0.3; }
@@ -1403,7 +1412,7 @@
       this.vx *= 0.9; this.vy *= 0.9;
       this.gazeA = U.turn(this.gazeA === undefined ? a : this.gazeA, a, 1.4, dt);
       // beam visual
-      if (Math.random() < dt * 30) {
+      if (chancePerSecond(30, dt)) {
         const gd = 120 + Math.random() * (o.gazeRange || 340);
         E.particles.spawn({
           x: this.x + Math.cos(this.gazeA) * gd, y: this.y + Math.sin(this.gazeA) * gd,
@@ -1450,7 +1459,7 @@
     if (this.state === 'windup') {
       this.telegraph -= dt;
       this.vx *= 0.78; this.vy *= 0.78;
-      if (Math.random() < dt * 30) {
+      if (chancePerSecond(30, dt)) {
         E.particles.spawn({ x: this.x + (Math.random() - 0.5) * this.radius * 2, y: this.y + this.radius, vx: 0, vy: -70, life: 0.4, max: 0.4, size: 3, color: '#e2a06a', glow: true, add: true });
       }
       if (this.telegraph <= 0) {
@@ -1463,7 +1472,7 @@
     }
     if (this.state === 'charge') {
       this.vx = this.chargeVX; this.vy = this.chargeVY;
-      if (Math.random() < dt * 30) {
+      if (chancePerSecond(30, dt)) {
         E.particles.spawn({ x: this.x, y: this.y + this.radius * 0.7, vx: (Math.random() - 0.5) * 90, vy: -30, life: 0.4, max: 0.4, size: 5, color: 'rgba(180,150,110,0.55)', drag: 0.9 });
       }
       if (this.stateT > (o.chargeTime || 0.5)) { this.state = 'idle'; this.stateT = 0; this.atkCd = o.chargeCd || 2.4; }
@@ -1582,7 +1591,7 @@
       this.fuseT -= dt;
       this.vx *= 0.86; this.vy *= 0.86;
       this.flash = 1 + Math.sin(this.anim * 40) * 0.5;
-      if (Math.random() < dt * 30) {
+      if (chancePerSecond(30, dt)) {
         E.particles.spawn({ x: this.x + (Math.random() - 0.5) * 16, y: this.y + (Math.random() - 0.5) * 16, vx: 0, vy: -30, life: 0.25, max: 0.25, size: 3, color: '#ffd27a', glow: true, add: true });
       }
       if (this.fuseT <= 0) { this.detonate(G); }
@@ -1731,6 +1740,8 @@
 
   Boss.prototype.update = function (dt, G) {
     dt = Math.min(0.08, Math.max(0, dt));
+    /* aiDt scales with attackTempoMul. Boss telegraphs and phase transitions run faster
+       when attackTempoMul > 1 (from trial modifiers). Player abilities use raw dt. */
     const aiDt = dt * (this.attackTempoMul || 1);
     this.anim += dt;
     this.spawnT = Math.max(0, this.spawnT - dt);
@@ -1743,7 +1754,7 @@
       this.deathT += dt;
       this.vx *= 0.88; this.vy *= 0.88;
       this.x += this.vx * dt; this.y += this.vy * dt;
-      if (Math.random() < dt * 26) {
+      if (chancePerSecond(26, dt)) {
         E.particles.spawn({ x: this.x + (Math.random() - 0.5) * this.radius * 2, y: this.y + (Math.random() - 0.5) * this.radius * 2, vx: (Math.random() - 0.5) * 60, vy: -60 * Math.random(), life: 0.7, max: 0.7, size: 4, color: this.color, glow: true, add: true, drag: 0.92 });
       }
       if (this.deathT > 2.0) this.removeMe = true;
@@ -1805,7 +1816,7 @@
     else { const t = a + Math.PI / 2; b.vx = U.lerp(b.vx, Math.cos(t) * s * 0.7, 1 - Math.pow(0.06, dt)); b.vy = U.lerp(b.vy, Math.sin(t) * s * 0.7, 1 - Math.pow(0.06, dt)); }
   }
   function bossTelegraph(b, dt, t) {
-    if (Math.random() < dt * 30) {
+    if (chancePerSecond(30, dt)) {
       E.particles.spawn({ x: b.x + (Math.random() - 0.5) * b.radius * 2.4, y: b.y + (Math.random() - 0.5) * b.radius * 2.4, vx: 0, vy: -60, life: 0.34, max: 0.34, size: 3.4, color: '#ffb060', glow: true, add: true });
     }
   }
@@ -2463,7 +2474,7 @@
     }
     this.x += this.vx * dt; this.y += this.vy * dt;
     G.collideWithWalls(this);
-    if (Math.random() < dt * 10) {
+    if (chancePerSecond(10, dt)) {
       E.particles.spawn({ x: this.x + (Math.random() - 0.5) * 14, y: this.y + (Math.random() - 0.5) * 14, vx: 0, vy: -24, life: 0.4, max: 0.4, size: 2.6, color: this.color, glow: true, add: true, drag: 0.94 });
     }
   };

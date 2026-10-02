@@ -47,7 +47,7 @@
   }
   function dimFor(ent) {
     const family = ent.visualKey || ent.familyId || ent.id;
-    const heroId=ent.isPlayer&&(ent.heroId||G.run&&G.run.heroId);
+    const heroId=ent.isPlayer&&ent.heroId;
     const heroArt=heroId&&'actor.player.'+heroId;
     const id = ent.isPlayer ? (heroArt&&A.entry(heroArt)?heroArt:'actor.player') : (ent.isBoss ? 'actor.boss.' + family : (ent.ally ? 'actor.ally.' + family : 'actor.enemy.' + family));
     const e = A.entry(id);
@@ -285,10 +285,8 @@
       ctx.save();
       ctx.globalAlpha = t;
       ctx.textAlign = 'center';
-      ctx.font = 'bold 18px Georgia, serif';
       ctx.fillStyle = f.color || '#f0cf5e';
-      ctx.shadowColor = '#090707'; ctx.shadowBlur = 8;
-      ctx.fillText(f.text, f.x, f.y - (1 - t) * 28);
+      floatText(ctx, f, t);
       ctx.restore();
       return;
     }
@@ -322,15 +320,35 @@
 
   function drawParticles(ctx, G) {
     const l = G.particles && G.particles.list || [];
+    const viewRect = K.WorldRenderer && K.WorldRenderer.viewRect;
+    const view = viewRect && G.cam ? viewRect(G.cam, 60) : null;
+    const tick = Math.floor((G.realTime || 0) * 8);
     for (let i = 0; i < l.length; i++) {
       const p = l[i], alpha = p.fade ? Math.max(0, p.life / p.max) : 1;
       if (alpha < 0.04) continue;
-      let cell = (i * 7 + Math.floor(G.realTime * 8)) % 16;
+      if (view) { const r = (p.size || 3) * 4; if (p.x + r < view.x0 || p.y + r < view.y0 || p.x - r > view.x1 || p.y - r > view.y1) continue; }
+      let cell = (i * 7 + tick) % 16;
       if (p.color && (p.color.indexOf('7a') >= 0 || p.color.indexOf('9b') >= 0)) cell = 9 + (cell % 4);
       else if (p.color && (p.color.indexOf('5f') >= 0 || p.color.indexOf('bf') >= 0)) cell = 4 + (cell % 4);
       const t = p.fade === false ? 1 : Math.max(0.36, 0.35 + 0.65 * alpha);
       A.drawCell(ctx, 'effects.particles', cell % 4, Math.floor(cell / 4), p.x, p.y,
         p.size * 4.2 * t, p.size * 3.6 * t, { alpha, rot: p.rot || 0 });
+    }
+  }
+
+  /* Floating combat text gets a dark outline so damage numbers stay readable over sand, lava, and snow. */
+  function floatText(ctx, f, t) {
+    ctx.font = 'bold 18px Georgia, serif';
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = 'rgba(8,6,5,.85)';
+    ctx.shadowColor = '#090707';
+    ctx.shadowBlur = 4;
+    if (typeof ctx.outlinedText === 'function') ctx.outlinedText(f.text, f.x, f.y - (1 - t) * 28);
+    else {
+      ctx.shadowBlur = 0;
+      ctx.strokeText(f.text, f.x, f.y - (1 - t) * 28);
+      ctx.shadowBlur = 4;
+      ctx.fillText(f.text, f.x, f.y - (1 - t) * 28);
     }
   }
   function drawProjectile(ctx, p) {
@@ -345,10 +363,21 @@
   function drawInteractable(ctx, G, it, rid) {
     const atlas = 'region.' + regionArtId(rid) + '.props';
     const usedAlpha = it.used ? 0.28 : 0.95;
+    if (['marketEntrance','marketReturn','worldNpc','worldCache','regionExit'].includes(it.kind)) {
+      const cell=it.kind==='worldNpc'?11:it.kind==='worldCache'?7:it.kind==='marketEntrance'?4:15;
+      A.drawCell(ctx,atlas,cell%4,Math.floor(cell/4),it.x,it.y-20,110,140,{alpha:usedAlpha});
+      if(it.kind==='worldNpc'&&it.characterIds&&D.GODS[it.characterIds[0]]){
+        const g=D.GODS[it.characterIds[0]],portrait='portrait.greek.'+g.id+'.poster';
+        if(A.entry(portrait))A.drawImage(ctx,portrait,it.x-40,it.y-118,80,110,{alpha:usedAlpha});
+        else A.drawCell(ctx,'ui.deities',g.portraitCell%8,Math.floor(g.portraitCell/8),it.x,it.y-65,90,110,{alpha:usedAlpha});
+      }
+      if(!it.used)textAt(ctx,it.label||it.kind.toUpperCase(),it.x,it.y-132,'#efd6a0',11);
+      return;
+    }
     if (it.kind === 'gate') {
       const frame = Math.floor(G.realTime * 8) % 4;
       A.drawCell(ctx, 'effects.divine', frame, 2, it.x, it.y - 24, 190, 210, { alpha: usedAlpha });
-      if (!it.used) textAt(ctx, 'E  DESCEND', it.x, it.y - 132, '#f0cf5e', 13);
+      if (!it.used) textAt(ctx, G.world ? 'E  CLAIM REWARD' : 'E  DESCEND', it.x, it.y - 132, '#f0cf5e', 13);
       return;
     }
     if(it.kind==='arena'){
@@ -376,7 +405,12 @@
   }
   function textAt(ctx, text, x, y, color, size) {
     ctx.save(); ctx.textAlign = 'center'; ctx.font = 'bold ' + size + 'px Georgia, serif';
-    ctx.fillStyle = color; ctx.shadowColor = '#080607'; ctx.shadowBlur = 8; ctx.fillText(text, x, y); ctx.restore();
+    ctx.lineWidth = Math.max(2, size * 0.22); ctx.strokeStyle = 'rgba(6,5,4,.8)';
+    ctx.shadowColor = '#080607'; ctx.shadowBlur = 6;
+    ctx.fillStyle = color;
+    if (typeof ctx.outlinedText === 'function') ctx.outlinedText(text, x, y);
+    else { ctx.strokeText(text, x, y); ctx.fillText(text, x, y); }
+    ctx.restore();
   }
   function drawPickup(ctx, p, G) {
     const t = G.realTime * 3 + p.x * 0.01;
@@ -394,8 +428,8 @@
     ctx.fillStyle = '#f0cf5e'; ctx.shadowColor = '#090707'; ctx.shadowBlur = 16;
     ctx.fillText(b.big, K.W / 2, K.H * 0.26);
     ctx.shadowBlur = 0;
-    if (b.small) { ctx.font = Math.round(Math.min(18, K.W / 50)) + 'px Georgia, serif'; ctx.fillStyle = '#c8b898'; ctx.fillText(b.small, K.W / 2, K.H * 0.285); }
-    if (b.sub) { ctx.font = 'italic ' + Math.round(Math.min(15, K.W / 60)) + 'px Georgia, serif'; ctx.fillStyle = '#9a8a72'; ctx.fillText(b.sub, K.W / 2, K.H * 0.31); }
+    if (b.small) { ctx.font = Math.round(Math.min(18, K.W / 50)) + 'px Georgia, serif'; ctx.fillStyle = '#d7c9aa'; ctx.shadowBlur = 8; ctx.shadowColor = '#090707'; ctx.fillText(b.small, K.W / 2, K.H * 0.285); }
+    if (b.sub) { ctx.font = 'italic ' + Math.round(Math.min(15, K.W / 60)) + 'px Georgia, serif'; ctx.fillStyle = '#b3a58c'; ctx.shadowBlur = 8; ctx.shadowColor = '#090707'; ctx.fillText(b.sub, K.W / 2, K.H * 0.31); }
     ctx.restore();
   }
   function drawCinematic(ctx, G) {
@@ -416,6 +450,8 @@
   }
 
   R.draw = function (ctx, G) {
+    if (K.WorldRenderer && ctx && ctx._webgl) return K.WorldRenderer.draw(ctx, G);
+    if (G.world) return;
     const rid = regionId(G);
     if (!G.arena) G.arena = { x: -590, y: -410, w: 1180, h: 820 };
     ctx.save();
@@ -448,6 +484,8 @@
   };
 
   R.godColor = function (id) { return (D.GODS[id] || { color: '#e0b355' }).color; };
+  R.worldHelpers = {actor:drawActor,hazard:drawHazard,effect:drawEffect,interactable:drawInteractable,
+    projectile:drawProjectile,particles:drawParticles,pickup:drawPickup,banner:drawBanner,cinematic:drawCinematic};
 })();
 
 

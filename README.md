@@ -1,12 +1,13 @@
 # ΚΑΤΑΒΑΣΙΣ — KATABASIS
 
 **A roguelite set in Ancient Greece.** You are a mortal who has walked out of the House of
-Hades. The Olympians take an interest as you climb through twenty-four regions—from Tartarus
-and the River Styx to the Aegean crossing, the Gigantomachy front and the summit of Olympus.
+Hades. The Olympians take an interest as you travel through 26 connected destinations—from
+Tartarus and the River Styx to the Aegean crossing, the living roads of Ancient Greece,
+Atlantis, the Gigantomachy front and the summit of Olympus.
 
 A *katabasis* is a descent — into the underworld, and back out again.
 
-The Divine Codex now holds **48 Greek deities**, including an Olympian Thirteen roster that counts both Hestia and Dionysus. Their painted portraits appear in divine audiences, calls, boon offers, and the Codex. Favor rises through boons, campaign choices, offerings, trials, and answered calls; refusing a god can sour the bond and strengthen a rival.
+The portrait Codex holds **53 stable deity identities**. The 48 boon-bearing gods keep their existing gameplay IDs; Mnemosyne, Leto, Oceanus, Tethys and Ananke are art-only. All 53 ship distinct full-resolution PNG masters and 320×400 offline WebP posters. One reusable portrait appears on every matching boon, duo, audience, and Codex entry. Favour rises through boons, campaign choices, offerings, trials and answered calls; refusing a god can sour the bond and strengthen a rival.
 
 The bestiary adds **232 illustrated enemy families** across four painted atlases, with regional homes and fifteen combat roles. Chambers bring larger waves and can keep up to 22 enemies active together.
 
@@ -99,36 +100,42 @@ empowers the rift, *Wing-Footed Charge* and *Afterimage* (Hermes) transform Rush
 
 ## How a run works
 
-The campaign climbs through **24 regions**, each with eight chamber positions, for 192
-main-path chambers. Six route decisions in each region shape room types, encounter
-conditions, enemy squads, optional boss aspects and rewards; every region ends at its
-own capstone.
+The connected Greek campaign has **24 established destinations plus Ancient Greece and
+Atlantis**, with eight major encounter beats and a capstone in each destination. The full
+26-destination circuit has 208 beats. A seeded world map links encounter spaces, recovery,
+events, optional fights, secrets and service stops; side routes can be explored and revisited.
+Ancient Greece and Atlantis open through story-gated exits while the original regional IDs
+and Olympus–Typhon finale remain intact.
 
 - **Combat and challenge** — staged waves of mythological enemies. Clear them for a boon.
 - **Champion chambers** — an elite champion supported by a larger minion group.
-- **Charon’s shops** — spend obols on healing, permanent upgrades, relics and boons.
+- **Charon’s Market** — visit a connected safe dock to browse persistent stock, gear, healing,
+  upgrades, relics and boons, then return to the same crossing.
 - **Treasure chambers** — fight through guardians and claim a relic.
 - **Events** — take a healing offer or accept a risk for obols and a lasting effect.
 - **Optional boss routes** — challenge a regional aspect for a greater reward.
 - **Capstones** — defeat the region’s required boss to continue the ascent.
 
-Clearing a chamber opens a gate. Passing through it collects its reward and advances the
-run. Obols and the Mirror of Nyx persist through death.
+Clearing an encounter opens a physical reward gate. Passing through it claims that reward and
+returns control to the connected map. The map reveals as you travel, terrain blocks movement,
+and dropped Obols are credited once when collected. Obols and the Mirror of Nyx persist through
+death.
 
 ### Progression and endgame
 
-The 24-region descent is grouped into three acts of eight regions: Establish, Combine, and
-Commit. The HUD tracks act, region, chamber, and the next milestone. The region 8 and 16
-capstones add a separate Fated Thread draft after the normal boss boon and before the
-campaign story. Choose one of three build-aware transformations; a run can keep two. Route
-cards show danger, reward, encounter condition, threats, and any cost before you commit.
+The original 24 destinations retain three acts (8/8/8, extended to 8/8/10 with the two
+story-gated destinations Ancient Greece and Atlantis); the HUD tracks act, region,
+encounter and the next milestone. Act capstones add a separate Fated Thread draft after the
+normal boss boon and before the campaign story. Choose one of three build-aware
+transformations; a run can keep two. Free run modifiers shape hazards and side paths without
+turning an ordinary run into a Fated Trial.
 
-Persistent progression keeps its existing systems and unlocks, with bounded combat power.
-Mirror ranks keep their current caps. Gear keeps its templates, rarity, affixes, and sets,
-but level 30 is its final effective power level. New drops scale with depth; legacy items
-above 30 stay in the Armory and use level 30 for effects, sale value, and upgrade limits.
-The Loom has 42 spendable points across its six branches; once those points are spent or
-banked, further Paragon XP does not add more points.
+Persistent progression keeps existing unlocks and bounds combat power. The Mirror retains its
+legacy ranks and adds finite Wayfinding, Artifice and Divine Accord branches. Gear keeps its
+templates, affixes and sets; level 30 is its final effective level. Masterworking adds three
+ranks, Refinement replaces one ordinary affix, and Mythic and Godforged items add capped
+horizontal traits and imprints. Legacy items above 30 stay in the Armory and use level 30 for
+effects, sale value and upgrade limits. The Loom has 42 spendable points across six branches.
 
 A full campaign victory unlocks Fated Trials. Select ranks 1–3 from eight Pacts before a
 descent; the sum is the Pact Score (1–24). Pacts can strengthen or speed enemies, reduce
@@ -196,7 +203,7 @@ the Eidolon of a Hero who still remembers its footwork.
 The original four bosses retain their named phases. Eight named capstones cover the earlier
 regions; Acheron’s Keeper, Mnemosyne, the Crowned Minotaur, Circe, the Colchian Dragon
 and Typhon’s Heart add six more regional capstones. Seventeen generated aspects for each
-original boss bring the full roster to 86 boss definitions.
+original boss bring the full roster to 92 boss definitions (4 base + 14 named + 6 capstones + 68 aspects).
 
 ### Gods you can call
 
@@ -212,8 +219,9 @@ gnaws at everything that lives.
 
 ## The Mirror of Nyx
 
-Permanent progression, bought with obols that survive death. Sixteen reflections, 52 ranks
-in total, two to five ranks each — Toughness, Striking Power, Swiftness, Sharpened Edge,
+Permanent progression, bought with obols that survive death. The original sixteen
+reflections and 52 ranks remain; three finite branches add map revelation, salvage and
+refinement options, and ordinary boon choice. Toughness, Striking Power, Swiftness, Sharpened Edge,
 Thick Skin, Gods' Charm, Greed, Windfoot, Wrathful, **Death's Mercy** (extra resurrections),
 Insight (extra rerolls and boon choices), Tithe of the Dead, Chthonic Bargain, Fury,
 Styx-Touched, and **Fated** — which starts every run with a random relic.
@@ -232,9 +240,7 @@ optimized image into `katabasis.html`.
 ```
 index.html          markup, HUD, and every menu screen
 css/style.css       black-figure pottery styling
-js/core.js          RNG, math, input, camera, particles, save normalization,
-                    and a fully procedural Web Audio score (modal Greek scales,
-                    frame drums, lyre arpeggios — no sound files)
+js/core.js          RNG, math, input, camera, particles, save normalization and audio support
 js/data.js          base records for 12 gods, 93 boons, 18 relics, 16 meta upgrades,
                     4 regions, 24 enemies and 4 bosses
 js/content-expansion.js  20× catalogs, boss aspects, new capstones, regions, routes,
@@ -245,7 +251,13 @@ js/game.js          the run director: chambers, spawning, the stat compiler,
                     damage resolution, boon economy, every god effect
 js/asset-manifest.js generated atlas dimensions and image paths
 js/assets.js        image preloader, atlas drawing, sprite animation and UI image helpers
-js/render.js        image-based visual layer: region scenes, actors, bosses, VFX, banners
+js/world.js         seeded connected terrain, landmarks, routes, hazards and discovery
+js/world-runtime.js world traversal, collision, physical encounters, Charon’s Market
+js/world-renderer.js WebGL 2.5D terrain, height, shadows, actors and visibility culling
+js/mythology.js     persistent contextual stories and future mythology-pack boundaries
+js/portraits.js     the 53-ID portrait registry and visible-surface motion treatment
+js/endgame.js       finite Mirror branches, ordinary modifiers and horizontal gear systems
+js/render.js        scene helpers for actors, bosses, VFX, banners and interactions
 js/main.js          boot, resize, the fixed-step loop, all menus and HUD wiring
 assets/             PNG source art and optimized WebP atlases used by the game
 ```
@@ -263,19 +275,17 @@ A few notes on how it is put together:
 - **Enemies are data plus an AI archetype.** Each bestiary entry names a behaviour
   (`charger`, `diver`, `petrifier`, `brute`, `kiter`, `summoner`, `exploder`, `duelist`,
   `hundred`, …) and its numbers. The archetype owns the tell, the danger, and the opening.
-- **All scene artwork is image-based.** Generated, transparent sprite atlases supply the
-  player, every creature and boss, animated combat effects, projectiles, status effects,
-  region backdrops and floors, environmental props, god portraits, relics and interface
-  textures. The canvas positions, crops, fades and animates these images; it does not draw
-  geometric artwork for the game world.
+- **Scene artwork is raster-based.** The WebGL renderer layers image atlases, generated
+  regional terrain, props, shadows, actors and effects into a 2.5D world. The 53 deity posters
+  are packaged by stable ID for offline use, with reduced-motion and static HUD fallbacks.
 - **The art source files stay editable.** PNG masters are retained in `assets/`; the
   manifest points the runtime at optimized WebP atlases and lazy-loaded animation sheets.
   `tools/build-animation-atlases.js --pack` registers reviewed transparent sprite sheets
   without resampling. Each sheet declares its own grid, with a 256-pixel minimum frame edge.
   `tools/bundle.js` streams the image and audio payloads into the standalone file.
-- **Audio is synthesised at runtime.** No assets. Each region has its own modal track
-  (Phrygian for Tartarus and the Forge, Dorian for Asphodel, Lydian for Olympus) with a
-  drone, a pad, a lyre arpeggio and frame drums.
+- **Audio follows the region.** Four local MP3 tracks layer calm, combat, miniboss and boss
+  intensity. Region changes select the matching theme, and the standalone file embeds every
+  track for offline play.
 
 ---
 
@@ -292,7 +302,8 @@ For the expanded revision and extensive debug pass:
   `node tools/offline-browser.js` verifies that file with networking disabled and records
   simulation-plus-draw CPU timings on the local machine.
 - Every runtime image entry is raster art; all referenced files are present in `assets/`.
-- The catalogue retains 24 regions, 192 chambers and 144 route decisions. The new boon
+- The catalogue retains the 24 established region IDs and adds Ancient Greece and Atlantis;
+  the full circuit has 26 destinations and 208 encounter beats. The new boon
   and build expansion triples 2,820 offers to 8,460 and preserves the original definitions.
 
 Projectile bonuses now produce their advertised damage multiplier. Calls, generated
@@ -345,23 +356,25 @@ These reference captures predate the expanded campaign and do not show the new r
 ## Expanded campaign
 
 The expanded game has 8,460 boons, 366 relics, 5,120 fightable enemy definitions plus
-two summoned allies, 92 boss definitions, and a twenty-four-region campaign of eight
-chambers per region (192 main-path chambers). Boons comprise 381 ordinary families
-and 42 special families, each with twenty build profiles. Painted enemy families and
+two summoned allies, 92 boss definitions, and a 26-destination campaign of eight major
+encounter beats per destination (208 beats if every destination is visited). Boons comprise
+381 ordinary families and 42 special families, each with twenty build profiles. Painted enemy families and
 their stat profiles retain the existing art, boss stages, and regional capstones.
 
-Six route decisions per region vary room types, conditions, enemy squads, optional boss
-aspects and rewards. Their route-signature lower bound is 2^108.
+Seeded maps connect the required combat, recovery, story and capstone beats with optional
+branches, caches, minibosses, hazards and landmarks. Encounter rewards remain tied to the
+physical node that was cleared.
 
 Capstone conversations play as image-led cutscenes over each region’s raster backdrop.
 Character sprite sheets animate per speaker; Enter, Space, or Right advances the dialogue,
-Escape skips to the decision, and every scene still ends with its campaign choice. Player and enemy art is
-larger while collision radii stay unchanged; combat queues later groups and caps active
-hostiles at 14. The searchable Codex renders 48 entries per page, and existing local Save
-and Mirror fields are retained.
+Escape skips to the decision, and every scene still ends with its campaign choice. Player and
+enemy art is larger while collision radii stay unchanged; combat queues later groups and caps
+active hostiles at 22. The searchable Codex includes all 53 portrait identities, and existing
+local Save and Mirror fields are retained.
 
-All runtime asset entries are raster images, including lazy-loaded enemy animation sheets. Generated PNG masters remain editable,
-and optimized WebP atlases are bundled for offline play. The last source build produced
+All runtime asset entries are raster images, including deity posters and lazy-loaded enemy
+animation sheets. Generated PNG masters remain editable, and optimized WebP atlases are
+bundled for offline play. The last source build produced
 a single HTML file with zero external references.
 
 ## Progress storage and quality pass (2026-09-30)

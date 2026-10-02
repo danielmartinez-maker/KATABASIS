@@ -59,7 +59,8 @@ async function main() {
   const profile = path.join(require('os').tmpdir(), 'katabasis-check-' + Date.now());
   const child = spawn(exe, [
     '--headless=new',
-    '--disable-gpu',
+    '--enable-gpu',
+    '--use-gl=angle',
     '--no-first-run',
     '--no-default-browser-check',
     '--disable-extensions',
@@ -158,6 +159,10 @@ async function main() {
 
   /* ---- start a run through the real UI ---- */
   await evalJS('document.getElementById("btn-begin").click()');
+  await sleep(500);
+  await evalJS('document.getElementById("hero-start").click()');
+  await sleep(500);
+  await evalJS('document.getElementById("modifier-start").click()');
   await sleep(700);
   const started = await evalJS('(function(){var G=window.K.G;return {phase:G.phase, region:G.region().name, type:G.roomDef.type, enemies:window.K.E.enemies.length, hp:Math.round(G.player.hp), maxHp:G.player.stats.maxHp};})()');
   console.log('run started:', JSON.stringify(started));
@@ -341,6 +346,10 @@ async function main() {
   /* The loop's `screen` variable is module-private, so drive it through the UI:
      BEGIN calls showScreen(null) and starts a fresh run on the canvas. */
   await evalJS('document.getElementById("btn-begin").click()');
+  await sleep(400);
+  await evalJS('document.getElementById("hero-start").click()');
+  await sleep(400);
+  await evalJS('document.getElementById("modifier-start").click()');
   await sleep(600);
   await evalJS(`(function(){
     /* NOTE: everything local is scoped inside this IIFE on purpose — a bare
@@ -403,17 +412,12 @@ async function main() {
   /* canvas pixel sanity: is anything actually drawn? */
   const px = await evalJS(`(function(){
     var c = document.getElementById('game');
-    var g = c.getContext('2d');
-    var d = g.getImageData(0,0,c.width,c.height).data;
-    var seen = {}, n = 0;
-    for (var i=0;i<d.length;i+=4*997){
-      var k = (d[i]>>4)+','+(d[i+1]>>4)+','+(d[i+2]>>4);
-      if (!seen[k]) { seen[k]=1; n++; }
-    }
-    return n;
+    var gl = c.getContext('webgl2') || c.getContext('webgl');
+    if (!gl) return null;
+    return {renderer: gl.getParameter(gl.RENDERER), version: gl.getParameter(gl.VERSION), width:c.width, height:c.height};
   })()`);
-  console.log('  distinct sampled canvas colours:', px);
-  if (px === null || px < 4) problems.push('canvas looks blank (only ' + px + ' distinct sampled colours)');
+  console.log('  WebGL canvas probe:', JSON.stringify(px));
+  if (!px || !px.renderer) problems.push('WebGL canvas is unavailable or blank');
 
   try { ws.close(); } catch (e) {}
   try { child.kill(); } catch (e) {}

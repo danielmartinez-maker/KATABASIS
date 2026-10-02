@@ -1,0 +1,114 @@
+﻿KATABASIS DEBUG PASS - SUMMARY OF FIXES APPLIED
+===============================================
+
+WORLD RENDERER - Missing terrain art for new regions (ancient_greece, atlantis)
+  world.js:15 - addDestination() now inherits base region's artFamily instead of using destination id
+  world-renderer.js:247 - artFamily() now applies aliases recursively (resolves ancient_greece->asphodel, atlantis->aegean)
+  world-renderer.js:194-200 - drawTerrain() adds floor family aliases + flat-color fallback for missing floor art
+  assets.js:225 - iconAsset() region: alias map now includes ancient_greece->elysium, atlantis->aegean
+
+ASSETS - Missing relic transform icons
+  assets.js:188 - relics[] array now includes all 6 RELIC_TRANSFORMS (r_hydra_heart, r_sunwheel, r_icarian_spurs, r_orpheus_lyre, r_aegis_memory, r_atlas_anvil)
+  assets.js:188 - removed phantom 'r_thread' (no such relic in data.js)
+
+GAMEPLAY - Wrath cooldown NaN bug
+  entities.js:911 - specialCdMul now has fallback: (st.specialCdMul || 1)
+
+GAMEPLAY - Free Death Defiance on every run
+  game.js:245 - changed Math.max(1, ...) to Math.max(0, ...) so deathDefy is 0 without sources
+  game.js:429,507 - trialModifiers.deathDefiancePenalty now safely reads from both modifiers and trialModifiers with || {} guards
+
+GAMEPLAY - NaN damage crashes
+  game.js:985-989 - damageEnemy() now validates amount with num() and returns 0 if not > 0
+
+GAMEPLAY - Wrath darkBonus heal on whiff
+  entities.js:909-938 - doWrath() now counts hits (wrathHits), only heals if wrathHits > 0
+
+GAMEPLAY - deflectProj unbounded (could exceed 1.0)
+  build-powers.js:36-37 - added STAT_CAPS for deflectProj:0.6, darkBonus:0.5
+
+GAMEPLAY - chain.n scale branch dead code / +1 target per stack
+  game.js:288-291 - dead branch (sc>1.3?1:1) left as-is (content), removed +1 from chain.n accumulation
+
+SAVE - __proto__ pollution in JSON.parse
+  core.js:526 - delete d.__proto__ and d.equippedGear.__proto__ after parse, before Object.assign
+
+SAVE - campaignMilestones / endgamePreferences / unlockedWeapons / weapon / unlockedHeroes / selectedHero not re-validated on load
+  core.js:526-528 - explicit re-initialization of all these fields with defaults if missing/invalid
+
+SAVE - Unbounded arrays grow until quota fail
+  core.js:555-556 - added slice() caps: killChronicle=500, campaignArchive=100, nemeses/nemesisLog=200, gearInventory=500
+
+SAVE - clear() doesn't clear IndexedDB, leaves stale marker
+  persistence.js:50-51 - added P.clearDatabase() that deletes IDB 'save' record and clears MARKER
+  core.js:590 - Save.clear() now calls K.Persistence.clearDatabase() if available
+
+SAVE - IDB flush failure has no localStorage fallback
+  persistence.js:45-46 - on IDB write failure, attempts localStorage.setItem() as emergency backup
+
+SAVE - gear.js unlockedWeapons normalization only runs inside valid weaponId block
+  gear.js:252-254 - hoisted unlockedWeapons array initialization and weapon validation outside conditional
+
+SAVE - gear.js equippedGear extra keys (__proto__, charm) not stripped
+  gear.js:256-263 - rebuild equippedGear as clean object with whitelisted SLOTS only
+
+SAVE - paragon respec uses unsafe obols check and bypasses MAX_SPENDABLE_POINTS cap
+  paragon.js:134-140 - added Number.isSafeInteger(save.obols) check, clamped refunded points to MAX_SPENDABLE_POINTS=42
+
+UI - Tab key swallowed by input guard, MAP·TAB never fires
+  core.js:135 - Tab now allowed through when not in form field, with preventDefault()
+
+UI - Escape key swallowed in search fields, can't close Codex
+  core.js:135 - Escape always passes through input guard
+
+UI - cutscene next/skip double-advance on Space (manual keydown->click + native)
+  main.js:1694-1700 - removed manual keydown handlers for cutscene buttons
+
+UI - global user-select:none blocks text selection in search inputs
+  css/style.css:92 - added input,textarea,select{user-select:text}
+
+UI - armory buildCode serializes equippedGear instance-ids, parse ignores payload.g
+  run-systems.js:459 - removed 'g' field from buildCode payload (gear is run-local display only)
+
+UI - codex-search rebuilds entire grid on every keystroke (perf + a11y)
+  main.js:1773 - added 150ms debounce on input event
+
+UI - armory re-focus uses aria-label.startsWith(name+',') - breaks on comma names
+  main.js:695 - changed to query [aria-pressed='true'] instead of string matching
+
+UI - overhaul market Escape doesn't call updateHUD()
+  overhaul-ui.js:68 - screen-market Escape handler now calls ui.updateHUD()
+
+UI - paragon-buy null .focus() when tree empty/locked
+  main.js:737 - added optional chaining ?.focus()
+
+UI - gamepad padHeld never cleared on disconnect
+  overhaul-ui.js:85 - reset padHeld={} when no pad found
+
+UI - spacebar legacy 'Spacebar' key missed in card keydown
+  main.js:627 - added 'Spacebar' and ev.code==='Space' to key check
+
+UI - showScreen() missing null guards for veil/hud
+  main.js:107-112 - added if (veil) / if (hudEl) guards
+
+CONTENT - content-expansion.js double-eval on module reload
+  content-expansion.js:2-5 - added D.CONTENT_EXPANDED guard at module entry
+
+CONTENT - bestiaryLore stale after regionHome reassignment
+  content-expansion.js:487-488 - added bestiaryLore refresh in reassignment loop
+
+CONTENT - order.map().filter(Boolean) silently drops typos
+  content-expansion.js:482 - replaced with explicit check that throws on missing region id
+
+README - boss count incorrect (86 vs actual 92)
+  README.md:206 - updated to '92 boss definitions (4 base + 14 named + 6 capstones + 68 aspects)'
+
+README - act split wrong (3 acts of 8 vs 8/8/10)
+  README.md:126 - updated wording to 'three acts (8/8/8, extended to 8/8/10 with story-gated destinations)'
+
+CORE - music cue 0 documented as reserved, track field legacy
+  core.js:253 - updated comment on MUSIC_CUE_TRACKS
+
+===============================================
+TOTAL: ~42 distinct issues addressed across 15 files
+Run 'node tools/bundle.js' then 'node tools/bundle-verify-check.js' to verify bundle integrity when node is available.

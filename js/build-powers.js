@@ -27,6 +27,23 @@
     ascendNova:{label:'Ascend nova damage',unit:'damage',cap:200,trigger:'Ascend releases a nova within 180 pixels at activation.'}
   };
   const finite=v=>typeof v==='number'&&Number.isFinite(v)?v:0;
+  // One ceiling contract for the actual compiled character. Ordinary and
+  // endgame gear share these limits; new rarity tiers cannot expand them.
+  const STAT_CAPS=Object.freeze({
+    maxHp:3000,maxShield:1500,armor:80,damage:1200,castDamage:2400,specialDamage:1800,
+    dmgMul:8,castMul:5,specialMul:8,moveMul:2.5,moveSpeed:700,attSpd:4,attackSpeed:4,
+    reachMul:2.5,dashDist:2.5,dashMax:6,crit:0.85,critMul:3,dmgReduce:0.75,dodge:0.6,deflectProj:0.6,darkBonus:0.5,
+    lifesteal:0.15,killHeal:20,killShield:60,healRoom:0.25,shieldOnRoom:250,dashShield:80,
+    deathDefy:6,multishot:6,pierce:8,homing:1,callBoost:0.4,guardMul:3,rushMul:3,ascendMul:3
+  });
+  function capCompiledStats(stats) {
+    if(!stats || typeof stats!=='object')return stats;
+    Object.keys(STAT_CAPS).forEach(key=>{
+      if(typeof stats[key]==='number')stats[key]=Math.min(STAT_CAPS[key],Math.max(0,finite(stats[key])));
+    });
+    ['guardCdMul','castCdMul','rushCdMul','ascendCdMul','specialCdMul'].forEach(key=>{if(typeof stats[key]==='number')stats[key]=Math.max(0.25,Math.min(3,finite(stats[key])));});
+    return capStats(stats);
+  }
   function capStats(stats) {
     if (!stats || typeof stats!=='object') return stats;
     Object.keys(rules).forEach(key=>{
@@ -37,7 +54,7 @@
     });
     return stats;
   }
-  K.BuildPowers={rules,capStats};
+  K.BuildPowers={rules,capStats,STAT_CAPS,capCompiledStats};
   const value=(p,key)=>Math.max(0,Math.min(rules[key].cap,finite(p&&p.stats&&p.stats[key])));
   const playerStates=new WeakMap(),hitContexts=new WeakMap(),statusOrigins=new WeakMap(),onHitContexts=new WeakMap();
   function state(p) {
@@ -215,7 +232,7 @@
     const haste=s.clock<s.hasteUntil?value(this,'killHaste'):0;
     const before=bonus?new Set(E.projectiles):null;
     s.strikeBonus=bonus;
-    if (haste>0) stats.attackSpeed=Math.max(0.25,finite(oldSpeed)*(1+haste));
+    if (haste>0) stats.attackSpeed=Math.min(STAT_CAPS.attackSpeed,Math.max(0.25,finite(oldSpeed)*(1+haste)));
     let result;
     try { result=originalAttack.call(this,G); }
     finally { stats.attackSpeed=oldSpeed;s.strikeBonus=0; }

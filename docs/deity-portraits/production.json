@@ -1,0 +1,645 @@
+{
+  "version": 1,
+  "approval": "User blanket approval, 2026-10-02",
+  "completed": 53,
+  "entries": [
+    {
+      "id": "zeus",
+      "prompt": "The original image-generation prompt and source path were not retained before the production ledger began. Approved creative brief: Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. ZEUS, King of the Olympians. Broad aged silhouette, raised bronze thunderbolt. Signature symbols: eagle; thunderbolt. Accent: #f5e07a.",
+      "sourcePath": null,
+      "targetPath": "assets\\deities\\masters\\zeus.png",
+      "tool": "built-in image_gen (pre-existing original master; prompt and source path unavailable)",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG viewed; packaged WebP crop reviewed in the complete contact sheet and dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; the existing distinct full-resolution original is retained."
+      }
+    },
+    {
+      "id": "hera",
+      "prompt": "Use case: stylized-concept. Asset type: original Katabasis Greek deity portrait cover, one complete finished raster image. Subject: HERA, Queen of Olympus, domain Marriage & Sovereignty. Upright dark-haired sovereign with feather fan. Signature attributes: peacock feather, royal diadem. Full rectangular portrait format, waist-up or chest-up figure; face and the defining attribute centered within the middle 65% crop safe area, readable in a 72px square boon-card crop. Painterly mythic realism with visible impasto brushwork, weathered bronze, dark stone ruins, terracotta cloth, cream flesh highlights and restrained gold; accent #d7a8d6. Dramatic warm side-light against dark ancient Greek architecture, consistent with an original rugged Zeus/sea Poseidon oil-painted game cover. Natural face, varied dignified anatomy and original costume designed for this deity. One divine focal figure; a symbolic animal or object may accompany them. Stable composition intended for a subtle two-second idle light/cloth treatment. No baked text, labels, lettering, name, logos, watermark, border, circular medallion, decorative frame or UI. Not an atlas and not a contact sheet. Identity-specific details remain inside the central crop. Produce one full standalone artwork for hera.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd3a-e9b5-7323-88c0-d798f301b214\\exec-c064a0f3-1a68-483a-9fb4-8124b962d2b6.png",
+      "targetPath": "assets\\deities\\masters\\hera.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "poseidon",
+      "prompt": "The original image-generation prompt and source path were not retained before the production ledger began. Approved creative brief: Original Katabasis Greek-Underworld art: dark stone, terracotta, cream and restrained gold; one central divine focal figure; no text, logos, labels or UI frame. POSEIDON, Earth-Shaker. Salt-bearded figure turning a long trident. Signature symbols: trident; sea horse. Accent: #5fd0d8.",
+      "sourcePath": null,
+      "targetPath": "assets\\deities\\masters\\poseidon.png",
+      "tool": "built-in image_gen (pre-existing original master; prompt and source path unavailable)",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG viewed; packaged WebP crop reviewed in the complete contact sheet and dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; the existing distinct full-resolution original is retained."
+      }
+    },
+    {
+      "id": "demeter",
+      "prompt": "Use case: stylized-concept. Asset type: original Katabasis Greek deity portrait cover, one complete finished raster image. Subject: DEMETER, Bringer of Harvest, domain Grain & Winter. Mature harvest figure cradling a sheaf. Signature attributes: wheat, sickle. Full rectangular portrait format, waist-up or chest-up figure; face and the defining attribute centered within the middle 65% crop safe area, readable in a 72px square boon-card crop. Painterly mythic realism with visible impasto brushwork, weathered bronze, dark stone ruins, terracotta cloth, cream flesh highlights and restrained gold; accent #d8cf7a. Dramatic warm side-light against dark ancient Greek architecture, consistent with an original rugged Zeus/sea Poseidon oil-painted game cover. Natural face, varied dignified anatomy and original costume designed for this deity. One divine focal figure; a symbolic animal or object may accompany them. Stable composition intended for a subtle two-second idle light/cloth treatment. No baked text, labels, lettering, name, logos, watermark, border, circular medallion, decorative frame or UI. Not an atlas and not a contact sheet. Identity-specific details remain inside the central crop. Produce one full standalone artwork for demeter.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd3a-e9b5-7323-88c0-d798f301b214\\exec-3456155d-1371-4537-973d-40308e0b2195.png",
+      "targetPath": "assets\\deities\\masters\\demeter.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "athena",
+      "prompt": "Use case: stylized-concept. Asset type: original Katabasis Greek deity portrait cover, one complete finished raster image. Subject: ATHENA, Bright-Eyed, domain Wisdom & War. Armored strategist in angular helm with owl. Signature attributes: owl, olive branch. Full rectangular portrait format, waist-up or chest-up figure; face and the defining attribute centered within the middle 65% crop safe area, readable in a 72px square boon-card crop. Painterly mythic realism with visible impasto brushwork, weathered bronze, dark stone ruins, terracotta cloth, cream flesh highlights and restrained gold; accent #cfd6e2. Dramatic warm side-light against dark ancient Greek architecture, consistent with an original rugged Zeus/sea Poseidon oil-painted game cover. Natural face, varied dignified anatomy and original costume designed for this deity. One divine focal figure; a symbolic animal or object may accompany them. Stable composition intended for a subtle two-second idle light/cloth treatment. No baked text, labels, lettering, name, logos, watermark, border, circular medallion, decorative frame or UI. Not an atlas and not a contact sheet. Identity-specific details remain inside the central crop. Produce one full standalone artwork for athena.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd3a-e9b5-7323-88c0-d798f301b214\\exec-4bfdf75e-9f81-4af2-9791-6a62bd927350.png",
+      "targetPath": "assets\\deities\\masters\\athena.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "apollo",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for APOLLO, Far-Shooter, domain Light, Music & Prophecy. A calm youthful laurel-crowned musician holds a slim vertical lyre with a small golden sun-disk reflection in its strings; distinct face, long dark hair, weathered bronze clasp, cream tunic with restrained terracotta drape. Painterly mythic realism, dark stone sanctuary and warm side-light, pale gold accent #f5d56a, centered upper-body portrait with face and lyre inside the middle 65 percent crop-safe area, readable in a 72px square crop. Full vertical artwork, one divine focal figure, no text, labels, logos, watermark, border, UI, collage, or extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-d2cf170d-2db0-4a76-b605-7518ded80197.png",
+      "targetPath": "assets\\deities\\masters\\apollo.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "artemis",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for ARTEMIS, Arrow-Pouring, domain The Hunt & the Moon. An alert huntress holds a crescent recurve bow across her shoulder, silver arrow angled upward, small moon circlet, dark braided hair and pale fur over bronze armor; independent silhouette and face, restrained silver-green accent #9be07a. Painterly mythic realism in a dark stone grove with moonlit leaves and warm terracotta underlight, centered upper-body portrait with face and bow inside the middle 65 percent crop-safe area, readable in a 72px square crop. Full vertical artwork, one divine focal figure, no text, labels, logos, watermark, border, UI, collage, or extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-136a294c-f7d9-44af-95a8-b87cf3c35819.png",
+      "targetPath": "assets\\deities\\masters\\artemis.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "ares",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for ARES, Sacker of Cities, domain Bloodlust & Ruin. Heavy dark-bearded warrior in a red-crested bronze helm grips a diagonal spear, battered round shield partly visible; broad decisive silhouette, stern face, small ember glow on the spear, accent vermilion #e2564a. Painterly cinematic mythic realism, dark stone battle arch with restrained terracotta cloth and bronze, warm side-light. Centered upper-body vertical cover, face and spear-head inside central crop-safe area, legible at 72px. One focal figure; no text, labels, logos, watermark, frame, UI, collage, or extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-006eb2cd-2b37-433d-b03b-8450c3271150.png",
+      "targetPath": "assets\\deities\\masters\\ares.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "aphrodite",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for APHRODITE, Foam-Born, domain Desire & Discord. A composed, fully clothed goddess with dark flowing hair raises a single pale rose beside a carved sea-shell, subtle foam and pearl highlights, warm human face, elegant but formidable silhouette; accent rose #f08bb4. Painterly cinematic mythic realism against a dark coastal shrine, cream silk and terracotta shadows, restrained gold, soft side-light. Centered upper-body vertical cover; face, rose, and shell stay in central crop-safe area and read at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, or extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-314f3e5c-3a11-483d-8a8a-9715e9046498.png",
+      "targetPath": "assets\\deities\\masters\\aphrodite.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "hephaestus",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for HEPHAESTUS, The Smith, domain Forge & Flame. Soot-marked smith with strong, asymmetrical shoulders rests a compact hammer over one shoulder; a small anvil and forge ember glow sit behind him, skin and bronze marked by honest work, distinctive broad silhouette; accent fire-amber #f0a04a. Painterly cinematic mythic realism in a dark volcanic forge, charcoal stone, terracotta apron, cream highlights and restrained gold. Centered upper-body vertical cover; face and hammer stay within central crop-safe area, legible at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, or extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-9394e3bd-16cb-40a1-8731-58f1b367bfae.png",
+      "targetPath": "assets\\deities\\masters\\hephaestus.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "hermes",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for HERMES, Guide of Souls, domain Speed & Thievery. Lean quick-footed traveler with winged sandals visible near the frame edge, a bronze caduceus held upright, a wind-tossed scarf and knowing expression; distinctive forward-tilted silhouette; accent jade #8fe3c8. Painterly cinematic mythic realism at a dark river-road threshold, stone and terracotta with cream light and restrained gold. Centered vertical waist-up composition, face and staff inside crop-safe center, recognizable at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, or extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-f97aabe7-a465-4d58-a15f-8c1d3aa24566.png",
+      "targetPath": "assets\\deities\\masters\\hermes.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "hestia",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for HESTIA, Keeper of the Hearth, domain Hearth & Home. A quiet, dignified woman cups a single living hearth flame over an offering bowl; warm protective gaze, soot-dark stone, simple terracotta mantle over cream linen, accent ember-amber #e6a56d. Painterly cinematic mythic realism in a small underworld sanctuary, intimate warm light against darkness, restrained bronze. Centered upper-body vertical cover, face and bowl within central crop-safe area, readable at 72px; one focal figure, no extra faces. No text, labels, logos, watermark, border, UI, collage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-c0efd272-ac79-4f45-8132-2394ac63017e.png",
+      "targetPath": "assets\\deities\\masters\\hestia.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "dionysus",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for DIONYSUS, Twice-Born, domain Wine & Madness. Relaxed, magnetic young god with dark curls and a grape-leaf crown holds a carved thyrsus and a small wine cup; joyful eyes with a hint of dangerous frenzy, distinct diagonal silhouette, plum accent #c07ad8. Painterly cinematic mythic realism in a dark stone revel hall, terracotta and cream cloth, restrained gold, dappled lantern light. Centered upper-body vertical cover; face, cup and thyrsus inside crop-safe center, legible at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-82b07dc0-f56e-43f9-b143-5fca15f8fc96.png",
+      "targetPath": "assets\\deities\\masters\\dionysus.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "hades",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for HADES, The Unseen, domain The Dead & Riches. A severe, silver-templed king stands in dark obsidian armor with a forked bident held upright and a small violet gem in a black crown; restrained underworld mist and ember, dignified unsmiling face, accent violet #9a7ad8. Painterly cinematic mythic realism in a basalt throne hall with terracotta shadow and cream side-light. Centered upper-body vertical cover; face and bident prongs within central crop-safe area, recognizable at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-efec8f57-3a62-4223-a367-46d94c5989a1.png",
+      "targetPath": "assets\\deities\\masters\\hades.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "chaos",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for CHAOS, The Void Before, domain Primordial Nothing. One androgynous primordial face emerges from a single deep dark aperture, a few fine stars orbit a small bronze ring; void cloth and unformed stone suggest possibility without making a second face, magenta-violet accent #d05ad0. Painterly cinematic mythic realism with subtle terracotta and cream highlights, restrained gold, strong readable single silhouette. Centered vertical portrait; face and aperture remain crop-safe and legible at 72px. One focal figure only; no text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-02b9876f-6e91-4f6d-9eab-cb66a958cf2b.png",
+      "targetPath": "assets\\deities\\masters\\chaos.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "persephone",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for PERSEPHONE, Queen Below, domain Spring & the Underworld. A poised queen cradles one pomegranate near her heart beside a single white narcissus; half her mantle is spring-terracotta, half deep underworld plum, graceful direct gaze, accent rose #cc8fb9. Painterly cinematic mythic realism in a dark garden court, warm cream side-light with restrained bronze. Centered upper-body vertical cover; face, pomegranate and narcissus inside central crop-safe area, clear at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-a75fa5f6-ce09-44d1-b1d0-ff99808bcdb8.png",
+      "targetPath": "assets\\deities\\masters\\persephone.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "hecate",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for HECATE, Torch-Bearer, domain Crossroads & Witchcraft. A resolute three-quarter witch holds two torches at different heights and a single old bronze key; one face and one body, dark hair, crossroads symbols carved behind, accent amethyst #a88cdf. Painterly cinematic mythic realism at a dark stone fork in the road, flame glows on terracotta and cream, restrained gold. Centered vertical upper-body portrait; face, torches and key inside central crop-safe area, legible at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, extra figures.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-8ae64c92-4858-4070-997e-faee9d869229.png",
+      "targetPath": "assets\\deities\\masters\\hecate.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "nyx",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for NYX, Night Incarnate, domain Night & Primordial Dark. Vast but calm night goddess with a single still celestial face framed by a dark feather mantle and star-stitched veil; few fine stars, wing shapes remain symbolic and elegant, muted violet accent #756aaf. Painterly cinematic mythic realism, dark stone night-sky chamber with cream face light and restrained gold. Centered vertical cover; face within central crop-safe area and readable at 72px, one figure only. No text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-792b4c64-3db9-402b-89cb-3a3b12698961.png",
+      "targetPath": "assets\\deities\\masters\\nyx.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "thanatos",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for THANATOS, Gentle Death, domain Death & Release. Reserved, calm winged youth lowers one inverted torch; layered black feathers frame rather than hide a compassionate face, silver-grey accent #8b9bab. Painterly cinematic mythic realism at a quiet basalt passage, terracotta undertone and cream side-light, restrained bronze. Centered upper-body vertical cover; face, lowered torch and wing edge remain inside the central crop-safe area, recognizable at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-dac99122-3131-4ba6-8aec-d180336dde99.png",
+      "targetPath": "assets\\deities\\masters\\thanatos.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "hypnos",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for HYPNOS, Soft-Sleep, domain Sleep & Dreams. Serene reclining dreamer with gentle closed eyes, one red poppy and a small pale wing-shaped temple ornament beside his dark hair; soft blue accent #91a7ca. Painterly cinematic mythic realism in a quiet dark-stone sleep chamber, cream moonlight and restrained terracotta and gold. Frame as a readable upper-body vertical cover, face and poppy inside the central crop-safe area, one figure only, legible at 72px. No text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-ba8c553c-739e-4bc8-8e27-5399829fb402.png",
+      "targetPath": "assets\\deities\\masters\\hypnos.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "charon",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for CHARON, The Ferryman, domain Ferries & Passage. Weathered hooded river elder grips a long oar beside one fare coin and a small warm lantern; kind but unsentimental face visible in shadow, grey river palette #827b71. Painterly cinematic mythic realism at the Styx ferry landing, dark stone and water with terracotta light and restrained bronze. Centered upper-body vertical cover, face, oar and coin inside central crop-safe area, readable at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-86e20602-d6b1-433a-9ddf-650f215a4fdc.png",
+      "targetPath": "assets\\deities\\masters\\charon.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "nemesis",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for NEMESIS, She Who Rebalances, domain Retribution & Balance. Direct-eyed divine judge holds a small bronze balance level at her chest and a measuring rod at her side; firm calm face, dark carved mantle, accent muted red #c56f62. Painterly cinematic mythic realism in a basalt tribunal, cream side-light, terracotta folds and restrained gold. Centered vertical upper-body portrait; face and balance clearly inside crop-safe center and recognizable at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-275d9f73-d07e-48f8-a619-e02aadc1bfc8.png",
+      "targetPath": "assets\\deities\\masters\\nemesis.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "nike",
+      "prompt": "Create one original Katabasis Greek deity cover portrait for NIKE, Winged Victory, domain Victory & Contest. Forward-reaching winged goddess offers one small laurel wreath; athletic but graceful stance, wind-swept dark hair, distinctive bronze shoulder armor and strong face, gold accent #e0bb62. Painterly cinematic mythic realism against a dark victory arch with terracotta and cream highlights, restrained gold. Centered upper-body vertical cover; face, wings and wreath inside central crop-safe area, legible at 72px. One focal figure; no text, labels, logos, watermark, border, UI, collage, extra faces.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-6ea82ea3-6c33-4f66-be62-b448eee8020d.png",
+      "targetPath": "assets\\deities\\masters\\nike.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "iris",
+      "prompt": "Create an original full-bleed mythic portrait for Iris, Greek goddess and rainbow messenger. Show a distinct, dignified young adult woman with warm olive skin and dark wavy hair, sweeping a vivid curved rainbow ribbon from a slender messenger staff; subtle wing-like color arcs are welcome. Center face and staff head high in the frame, face fully inside a top-safe crop, with rainbow arc across the middle. Palette sky blue #9acbe0, restrained gold, deep charcoal and terracotta. Painterly cinematic myth realism, tactile oil-brush finish, dramatic chiaroscuro, refined ancient Greek atmosphere, confident and readable at small portrait size. Vertical 2:3 composition. No border, no lettering, no logos, no UI, no montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-5349a755-3db8-46c9-890b-70f2795b983c.png",
+      "targetPath": "assets\\deities\\masters\\iris.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "hebe",
+      "prompt": "Create an original full-bleed mythic portrait for Hebe, Greek goddess of youth and cupbearer. A youthful but adult woman with a bright, calm face, holding a graceful golden cup and a small ivy sprig; suggest timeless renewal without childish styling. Keep face and cup near the upper and central composition, unobstructed and safe in a top crop. Palette soft lilac #d5b6dd, ivory, aged gold and charcoal. Painterly cinematic myth realism, tactile oil-brush finish, dramatic chiaroscuro, refined ancient Greek atmosphere, elegant and readable at small portrait size. Vertical 2:3 composition. No border, no lettering, no logos, no UI, no montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-5104021e-0779-4394-9644-9e813d8b3f59.png",
+      "targetPath": "assets\\deities\\masters\\hebe.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "asclepius",
+      "prompt": "Create an original full-bleed mythic portrait for Asclepius, Greek god of healing. Show a wise, bearded adult healer with a steady compassionate face, holding a single-serpent staff and shallow medicinal bowl; clearly portray the staff and serpent as the healing symbol. Keep face and staff head fully within the upper crop-safe area, bowl visible in lower middle. Palette healing green #83b7a1, warm cream, aged gold and deep charcoal. Painterly cinematic myth realism, tactile oil-brush finish, dramatic chiaroscuro, refined ancient Greek atmosphere, dignified and readable at small portrait size. Vertical 2:3 composition. No border, no lettering, no logos, no UI, no montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-41cf58b3-ccef-4fc8-9ebd-ded727d2aae4.png",
+      "targetPath": "assets\\deities\\masters\\asclepius.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "pan",
+      "prompt": "Create an original full-bleed mythic portrait for Pan, Greek god of wild places and shepherds. Show a rugged, adult, partly goat-horned woodland god with a distinct expressive face and reed pipes held near the chest; include leaves and rocky woodland hints, not a generic demon. Keep horns and face fully inside a top-safe portrait crop, pipes legible across the middle. Palette sage #99a36f, forest charcoal, muted bronze and terracotta. Painterly cinematic myth realism, tactile oil-brush finish, dramatic chiaroscuro, refined ancient Greek atmosphere, vivid and readable at small portrait size. Vertical 2:3 composition. No border, no lettering, no logos, no UI, no montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-a2a364c4-81a9-48fe-841b-5433c06d1cc4.png",
+      "targetPath": "assets\\deities\\masters\\pan.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "eros",
+      "prompt": "Original full-bleed mythic portrait of Eros, Greek god of desire: a beautiful adult youthful-faced winged archer with a distinctive, composed gaze, holding a small golden bow with a single arrow; romantic divinity, not cherubic or childish. Center face and winged head within top crop-safe region, bow across chest. Accent vivid rose #d98fa2 with dark charcoal, warm ivory, and bronze. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait scale. Vertical 2:3 composition, no border, text, lettering, logo, UI, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-16e0b0e7-e20c-475f-8946-998b6470dd7d.png",
+      "targetPath": "assets\\deities\\masters\\eros.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "eris",
+      "prompt": "Original full-bleed mythic portrait of Eris, Greek goddess of strife: an arresting adult goddess in dark bronze armor, calm sharp face, holding one luminous golden apple that is unmistakable and central; hints of storm-tossed banners behind. Face and apple safely framed in upper and middle crop. Accent ember red #bc715d with charcoal, aged gold and muted ivory. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait scale. Vertical 2:3 composition, no border, text, lettering, logo, UI, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-24c7aa1c-a077-4f8c-a3e0-c43536ac7f48.png",
+      "targetPath": "assets\\deities\\masters\\eris.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "gaia",
+      "prompt": "Original full-bleed mythic portrait of Gaia, primordial Greek earth mother: mature regal woman with a serene face, hair woven with small leaves, one hand touching a living olive branch and the other holding ancient stone; grounded and powerful. Face must be high and clearly visible in top crop, branch crossing middle. Accent deep moss #84a77e with warm stone, muted gold, charcoal. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait scale. Vertical 2:3 composition, no border, text, lettering, logo, UI, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-f2b8ecfd-6f0e-4557-9e3e-3e48aedd4c4b.png",
+      "targetPath": "assets\\deities\\masters\\gaia.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "kronos",
+      "prompt": "Original full-bleed mythic portrait of Kronos, Greek Titan of time and father of Zeus: imposing ancient bearded Titan with a distinct weathered face and a bronze harvest sickle, behind him a subtle circular stone calendar suggesting cycles. Face and sickle curve wholly inside portrait crop. Accent midnight blue #657ca8, charcoal, aged bronze, subdued cream. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait scale. Vertical 2:3 composition, no border, text, lettering, logo, UI, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-c3d1d69c-e8f8-4141-89d3-52c0867168d0.png",
+      "targetPath": "assets\\deities\\masters\\kronos.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "rhea",
+      "prompt": "Original full-bleed mythic portrait of Rhea, Greek Titaness and mother of the Olympians: mature, stately adult goddess with warm, protective expression, crowned by a modest tower diadem and holding a swaddled stone-like sacred bundle with a small golden lion motif. Center her face and diadem high, bundle visible in middle. Palette plum #a687a9, ivory, muted gold, charcoal. Painterly cinematic myth realism, oil-brush texture, refined Greek antiquity, clear at small portrait scale. Vertical 2:3, no border or text, lettering, logo, UI, montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-5eafa2ec-f993-413d-a136-4d30a57d5826.png",
+      "targetPath": "assets\\deities\\masters\\rhea.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "themis",
+      "prompt": "Original full-bleed mythic portrait of Themis, Greek Titaness of divine order and custom: calm mature goddess with a clear, resolute face, holding balanced scales and a laurel-bound tablet; eyes open and discerning, not blindfolded. Keep face and scale beam crop-safe near top and center. Palette cool silver-blue #9ab5c1, warm cream, aged gold, charcoal. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, clear at small portrait scale. Vertical 2:3, no border or text, lettering, logo, UI, montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-6a4c7c0c-831d-481f-a693-e030f3d21758.png",
+      "targetPath": "assets\\deities\\masters\\themis.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "tyche",
+      "prompt": "Original full-bleed mythic portrait of Tyche, Greek goddess of fortune and cities: confident adult woman with a knowing expression, holding a small golden cornucopia filled with pomegranates and a turning bronze wheel, faint ancient city rooftops behind. Keep face and horn of plenty clearly visible in crop. Palette bright teal #64aaa5, warm gold, ivory, charcoal. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, clear at small portrait scale. Vertical 2:3, no border or text, lettering, logo, UI, montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-71170452-8c67-49bc-a902-17c881e3ab63.png",
+      "targetPath": "assets\\deities\\masters\\tyche.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "morpheus",
+      "prompt": "Original full-bleed mythic portrait of Morpheus, Greek god of dreams: serene adult male dream spirit with a graceful, androgynous face, dark hair, a few poppy petals drifting near a closed book, moonlit mist behind. He holds one delicate poppy stem; dreamlike but tangible. Center face high and keep poppy close to center. Palette lavender #9990bd, deep night charcoal, muted silver, warm ivory. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, clear at small portrait scale. Vertical 2:3, no border or text, lettering, logo, UI, montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-ca27e886-9682-4ee1-a05b-1db1228af4b8.png",
+      "targetPath": "assets\\deities\\masters\\morpheus.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "moirai",
+      "prompt": "Original full-bleed mythic portrait for the Moirai, the three Greek Fates: show three clearly distinct mature women together in a tight, readable triad, one holding a spindle, one measuring a fine golden thread, one holding small shears. Their faces are composed and individually visible, not fused. Crop-safe faces in upper half, symbols grouped center. Palette smoky mauve #9c849d, charcoal, pale linen, silver gold. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, dramatic yet readable at small portrait scale. Vertical 2:3, no border, text, lettering, logo, UI, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-5ccfecb2-5260-4446-8984-ce93a400e83d.png",
+      "targetPath": "assets\\deities\\masters\\moirai.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "amphitrite",
+      "prompt": "Original full-bleed mythic portrait of Amphitrite, Greek queen of the sea: regal adult sea goddess with a composed face, elegant shell-and-coral crown, one small pearl and a trident visible, deep Aegean waves behind. Face and crown high within safe portrait crop, trident near middle. Palette sea teal #74adb0 with shell ivory, aged gold, deep ocean charcoal. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait scale. Vertical 2:3, no border, text, lettering, logo, UI, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-c11053b0-fd5f-42b4-9af7-ea55c63b8448.png",
+      "targetPath": "assets\\deities\\masters\\amphitrite.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "triton",
+      "prompt": "Original full-bleed mythic portrait of Triton, Greek merman herald of the sea: powerful adult male with long wavy hair, a dignified sea-weathered face, clearly visible scaled shoulders and a curved conch shell trumpet held near the chest, waves behind. Keep face top-safe and conch visible at center. Palette deep blue #5f94a9, muted sea green, bronze and ivory. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait scale. Vertical 2:3, no border, text, lettering, logo, UI, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-193f86e1-12be-438a-9867-1f4a6127335c.png",
+      "targetPath": "assets\\deities\\masters\\triton.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "boreas",
+      "prompt": "Original full-bleed mythic portrait of Boreas, Greek personification of the north wind: rugged bearded adult wind god with stern clear face, sweeping feathered cloak and icy gusts curling around his shoulders, snow and bare branches behind. Keep face and winglike mantle inside top-safe crop. Palette cold blue #8daabd, pale ice, charcoal, muted silver. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait scale. Vertical 2:3, no border, text, lettering, logo, UI, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-a94c0086-35aa-430c-b4c7-f4cc74c7735f.png",
+      "targetPath": "assets\\deities\\masters\\boreas.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "aeolus",
+      "prompt": "Original full-bleed mythic portrait of Aeolus, Greek keeper of the winds: mature, watchful adult ruler with a weathered kind face, holding a bronze wind-key beside a small swirling cloud and tied leather wind-bag. Face high and wind emblem central, clearly not Boreas. Palette muted indigo #7d97b5, storm charcoal, silver and bronze. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, crisp and readable at small portrait size. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-fecc22e5-2297-4363-9c12-187c3cd1826c.png",
+      "targetPath": "assets\\deities\\masters\\aeolus.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "selene",
+      "prompt": "Original full-bleed mythic portrait of Selene, Greek moon goddess: luminous adult woman with serene clear face, silver crescent diadem and a soft moon disk behind her, holding silvery reins near a pale horse suggested in the lower frame. Face and crescent fully crop-safe near top. Palette lunar silver #c1c7d8, deep blue charcoal, soft ivory and muted gold. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait size. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-634e63d1-2922-4fab-997e-304609bdde93.png",
+      "targetPath": "assets\\deities\\masters\\selene.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "helios",
+      "prompt": "Original full-bleed mythic portrait of Helios, Greek sun god: powerful adult man with sun-bright auburn hair, sharply defined face framed by a restrained bronze sun halo and the reins of a celestial chariot. Keep face central and halo wholly in crop; restrained rays, no huge sun obscuring face. Palette warm gold #d39f58, ivory, ember, deep charcoal. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait size. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-4f636197-a7ca-4d55-bb3c-d112b5e237d0.png",
+      "targetPath": "assets\\deities\\masters\\helios.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "eos",
+      "prompt": "Original full-bleed mythic portrait of Eos, Greek goddess of dawn: radiant adult woman with rose-gold hair and gentle but lively face, rosy dawn light breaking across clouds and delicate translucent wings opening behind her. Center face in upper crop-safe region, wings and dawn glow framing rather than hiding. Palette dawn rose #dd9a91, pale gold, mauve and charcoal. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, readable at small portrait size. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-abdec6bd-2868-4241-92f2-b82f7f5aeaa7.png",
+      "targetPath": "assets\\deities\\masters\\eos.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "harmonia",
+      "prompt": "Original full-bleed mythic portrait of Harmonia, Greek goddess of harmony: poised adult woman with a tranquil confident face, wearing a simple golden necklace whose interlocking forms suggest balance and two opposing musical strings resolving together. Keep her face central and jewelry clear in crop. Palette soft rose #c99aaa, ivory, aged gold and charcoal. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, legible at small portrait scale. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-9bb97b38-71ed-45b5-981f-e8a5874e8b01.png",
+      "targetPath": "assets\\deities\\masters\\harmonia.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "prometheus",
+      "prompt": "Original full-bleed mythic portrait of Prometheus, Greek Titan who gave fire to humanity: resolute bearded adult man with a compassionate, defiant face, holding a single ember-bright torch as a broken bronze chain falls from his wrist. Face and torch top-safe and central. Palette ember orange #cb835f, dark charcoal, bronze and pale smoke. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, legible at small portrait scale. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-9ac582fe-179d-4bf3-8339-e5bcba29e476.png",
+      "targetPath": "assets\\deities\\masters\\prometheus.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "atlas",
+      "prompt": "Original full-bleed mythic portrait of Atlas, Greek Titan: immense, weathered adult male Titan with a focused face and powerful shoulders carrying a celestial globe above him; globe is star-mapped and clearly separate from his head. Keep face and lower arc of globe crop-safe, readable. Palette slate blue #758cac, bronze, star-silver and charcoal. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, legible at small portrait scale. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-c4d52ca2-23b4-4b47-9f4f-6a439c24aed6.png",
+      "targetPath": "assets\\deities\\masters\\atlas.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "styx",
+      "prompt": "Original full-bleed mythic portrait of Styx, Greek goddess of the underworld river and sacred oaths: formidable adult woman with a cool solemn face, holding a dark river-water vessel where one silver ripple gleams, black waters and a faint oath-ring behind her. Keep face upper and water symbol central. Palette abyssal teal #527b80, silver, charcoal and muted gold. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, legible at small portrait scale. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-05080d5c-d815-424a-b05b-926ce193bbf5.png",
+      "targetPath": "assets\\deities\\masters\\styx.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "phobos",
+      "prompt": "Original full-bleed mythic portrait of Phobos, Greek personification of fear and battle panic, son of Ares: imposing adult male warrior-spirit with a striking human face partly shadowed by a restrained bronze war mask, one gloved hand gripping a spear, faint smoke and a horse silhouette behind. Evoke dread through expression and atmosphere, not gore; face and mask fully visible in upper crop-safe area, spear near middle. Palette deep crimson #a9575f, bronze, charcoal and smoke-gray. Painterly cinematic myth realism, oil-brush texture, Greek antiquity, clear silhouette and readable at small portrait scale. Vertical 2:3, no border, text, logo, UI, lettering, or montage.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-fefbab34-0a8b-486d-b378-bc1dd8e16aa2.png",
+      "targetPath": "assets\\deities\\masters\\phobos.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "mnemosyne",
+      "prompt": "Original Katabasis deity portrait for MNEMOSYNE, domain Memory & Remembrance. silver-haired keeper of memories with a wreath of written leaves, pale gold light against a slate archive. Square painterly mythic concept art, centered face readable at small icon size, no text or frame.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-8c8babb2-6a9b-473b-be31-70a7f5bc0407.png",
+      "targetPath": "assets\\deities\\masters\\mnemosyne.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "leto",
+      "prompt": "Original Katabasis deity portrait for LETO, domain Motherhood & Prophecy. quiet maternal titaness with a star-woven veil, blue-grey night sky and a soft twin-star motif. Square painterly mythic concept art, centered face readable at small icon size, no text or frame.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-31e506d5-3e08-47fa-849a-c7f3621588d8.png",
+      "targetPath": "assets\\deities\\masters\\leto.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "oceanus",
+      "prompt": "Original Katabasis deity portrait for OCEANUS, domain The Encircling River. ancient river titan with curled horns, flowing water, deep teal and bronze palette. Square painterly mythic concept art, centered face readable at small icon size, no text or frame.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-6a37fad5-ade4-4494-99fa-47c8a7036038.png",
+      "targetPath": "assets\\deities\\masters\\oceanus.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "tethys",
+      "prompt": "Original Katabasis deity portrait for TETHYS, domain Fresh Waters & Nourishment. pearl-silver river mother with shell crown, sea-glass hair, abyssal teal and moonlit waves. Square painterly mythic concept art, centered face readable at small icon size, no text or frame.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-54e73f62-986b-4d96-ad03-630cb8ff9b76.png",
+      "targetPath": "assets\\deities\\masters\\tethys.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    },
+    {
+      "id": "ananke",
+      "prompt": "Original Katabasis deity portrait for ANANKE, domain Necessity & Constraint. solemn necessity goddess with bronze thread-and-gear diadem, eclipse rings and fated golden threads. Square painterly mythic concept art, centered face readable at small icon size, no text or frame.",
+      "sourcePath": "C:\\Users\\dmcfu\\.codex\\generated_images\\01a0fd39-8a2e-76c1-8c22-4257f5dc4d78\\exec-67299b34-f914-4904-9865-73b4d19416e2.png",
+      "targetPath": "assets\\deities\\masters\\ananke.png",
+      "tool": "built-in image_gen",
+      "inspection": {
+        "passed": true,
+        "method": "Original PNG and packaged WebP poster reviewed in the complete contact sheet; dimensions verified.",
+        "notes": "Identity and defining attributes remain legible at contact-sheet scale; crop is centered with no text or UI."
+      }
+    }
+  ],
+  "fullResolutionMasters": 53,
+  "atlasCompatibilityCrops": 0
+}

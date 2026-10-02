@@ -207,6 +207,36 @@
     { id:'crowded-fate', name:'Crowded Fate', desc:'More enemies enter each wave as elites.', ranks:['+1 elite per wave','+2 elites per wave','+3 elites per wave'], key:'elitePressure', step:1 },
     { id:'mortal-thread', name:'Mortal Thread', desc:'Begin with fewer Death Defiances.', ranks:['−1 Death Defiance','−2 Death Defiances','−3 Death Defiances'], key:'deathDefiance', step:1 }
   ];
+  const MODIFIER_VERSION=1;
+  const WORLD_MODIFIERS = [
+    {id:'braided-roads',name:'Braided Roads',desc:'More optional branches, each with an extra encounter before its reward.',ranks:['+1 optional branch','+2 optional branches','+3 optional branches'],key:'sidePaths',step:1,rewardStep:0.03,counterplay:'Explore a branch only when your build has enough recovery.',incompatible:['sparse-branches']},
+    {id:'flooded-paths',name:'Flooded Paths',desc:'Currents and flood hazards shape optional routes; the main route stays clear.',ranks:['Light currents','Strong currents','Severe currents'],key:'flooding',step:1,rewardStep:0.05,counterplay:'Read the current markers and use safe ground between surges.'},
+    {id:'unstable-altars',name:'Unstable Altars',desc:'Denser hazard pockets around optional rewards increase valuable gear odds.',ranks:['+20% hazard density','+40% hazard density','+60% hazard density'],key:'hazardDensity',step:0.2,rewardStep:0.05,counterplay:'Clear nearby enemies before entering a marked altar pocket.'},
+    {id:'gentle-current',name:'Gentle Current',desc:'Enemy damage is reduced; surrender part of the bonus gear reward potential.',ranks:['−10% enemy damage; −8% bonus rewards','−20% enemy damage; −16% bonus rewards','−30% enemy damage; −24% bonus rewards'],key:'gentleDamage',step:0.1,rewardStep:-0.08,counterplay:'A gentler descent gives fewer opportunities for exceptional rolls.'},
+    {id:'sparse-branches',name:'Quiet Roads',desc:'Fewer optional branches, fewer extra fights and lower bonus gear odds. Required route and recovery beats remain.',ranks:['−1 optional branch','−2 optional branches','−3 optional branches'],key:'sidePaths',step:-1,rewardStep:-0.04,counterplay:'Use the guaranteed main route for core build rewards.',incompatible:['braided-roads']}
+  ];
+  const MODIFIERS=PACTS.concat(WORLD_MODIFIERS);
+  function normalizeModifierSelection(selection) {
+    const input=selection && typeof selection==='object' && !Array.isArray(selection) ? selection.ranks || selection : {},ranks={};
+    MODIFIERS.forEach(def=>{const rank=input[def.id];if(Number.isInteger(rank) && rank>=1 && rank<=3)ranks[def.id]=rank;});
+    return {ranks,score:normalizePactSelection(ranks).score,version:MODIFIER_VERSION};
+  }
+  function validateModifierSelection(selection) {
+    const normalized=normalizeModifierSelection(selection),errors=[];
+    MODIFIERS.forEach(def=>{if(normalized.ranks[def.id]) (def.incompatible || []).forEach(id=>{if(normalized.ranks[id] && def.id<id)errors.push(def.name+' cannot be combined with '+MODIFIERS.find(x=>x.id===id).name+'.');});});
+    return Object.assign(normalized,{valid:!errors.length,errors});
+  }
+  function modifierEffects(selection) {
+    const normalized=normalizeModifierSelection(selection),out=pactModifiers(normalized.ranks);
+    Object.assign(out,{sidePaths:0,flooding:0,hazardDensity:1,recoveryNodes:0,rewardBonus:normalized.score*0.02});
+    WORLD_MODIFIERS.forEach(def=>{const rank=normalized.ranks[def.id] || 0;if(!rank)return;
+      if(def.key==='gentleDamage')out.enemyDamage*=1-def.step*rank;
+      else out[def.key]=(out[def.key] || 0)+def.step*rank;
+      out.rewardBonus+=def.rewardStep*rank;
+    });
+    out.enemyDamage=Math.max(0.6,Math.min(2,out.enemyDamage));out.rewardBonus=Math.max(-0.4,Math.min(0.6,out.rewardBonus));
+    return out;
+  }
 
   const CAMPAIGN_MILESTONES = ['firstCapstone','actI','actII','campaignVictory'];
   const FATED_TRIAL_REWARDS = [
@@ -426,11 +456,12 @@
 
   function buildCode(run) {
     if (!run) return '';
+    // Gear is run-local display only: equipped instance ids are not portable
+    // across saves, so build codes carry hero/weapon/boons/relics/augments.
     const payload={v:1,h:run.heroId||'perseus',w:run.weapon||'xiphos',
       b:(run.boons||[]).map(x=>x.id).filter(x=>D.boonById[x]),
       r:(run.relics||[]).filter(x=>D.relicById[x]),
-      a:(run.augmentIds||[]).slice(),u:(run.heroUpgrades||[]).slice(),t:eligibleThreadIds(run),
-      g:K.Save.data.equippedGear?Object.keys(K.Save.data.equippedGear).map(k=>[k,K.Save.data.equippedGear[k]]):[]};
+      a:(run.augmentIds||[]).slice(),u:(run.heroUpgrades||[]).slice(),t:eligibleThreadIds(run)};
     const raw=unescape(encodeURIComponent(JSON.stringify(payload)));
     return 'KAT1-' + btoa(raw).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   }
@@ -457,7 +488,8 @@
   K.RunSystems={
     HEROES, STARTERS, AUGMENTS, QUESTS, MINIBOSSES, WEAPON_UPGRADES, SYNERGIES, RELIC_TRANSFORMS,
     normalizeSave, updateUnlocks, recordCampaignMilestone, recordTrialVictory, FATED_TRIAL_REWARDS, FATED_THREADS, eligibleFatedThreads, fatedThreadEffects, threadRelevance,
-    PACTS, normalizePactSelection, pactScore:selection => normalizePactSelection(selection).score, pactModifiers, createQuest, progressQuest, activeSynergies,
+    PACTS, MODIFIERS, WORLD_MODIFIERS, MODIFIER_VERSION, normalizeModifierSelection,validateModifierSelection,modifierEffects,
+    normalizePactSelection, pactScore:selection => normalizePactSelection(selection).score, pactModifiers, createQuest, progressQuest, activeSynergies,
     hasTransform, buildCode, parseBuildCode
   };
 })(); 
