@@ -1,6 +1,6 @@
 # Katabasis — Dense Descents, Run Leveling, and Regional Terrain Art
 
-**Status:** Proposed for user review
+**Status:** Approved for implementation by user on 2026-10-02
 
 **Date:** 2026-10-02
 
