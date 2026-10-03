@@ -83,6 +83,7 @@
 - Produces: a self-contained production single-file build and native portable package with no remote ambience dependencies.
 
 - [ ] Register the ambience module in `index.html` and bundler order, if not already registered in Task 1.
+- [ ] Run the complete `node tools/world-overhaul.test.js` and `node tools/world-renderer.test.js` suites after focused task checks; record any failure before packaging.
 - [ ] Run `node tools/bundle.js`; inspect the bundle inventory and offline reference audit for all new scripts/assets.
 - [ ] Run `pnpm dist:win` to package the native build from the regenerated production file.
 - [ ] Open the production build, listen to representative Tartarus, Aegean, and grove beds, and confirm the independent ambience control and reduced-motion switch work.

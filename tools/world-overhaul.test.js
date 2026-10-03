@@ -40,6 +40,32 @@ test('Generator streams are deterministic and separate from combat RNG',()=>{
   assert.throws(()=>K.World.generate({seed:1,regionId:'missing'}),/region/i);
   assert.throws(()=>K.World.generate({seed:1,regionId:'styx',version:999}),/version/i);
 });
+test('Every region owns a distinct terrain and ambience program with seeded traversal features',()=>{
+  assert.ok(K.World,'K.World generator is missing');reset();
+  const ids=K.DATA.REGIONS.map(region=>region.id).concat(['charon_market','practice']),layouts=new Set(),shapes=new Set();
+  const combatSeed=G.run.rng.seed,repeatSeeds=new Set(['tartarus','aegean','arcadia']);
+  assert.strictEqual(K.World.VERSION,3,'terrain semantics require a new world generation version');
+  for(const id of ids){
+    const profile=K.World.PROFILES[id];
+    assert.ok(profile&&profile.terrain&&profile.ambience,id+' is missing its terrain/ambience profile');
+    assert.strictEqual(profile.terrain.programId,id,id+' terrain program is not region-specific');
+    assert.ok(profile.terrain.shape&&profile.terrain.surface,id+' has an incomplete terrain program');
+    assert.ok(profile.ambience.bed&&profile.ambience.weather&&profile.ambience.particleKind,id+' has an incomplete ambience program');
+    assert.ok(profile.subzones.every(zone=>zone.landmark),id+' has an unnamed terrain subzone');
+    shapes.add(profile.terrain.shape);
+  }
+  assert.strictEqual(shapes.size,ids.length,'region terrain profiles collapsed to duplicate shapes');
+  for(const id of ids){
+    const a=K.World.generate({seed:872,regionId:id});
+    assert.ok(Array.isArray(a.terrainFeatures)&&a.terrainFeatures.length>0,id+' generated no terrain features');
+    if(repeatSeeds.has(id)){const b=K.World.generate({seed:872,regionId:id});assert.deepStrictEqual(JSON.parse(JSON.stringify(a.terrainFeatures)),JSON.parse(JSON.stringify(b.terrainFeatures)),id+' terrain features are not deterministic');}
+    layouts.add(JSON.stringify(a.terrainFeatures.map(feature=>[feature.kind,feature.shape,feature.x,feature.y,feature.w,feature.h,feature.elevation,feature.material])));
+    if(K.DATA.REGIONS.some(region=>region.id===id))assert.ok(a.terrainFeatures.some(feature=>feature.kind==='ramp'||feature.kind==='stair'||feature.kind==='bridge'||feature.kind==='causeway'),id+' has no gameplay traversal feature');
+    assert.ok(K.World.validate(a).valid,id+' terrain disconnected a required node: '+K.World.validate(a).errors.join(', '));
+  }
+  assert.strictEqual(layouts.size,ids.length,'region terrain programs collapsed to duplicate layouts');
+  assert.strictEqual(G.run.rng.seed,combatSeed,'world terrain consumed combat RNG');
+});
 test('Encounter rewards claim once and cleared regions permit backtracking without re-spawning',()=>{
   assert.ok(K.WorldRuntime,'World runtime is missing');reset();
   const map=G.world,first=G.activeEncounter;assert.ok(first);
@@ -202,7 +228,9 @@ test('Backtracking can claim an older cleared side-encounter reward after anothe
   assert.strictEqual(first.rewardClaimed,false);assert.strictEqual(G.doInteract(olderGate),true);
   assert.strictEqual(first.rewardClaimed,true);assert.strictEqual(G.pendingReward.kind,'augment');
 });
+const filter=process.argv[2],selected=filter?tests.filter(([name])=>name.toLowerCase().includes(filter.toLowerCase())):tests;
+if(filter&&!selected.length)throw new Error('No world overhaul test matched '+filter);
 let failed=0;
-for(const [name,fn] of tests)try{fn();console.log('PASS '+name);}catch(error){failed++;console.error('FAIL '+name+'\n'+error.stack);}
-console.log((tests.length-failed)+'/'+tests.length+' world overhaul tests passed');
+for(const [name,fn] of selected)try{fn();console.log('PASS '+name);}catch(error){failed++;console.error('FAIL '+name+'\n'+error.stack);}
+console.log((selected.length-failed)+'/'+selected.length+' world overhaul tests passed');
 if(failed)process.exitCode=1;

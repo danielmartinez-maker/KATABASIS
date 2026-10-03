@@ -40,10 +40,11 @@
 - Produces: each profile has `terrain` metadata (`programId`, `shape`, `surface`, `accent`) and an `ambience` record (`bed`, `weather`, `motif`, `palette`, `accentHz`, `particleKind`); each map has serializable `terrainFeatures`, each with `id`, `kind`, `shape`, `x`, `y`, `w`, `h`, `elevation`, `material`, `surface`, `walkable`, and optional `transition: { kind, fromElevation, toElevation }`. `elevation` is in world units, with a maximum adjacent walkable step of 16; ramps and stairs encode explicit transition cells.
 
 - [ ] Add failing assertions that all 26 campaign profiles plus Market and Practice have terrain/ambience metadata, generated feature layouts differ by region, repeat exactly for the same seed, and leave combat RNG untouched.
-- [ ] Run `node tools/world-overhaul.test.js`; confirm the new assertions fail because profiles and terrain features are missing.
+- [ ] Run `node tools/world-overhaul.test.js "Every region owns a distinct terrain"`; confirm the new assertion fails because profiles and terrain features are missing.
+- [ ] Bump `K.World.VERSION` to `3` for the serializable terrain profile/feature schema.
 - [ ] Implement a stable 28-profile catalog and an isolated `terrainRng` composition pass in `js/world.js`; generate substantial shelves, ridges, basins, channels, ruins, banks, and landmark clearings appropriate to each profile's family.
 - [ ] Add route-preserving feature placement to `W.validate(map)`: every required node and entry remains connected with encounter clearance, and each campaign region contains at least one real traversal feature.
-- [ ] Run `node tools/world-overhaul.test.js`; confirm the new assertions pass and existing map/reward cases remain green.
+- [ ] Run `node tools/world-overhaul.test.js "Every region owns a distinct terrain"` and `node tools/world-overhaul.test.js "Market is a safe connected"`; confirm 1/1 passes for each.
 - [ ] Commit as `feat: generate regional landform terrain`.
 
 ### Task 2: Shared surface, traversal, and combat queries
@@ -62,7 +63,7 @@
 - [ ] Run `node tools/world-overhaul.test.js`; confirm each case fails on absent surface/visibility behavior.
 - [ ] Implement bounded transitions in `W.isWalkable`/`W.resolveMove`, surface sampling, cover ray checks, and force application in the existing movement/runtime hooks; reserve a stable main route and keep force magnitudes capped.
 - [ ] Make enemy and player collision use the same world queries; make projectile path checks sample the same cells and blockers.
-- [ ] Run `node tools/world-overhaul.test.js`; confirm traversal, force, visibility, hazard, encounter, and campaign cases pass.
+- [ ] Run the focused movement, projectile, and environment cases from `tools/world-overhaul.test.js`; confirm each named case passes.
 - [ ] Commit as `feat: make terrain affect traversal and combat`.
 
 ### Task 3: Terrain art atlas and painterly map composition
@@ -84,7 +85,7 @@
 - [ ] Run `node tools/world-renderer.test.js`; confirm the missing atlas/feature draw assertions fail.
 - [ ] Generate eight original 4x4 raster terrain atlases, one per existing family, with consistent hand-painted 2.5D Greek-myth lighting; keep cells isolated for atlas slicing and preserve the final prompts and origin in `assets/regions/generated/living-terrain-provenance.md`.
 - [ ] Register atlas metadata and draw collision-aligned features in the ground/edge/depth passes without replacing the existing floor or signature-landmark layers.
-- [ ] Run `node tools/world-renderer.test.js` and `node tools/world-overhaul.test.js`; confirm atlas mapping, projection/culling, and feature coverage pass.
+- [ ] Run `node tools/world-renderer.test.js` and the focused terrain/feature cases from `tools/world-overhaul.test.js`; confirm atlas mapping, projection/culling, and feature coverage pass.
 - [ ] Render and inspect Tartarus and Aegean captures at the gameplay camera scale; correct any terrain art that obscures walkable paths, combat actors, or hazard telegraphs.
 - [ ] Commit as `feat: paint regional terrain layers`.
 
