@@ -141,7 +141,6 @@
     return result;
   };
   P.offerBoons=function(options){
-    if(options&&options.kind==='boss'&&this.world&&this._worldRewardNode){options=Object.assign({},options);const node=this._worldRewardNode;options.threadAfter=!!(node.main&&node.idx===7&&this.region().actMilestone);}
     return base.offerBoons.call(this,options);
   };
   P.advance=function(){
@@ -227,7 +226,7 @@
     const prop=this.world&&this.world.props.find(p=>p.id===id);
     if(!prop||!prop.destructible||prop.broken||!Number.isFinite(damage)||damage<=0)return false;
     prop.hp=Math.max(0,prop.hp-damage);prop.impactT=0.22;
-    if(prop.hp===0){prop.broken=true;prop.solid=false;this.world.blockers=this.world.blockers.filter(blocker=>blocker.id!==id);E.effects.push({kind:'urnBreak',x:prop.x,y:prop.y,r:50,life:0.4,max:0.4});K.Audio.sfx('stone');}
+    if(prop.hp===0){prop.broken=true;prop.solid=false;prop.collision=null;prop.visualState='broken';this.world.blockers=this.world.blockers.filter(blocker=>blocker.id!==id);E.effects.push({kind:'urnBreak',x:prop.x,y:prop.y,r:50,life:0.4,max:0.4});K.Audio.sfx('stone');}
     return true;
   };
   const playerAttack=E.Player.prototype.doAttack;

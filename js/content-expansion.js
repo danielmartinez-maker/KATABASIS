@@ -176,7 +176,7 @@
     ['dashing', 'Wayfaring', '+5 dash damage.', { dashDmg: 5 }],
     ['warded', 'Ward-Kept', '+4 starting shield in each chamber.', { shieldOnRoom: 4 }],
     ['merciful', 'Merciful', '+1.5 health per kill.', { killHeal: 1.5 }],
-    ['generous', 'Open-Handed', '+1 reward choice.', { extraReward: 1 }],
+    ['generous', 'Open-Handed', '+1 level-up reroll.', { rerollPlus: 1 }],
     ['fated', 'Fate-Favored', '+1 reroll.', { rerollPlus: 1 }],
     ['fortunate', 'Fortunate', '100% chance to drop 1 Obol on each hit.', { coinOnHit: 1 }],
     ['piercing', 'Piercing', '+1 extra target pierced by projectiles.', { pierce: 1 }],
@@ -573,7 +573,7 @@
       id:e[0],name:e[1],desc:e[2],
       choices:[
         { id:e[0]+'_mend',title:'Take the quiet gift',desc:'Restore '+heal+' life and pass without a price.',heal },
-        { id:e[0]+'_pledge',title:'Make the dangerous promise',desc:'Lose '+(10+(i%4)*3)+' life for '+obols+' obols and a lasting boon.',damage:10+(i%4)*3,obols,fx:bonus }
+        { id:e[0]+'_pledge',title:'Make the dangerous promise',desc:'Lose '+(10+(i%4)*3)+' life for '+obols+' obols and a lasting run effect.',damage:10+(i%4)*3,obols,fx:bonus }
       ]
     };
   });
@@ -588,7 +588,7 @@
       desc:god.title + ' appears before you. ' + god.blurb + ' What you choose will change this run’s standing with ' + god.name + '.',
       choices:[
         { id:'divine_' + godId + '_homage', title:'Pay homage', desc:'Spend ' + cost + ' obols; receive a blessing and +3 favor.', costObols:cost, favorDelta:3, heal:12, fx:effect },
-        { id:'divine_' + godId + '_trial', title:'Accept the god’s trial', desc:'Endure a light wound to prove your resolve; gain +2 favor and a lasting boon.', damage:9, favorDelta:2, fx:effect },
+        { id:'divine_' + godId + '_trial', title:'Accept the god’s trial', desc:'Endure a light wound to prove your resolve; gain +2 favor and a lasting run effect.', damage:9, favorDelta:2, fx:effect },
         { id:'divine_' + godId + '_refuse', title:'Refuse the claim', desc:'Keep your freedom and take 55 obols; lose 3 favor.', obols:55, favorDelta:-3 }
       ]
     };

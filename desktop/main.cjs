@@ -6,7 +6,7 @@ const { pathToFileURL } = require('node:url');
 const { app, BrowserWindow, Menu, dialog, net, protocol, session } = require('electron');
 
 const APP_SCHEME = 'katabasis';
-const APP_ENTRY = `${APP_SCHEME}://app/index.html`;
+const APP_ENTRY = `${APP_SCHEME}://app/katabasis.html`;
 const APP_ID = 'com.danielmartinezmaker.katabasis';
 
 protocol.registerSchemesAsPrivileged([{
@@ -60,7 +60,7 @@ function registerGameProtocol() {
     }
 
     if (url.hostname !== 'app') return response(404, 'Not found');
-    if (!requestedPath || requestedPath === '/') requestedPath = '/index.html';
+    if (!requestedPath || requestedPath === '/') requestedPath = '/katabasis.html';
 
     const appRoot = app.getAppPath();
     const relativePath = requestedPath.replace(/^[/\\]+/, '');

@@ -295,7 +295,7 @@
     const A=K.Assets;if(!A||!A.image||!A.entry)return 0;
     let n=0;
     for(const id of ids||[]){
-      const e=A.entry(id);if(!e||e.lazy)continue;
+      const e=A.entry(id);if(!e)continue;
       const img=A.image(id);if(img&&ctx.texture(img))n++;
     }
     return n;
@@ -303,7 +303,7 @@
   R.prewarmWorld=function(ctx,world){
     if(!ctx||!ctx._webgl||ctx.lost||!world)return 0;
     const family=artFamily(world);
-    return R.prewarmIds(ctx,['region.'+family+'.floor','region.'+family+'.props','region.'+family+'.backdrop']);
+    return R.prewarmIds(ctx,['region.'+family+'.floor','region.'+family+'.props','region.'+family+'.backdrop','regionkit.'+(world.profile&&world.profile.assetKit||'ruins'),world.groundAssetId||'regionground.'+(world.profile&&world.profile.assetKit||'ruins'),world.profile&&world.profile.signatureAssetId].filter(Boolean));
   };
   // Deterministic per-tile light variation and shoreline foam. Purely visual:
   // derived from tile coordinates, so generation output and saves are unchanged.
@@ -323,6 +323,24 @@
     for(let i=0;i<cells.length;i++){const c=cells[i];if(c.walkable)s.add(Math.round(c.x/ts)*4096+Math.round(c.y/ts));}
     walkCache.set(world,s);return s;
   }
+  function artRevealed(world,x,y){const key=K.World.cellKey(x,y,world.tileSize);return !!world.revealed?.[key];}
+  function drawPlacedTerrain(ctx,world,cam){
+    const chunks=world.artChunkIndex;if(!chunks)return;
+    const span=world.artChunkSize||1024,view=R.viewRect(cam,720),x0=Math.floor(view.x0/span),x1=Math.floor(view.x1/span),y0=Math.floor(view.y0/span),y1=Math.floor(view.y1/span),A=K.Assets;
+    for(let cx=x0;cx<=x1;cx++)for(let cy=y0;cy<=y1;cy++){
+      const chunk=chunks[cx+','+cy];if(!chunk)continue;
+      for(const item of chunk.terrain){const w=item.w||240,h=item.h||200,id=item.assetId,aspect=A.entry(id)?.aspect||A.cellAspect(id)||1,drawW=Math.min(w,h*aspect),extent=Math.max(drawW,h);if(!artRevealed(world,item.x,item.y)||!R.visible(cam,{x:item.x-extent/2,y:item.y-extent/2,w:extent,h:extent},80))continue;ctx.save();ctx.globalAlpha=item.alpha===undefined?0.9:item.alpha;if(item.rot){ctx.translate(item.x,item.y);ctx.rotate(item.rot);ctx.translate(-item.x,-item.y);}A.drawCell(ctx,id,item.cell%4,Math.floor(item.cell/4),item.x-drawW/2,item.y-h/2,drawW,h);ctx.restore();}
+    }
+  }
+  function visibleProps(world,cam){
+    const chunks=world.artChunkIndex;if(!chunks)return[];
+    const span=world.artChunkSize||1024,view=R.viewRect(cam,420),x0=Math.floor(view.x0/span),x1=Math.floor(view.x1/span),y0=Math.floor(view.y0/span),y1=Math.floor(view.y1/span),visible=[];
+    for(let cx=x0;cx<=x1;cx++)for(let cy=y0;cy<=y1;cy++){
+      const chunk=chunks[cx+','+cy];if(!chunk)continue;
+      for(const prop of chunk.props){const size=(prop.size||100)*(prop.scale||1),entry=K.Assets.entry(prop.assetId),aspect=entry&&entry.aspect||1,w=size*aspect,h=size;if(artRevealed(world,prop.x,prop.y)&&R.visible(cam,{x:prop.x-w/2,y:prop.y-h,w,h},50))visible.push(prop);}
+    }
+    return visible;
+  }
   R.draw=function(ctx,G){
     if(!ctx||!ctx._webgl||ctx.lost)return;const started=typeof performance!=='undefined'?performance.now():0,world=G.world,cam=G.cam,A=K.Assets;
     ctx.beginFrame(G.realTime,world?.profile?.voidColor||'#100c10');
@@ -332,9 +350,10 @@
     A.drawCover(ctx,'region.'+family+'.backdrop',-24-Math.sin(cam.x*0.00008)*18,-20-Math.sin(cam.y*0.00008)*12,K.W+80,K.H+70,{alpha:0.32});
     ctx.save();cam.apply(ctx);
     drawTerrain(ctx,G,world,cam,family,size);
+    drawPlacedTerrain(ctx,world,cam);
     // Props are grounded and depth sorted with actors. Telegraphs always stay visible.
     const things=[];
-    for(const prop of world.props||[]){const s=prop.size||100;if(R.visible(cam,{x:prop.x-s/2,y:prop.y-s,w:s,h:s},50))things.push({y:prop.y,prop});}
+    for(const prop of visibleProps(world,cam))things.push({y:prop.depthY===undefined?prop.y:prop.depthY,prop});
     for(const ent of K.E.enemies||[])if(ent&&!ent.removeMe&&R.visible(cam,{x:ent.x-100,y:ent.y-180,w:200,h:240},20))things.push({y:ent.y,ent});
     if(G.player)things.push({y:G.player.y,ent:G.player});
     for(const it of G.interactables||[])if(R.visible(cam,{x:it.x-80,y:it.y-140,w:160,h:200},40))things.push({y:it.y,it});
@@ -342,7 +361,7 @@
     for(const h of G.hazards||[])if(R.visible(cam,{x:h.x-150,y:h.y-150,w:300,h:300}))helpers.hazard(ctx,G,h);
     for(const f of K.E.effects||[])if(R.visible(cam,{x:f.x-180,y:f.y-180,w:360,h:360}))helpers.effect(ctx,G,f);
     things.sort((a,b)=>a.y-b.y);
-    for(const t of things){if(t.ent)helpers.actor(ctx,G,t.ent);else if(t.it)helpers.interactable(ctx,G,t.it,family);else{const p=t.prop,s=p.size||100,id=p.asset||'region.'+family+'.props',entry=A.entry(id),cols=entry?.cols||4,cell=p.cell||0;ctx.save();ctx.globalAlpha=p.broken?0.25:(p.alpha||0.83);if(G.player&&Math.abs(p.x-G.player.x)<s*0.45&&p.y>G.player.y&&p.y-G.player.y<s*0.75)ctx.globalAlpha*=0.4;A.drawCell(ctx,id,cell%cols,Math.floor(cell/cols),p.x,p.y-s*0.28,s,s,{rot:p.motion?Math.sin(G.realTime*0.8+p.x)*0.025:0});ctx.restore();}}
+    for(const t of things){if(t.ent)helpers.actor(ctx,G,t.ent);else if(t.it)helpers.interactable(ctx,G,t.it,family);else{const p=t.prop,s=(p.size||100)*(p.scale||1),id=p.assetId||p.asset||'region.'+family+'.props',entry=A.entry(id),cols=entry?.cols||4,aspect=entry&&entry.aspect||1,cell=p.broken?(p.brokenCell||0):(p.cell||0),y=p.y-s*0.28;ctx.save();ctx.globalAlpha=p.broken?0.58:(p.alpha||0.95);if(G.player&&Math.abs(p.x-G.player.x)<s*0.45&&p.y>G.player.y&&p.y-G.player.y<s*0.75)ctx.globalAlpha*=0.4;A.drawCell(ctx,id,cell%cols,Math.floor(cell/cols),p.x,y,s*aspect,s,{rot:p.rot||0});ctx.restore();}}
     for(const f of K.E.telegraphs||[])helpers.effect(ctx,G,Object.assign({kind:'telegraph'},f));
     for(const p of K.E.projectiles||[])if(R.visible(cam,{x:p.x-40,y:p.y-40,w:80,h:80}))helpers.projectile(ctx,p);
     helpers.particles(ctx,G);

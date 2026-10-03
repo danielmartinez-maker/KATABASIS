@@ -30,13 +30,14 @@ and `pnpm start`. Build the Windows x64 executable with `pnpm run dist:win` on W
 
 The browser editions also work without installation.
 
-**The single file — `katabasis.html`.** This is the one to send to someone. Styles, scripts,
-and the complete generated image library are inlined, so it has no siblings and no
-dependencies: open it from anywhere, offline, with no server. Drop it on a desktop, email
-it, put it on a USB stick.
+**The main game — `katabasis.html`.** This is the production edition for browser and desktop
+play. Styles, scripts, and the complete generated image library are inlined, so it has no
+siblings or runtime dependencies and works offline.
 
-**The source tree — `index.html` + `css/` + `js/`.** Edit these. This is the real project;
-`katabasis.html` is generated from it.
+**The development and test page — `index.html`.** Use it to exercise the editable source tree
+(`css/`, `js/`, and `assets/`). The production game is rebuilt from those sources with
+`tools/bundle.js`; `pnpm start` and `pnpm run dist:win` do this automatically before launch
+or packaging.
 
 The score uses four supplied MP3s in `assets/audio/`, selected by region and adapted to
 calm, combat, miniboss and boss intensity. The single-file build embeds the recordings for
@@ -102,12 +103,18 @@ empowers the rift, *Wing-Footed Charge* and *Afterimage* (Hermes) transform Rush
 
 The connected Greek campaign has **24 established destinations plus Ancient Greece and
 Atlantis**, with eight major encounter beats and a capstone in each destination. The full
-26-destination circuit has 208 beats. A seeded world map links encounter spaces, recovery,
-events, optional fights, secrets and service stops; side routes can be explored and revisited.
-Ancient Greece and Atlantis open through story-gated exits while the original regional IDs
-and Olympus–Typhon finale remain intact.
+26-destination circuit has 208 beats. Each region now spans about 25 times the previous
+walkable area and about five times its required-route distance. A seeded world map links
+encounter spaces, recovery, events, optional fights, secrets and service stops; side routes can
+be explored and revisited. Region-specific illustrated terrain, landmarks, and obstacles are
+drawn over the floor. New ground atlases add patterned paving, worn transitions, and biome
+detail across rooms and routes; decorative ground art remains walkable, while solid props keep
+explicit collision. The eight-beat campaign rhythm is unchanged. Ancient Greece and Atlantis
+open through story-gated exits while the original regional IDs and Olympus–Typhon finale remain
+intact.
 
-- **Combat and challenge** — staged waves of mythological enemies. Clear them for a boon.
+- **Combat and challenge** — staged waves of mythological enemies. Defeated foes grant run XP;
+  clearing the chamber opens the route onward but never drafts a boon directly.
 - **Champion chambers** — an elite champion supported by a larger minion group.
 - **Charon’s Market** — visit a connected safe dock to browse persistent stock, gear, healing,
   upgrades, relics and boons, then return to the same crossing.
@@ -116,19 +123,26 @@ and Olympus–Typhon finale remain intact.
 - **Optional boss routes** — challenge a regional aspect for a greater reward.
 - **Capstones** — defeat the region’s required boss to continue the ascent.
 
-Clearing an encounter opens a physical reward gate. Passing through it claims that reward and
-returns control to the connected map. The map reveals as you travel, terrain blocks movement,
-and dropped Obols are credited once when collected. Obols and the Mirror of Nyx persist through
+Defeating enemies grants run XP by threat: standard foes 10, high-threat foes 20, elites 50,
+mythic nemeses 100, and bosses 200. Run level 2 needs 100 XP; each later level needs 20 more
+than the previous one. Overflow carries forward. Every level-up pauses play for a draft of
+exactly three compatible boons, and one choice advances the build. Rerolls change those three
+cards without adding or removing choices. Allied and summoned foes grant no XP; Practice has
+run XP disabled. Paragon XP remains persistent and separate from this run progression.
+
+Clearing an encounter opens a physical reward gate for its non-boon rewards, such as relics,
+augments, obols, and campaign transitions. Passing through it claims that reward and returns
+control to the connected map. The map reveals as you travel, terrain blocks movement, and
+dropped Obols are credited once when collected. Obols and the Mirror of Nyx persist through
 death.
 
 ### Progression and endgame
 
 The original 24 destinations retain three acts (8/8/8, extended to 8/8/10 with the two
 story-gated destinations Ancient Greece and Atlantis); the HUD tracks act, region,
-encounter and the next milestone. Act capstones add a separate Fated Thread draft after the
-normal boss boon and before the campaign story. Choose one of three build-aware
-transformations; a run can keep two. Free run modifiers shape hazards and side paths without
-turning an ordinary run into a Fated Trial.
+encounter and the next milestone. Act capstones add a separate Fated Thread draft before the
+campaign story. Choose one of three build-aware transformations; a run can keep two. Free run
+modifiers shape hazards and side paths without turning an ordinary run into a Fated Trial.
 
 Persistent progression keeps existing unlocks and bounds combat power. The Mirror retains its
 legacy ranks and adds finite Wayfinding, Artifice and Divine Accord branches. Gear keeps its
@@ -139,8 +153,9 @@ effects, sale value and upgrade limits. The Loom has 42 spendable points across 
 
 A full campaign victory unlocks Fated Trials. Select ranks 1–3 from eight Pacts before a
 descent; the sum is the Pact Score (1–24). Pacts can strengthen or speed enemies, reduce
-healing, raise shop prices, thin boon drafts, add elite pressure, or reduce starting Death
-Defiance. Only a completed Trial improves the best score. One-time score rewards at 5, 10,
+healing, raise shop prices, reduce level-up rerolls, add elite pressure, or reduce starting
+Death Defiance. Every level-up draft still offers exactly three boons. Only a completed Trial
+improves the best score. One-time score rewards at 5, 10,
 15, and 20 unlock titles shown in the Trial screen and victory recap. Trials add no
 spendable currency or permanent combat stats. Existing campaign wins unlock Trials when an
 older save is loaded.
@@ -221,9 +236,9 @@ gnaws at everything that lives.
 
 Permanent progression, bought with obols that survive death. The original sixteen
 reflections and 52 ranks remain; three finite branches add map revelation, salvage and
-refinement options, and ordinary boon choice. Toughness, Striking Power, Swiftness, Sharpened Edge,
+refinement options, and level-up boon rerolls. Toughness, Striking Power, Swiftness, Sharpened Edge,
 Thick Skin, Gods' Charm, Greed, Windfoot, Wrathful, **Death's Mercy** (extra resurrections),
-Insight (extra rerolls and boon choices), Tithe of the Dead, Chthonic Bargain, Fury,
+Insight (extra level-up rerolls), Tithe of the Dead, Chthonic Bargain, Fury,
 Styx-Touched, and **Fated** — which starts every run with a random relic.
 
 A **Codex** records every boon, relic, god and creature you have encountered, and marks the
@@ -234,11 +249,11 @@ ones you have not.
 ## Architecture
 
 Plain ES5-flavoured JavaScript, no modules, no transpiler, no runtime dependencies. Load
-order is explicit in `index.html`, and `tools/bundle.js` inlines the source and every
-optimized image into `katabasis.html`.
+order is explicit in the development/test page `index.html`, and `tools/bundle.js` inlines
+the source and every optimized image into the production game `katabasis.html`.
 
 ```
-index.html          markup, HUD, and every menu screen
+index.html          development/test page for markup, HUD, and menu screens
 css/style.css       black-figure pottery styling
 js/core.js          RNG, math, input, camera, particles, save normalization and audio support
 js/data.js          base records for 12 gods, 93 boons, 18 relics, 16 meta upgrades,
@@ -250,6 +265,9 @@ js/entities.js      Player and its eight abilities, Enemy (15 AI archetypes),
 js/game.js          the run director: chambers, spawning, the stat compiler,
                     damage resolution, boon economy, every god effect
 js/asset-manifest.js generated atlas dimensions and image paths
+assets/region-art-manifest.json stable region-to-kit, ground, material and landmark coverage
+assets/regions/generated/ eight biome prop kits, eight patterned ground atlases,
+                    and two signature-landmark sheets
 js/assets.js        image preloader, atlas drawing, sprite animation and UI image helpers
 js/world.js         seeded connected terrain, landmarks, routes, hazards and discovery
 js/world-runtime.js world traversal, collision, physical encounters, Charon’s Market
@@ -259,7 +277,8 @@ js/portraits.js     the 53-ID portrait registry and visible-surface motion treat
 js/endgame.js       finite Mirror branches, ordinary modifiers and horizontal gear systems
 js/render.js        scene helpers for actors, bosses, VFX, banners and interactions
 js/main.js          boot, resize, the fixed-step loop, all menus and HUD wiring
-assets/             PNG source art and optimized WebP atlases used by the game
+assets/             PNG source art, optimized WebP atlases, and generated regional terrain kits
+docs/world-generation/ v1 baseline and v2 area/route measurements for 26 regions × 32 seeds
 ```
 
 Plus `katabasis.html`, the generated single-file edition, and `tools/` (the bundler and the
@@ -345,8 +364,8 @@ These reference captures predate the expanded campaign and do not show the new r
    sustained damage in the game, and *Curse of Longing* doubles it.
 5. **Buy Death's Mercy early.** The Mirror's resurrection ranks are worth more than any
    damage stat when you are still learning the bosses.
-6. **Refusing the gods is a real choice.** The skip button trades a boon for obols and
-   maximum life — a legitimate path when the offered boons do not fit your build.
+6. **Make each level-up draft fit.** Every run level offers three boons and asks you to choose
+   one; spend a limited reroll when none suit the build.
 7. **Against Medusa, turn your back.** Walk away from the gaze and dash when the cone
    locks on. Petrifaction is not fatal; being petrified in front of a charging Minotaur is.
 8. **Save Ascend for the turn.** Five seconds of godhood is the difference between a chamber

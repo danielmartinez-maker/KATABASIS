@@ -13446,5 +13446,175 @@
     "rows": 1,
     "kind": "region-backdrop",
     "source": "aegean"
+  },
+  "regionkit.ash": {
+    "src": "assets/regions/generated/ash-world-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.0144578313253012,
+    "lazy": true,
+    "kind": "region-world-art",
+    "family": "ash",
+    "biome": "cinder, iron and basalt"
+  },
+  "regionkit.river": {
+    "src": "assets/regions/generated/river-world-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.5,
+    "lazy": true,
+    "kind": "region-world-art",
+    "family": "river",
+    "biome": "shallows, silt and saltstone"
+  },
+  "regionkit.grove": {
+    "src": "assets/regions/generated/grove-world-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.5,
+    "lazy": true,
+    "kind": "region-world-art",
+    "family": "grove",
+    "biome": "roots, blossom and moss"
+  },
+  "regionkit.fields": {
+    "src": "assets/regions/generated/fields-world-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-world-art",
+    "family": "fields",
+    "biome": "laurel, marble and poppy fields"
+  },
+  "regionkit.lava": {
+    "src": "assets/regions/generated/lava-world-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.3259871441689624,
+    "lazy": true,
+    "kind": "region-world-art",
+    "family": "lava",
+    "biome": "slag, bronze and obsidian"
+  },
+  "regionkit.ruins": {
+    "src": "assets/regions/generated/ruins-world-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.3333333333333333,
+    "lazy": true,
+    "kind": "region-world-art",
+    "family": "ruins",
+    "biome": "marble, mosaic and fallen stone"
+  },
+  "regionkit.storm": {
+    "src": "assets/regions/generated/storm-world-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.0942452043369475,
+    "lazy": true,
+    "kind": "region-world-art",
+    "family": "storm",
+    "biome": "cloudstone, lightning and titan stone"
+  },
+  "regionkit.terraces": {
+    "src": "assets/regions/generated/terraces-world-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.2,
+    "lazy": true,
+    "kind": "region-world-art",
+    "family": "terraces",
+    "biome": "cloud, sunstone and wind-cut marble"
+  },
+  "regionlandmark.01": {
+    "src": "assets/regions/generated/region-landmarks-01.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.0667215815485998,
+    "lazy": true,
+    "kind": "region-signature-landmarks",
+    "cells": 16
+  },
+  "regionlandmark.02": {
+    "src": "assets/regions/generated/region-landmarks-02.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.2105263157894737,
+    "lazy": true,
+    "kind": "region-signature-landmarks",
+    "cells": 16
+  },
+  "regionground.ash": {
+    "src": "assets/regions/generated/ash-ground-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.249554367201426,
+    "lazy": true,
+    "kind": "region-ground-overlay",
+    "family": "ash"
+  },
+  "regionground.river": {
+    "src": "assets/regions/generated/river-ground-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.249554367201426,
+    "lazy": true,
+    "kind": "region-ground-overlay",
+    "family": "river"
+  },
+  "regionground.grove": {
+    "src": "assets/regions/generated/grove-ground-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.249554367201426,
+    "lazy": true,
+    "kind": "region-ground-overlay",
+    "family": "grove"
+  },
+  "regionground.fields": {
+    "src": "assets/regions/generated/fields-ground-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.249554367201426,
+    "lazy": true,
+    "kind": "region-ground-overlay",
+    "family": "fields"
+  },
+  "regionground.lava": {
+    "src": "assets/regions/generated/lava-ground-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.249554367201426,
+    "lazy": true,
+    "kind": "region-ground-overlay",
+    "family": "lava"
+  },
+  "regionground.ruins": {
+    "src": "assets/regions/generated/ruins-ground-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-overlay",
+    "family": "ruins"
+  },
+  "regionground.storm": {
+    "src": "assets/regions/generated/storm-ground-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-overlay",
+    "family": "storm"
+  },
+  "regionground.terraces": {
+    "src": "assets/regions/generated/terraces-ground-kit.webp",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1.2475512021371327,
+    "lazy": true,
+    "kind": "region-ground-overlay",
+    "family": "terraces"
   }
 }

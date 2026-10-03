@@ -189,6 +189,7 @@
     actStatus: document.getElementById('act-status'),
     roomTrack: document.getElementById('room-track'),
     obolNum: document.getElementById('obol-num'),
+    levelStatus: document.getElementById('run-level-status'),
     dashPips: document.getElementById('dash-pips'),
     boonTray: document.getElementById('boon-tray'),
     relicTray: document.getElementById('relic-tray'),
@@ -271,6 +272,12 @@
     const rk = G.regionIndex + ':' + G.chamberIndex + ':' + (G.roomDef ? G.roomDef.cleared : 0);
     if (cache.room !== rk) { cache.room = rk; buildRoomTrack(); }
 
+    if(hud.levelStatus&&slowDue){
+      const run=G.run,threshold=100+20*Math.max(0,(run.level||1)-1);
+      const text=G.practiceMode?'PRACTICE · RUN XP OFF':'LV '+run.level+' · '+run.xp+'/'+threshold+' XP';
+      if(hud.levelStatus.textContent!==text)hud.levelStatus.textContent=text;
+    }
+
     const ob = G.run.obols;
     if (ob !== cache.obols) { cache.obols = ob; hud.obolNum.textContent = U.comma(ob); }
     if(hud.runStatus && slowDue){
@@ -279,7 +286,8 @@
       const favorId=favorIds.length?favorIds[0]:null, favorText=favorId?' · Favor: '+D.GODS[favorId].name+' '+(G.run.godFavor[favorId]>0?'+':'')+G.run.godFavor[favorId]:'';
       const threads=(G.run.fatedThreadIds||[]).map(id=>K.RunSystems.FATED_THREADS.find(x=>x.id===id)).filter(Boolean).map(x=>x.name);
       const hero=K.RunSystems.HEROES[G.run.heroId]||K.RunSystems.HEROES.perseus,weapon=(D.WEAPONS[G.run.weapon]||{}).name||G.run.weapon;
-      const status=G.practiceMode?'PRACTICE YARD · progress disabled':(hero.name+' · '+weapon+' · Threads: '+(threads.join(', ')||'none')+'  ·  '+
+      const threshold=100+20*Math.max(0,(G.run.level||1)-1);
+      const status=G.practiceMode?'PRACTICE YARD · run XP disabled':('Level '+G.run.level+' · '+G.run.xp+'/'+threshold+' XP · '+hero.name+' · '+weapon+' · Threads: '+(threads.join(', ')||'none')+'  ·  '+
         (q?(q.name+' '+q.progress+'/'+q.goal+(q.complete?' · COMPLETE':'')+'  ·  '):'')+
         (sy.length?'Synergy: '+sy.map(x=>x.name).join(', ')+'  ·  ':'')+'Second wind '+G.run.deathDefy+'/'+G.run.deathDefyMax+favorText);
       if(hud.runStatus.textContent!==status)hud.runStatus.textContent=status;
@@ -483,7 +491,7 @@
       const condition = node.condition || {};
       const families = node.familyNames || (node.families || []).map(id => D.ENEMIES[id] && D.ENEMIES[id].name).filter(Boolean).slice(0, 2).join(' and ');
       const meta = '<div class="route-meta"><span><strong>DANGER</strong> ' + escapeHtml(node.danger || 'Steady') + '</span>' +
-        '<span><strong>REWARD</strong> ' + escapeHtml(node.reward || 'Boon after the fight') + '</span>' +
+        '<span><strong>REWARD</strong> ' + escapeHtml(node.reward || 'Run XP from defeated foes') + '</span>' +
         '<span><strong>COST</strong> ' + escapeHtml(node.cost || 'None') + '</span>' +
         '<span><strong>CONDITION</strong> ' + escapeHtml(condition.name || node.title) + (condition.desc ? ' · ' + escapeHtml(condition.desc) : '') + '</span>' +
         (families ? '<span><strong>THREATS</strong> ' + escapeHtml(families) + '</span>' : '') +
@@ -897,16 +905,13 @@
           onClick:()=>{if(G.takeAugment(ch.id))closeToPlay();}}));
       });
     } else {
-      const tribute = reward.kind === 'boss';
-      kick.textContent = tribute ? 'CHAMPION’S TRIBUTE' : 'THE GODS OFFER';
-      title.textContent = tribute ? 'CHOOSE YOUR SPOILS' : 'CHOOSE A BOON';
+      kick.textContent = 'RUN LEVEL '+reward.level+' · DIVINE DRAFT';
+      title.textContent = 'CHOOSE ONE BOON';
       btnRr.classList.remove('hidden');
-      btnSkip.classList.remove('hidden');
+      btnSkip.classList.add('hidden');
       btnRr.disabled = reward.rerolls <= 0;
       rr.textContent = '(' + reward.rerolls + ')';
-      btnRr.setAttribute('aria-label', reward.rerolls > 0 ? 'Reroll boon choices, ' + reward.rerolls + ' left' : 'No rerolls left');
-      document.getElementById('skip-bonus').innerHTML = '(+' + Math.round(reward.skipBonus || 30) + ' ' + A.iconHtml('coin', 'currency-icon') + ', +8 max life, heal 20)';
-      btnSkip.setAttribute('aria-label', 'Refuse the gods: gain obols, maximum life, and healing instead of a boon');
+      btnRr.setAttribute('aria-label', reward.rerolls > 0 ? 'Reroll level-up boon choices, ' + reward.rerolls + ' left' : 'No rerolls left');
       reward.choices.forEach(ch => {
         const b = D.boonById[ch.id];
         const g = D.GODS[b.god];
@@ -922,7 +927,7 @@
           rarityLabel: rar.name,
           owned: isOwned ? 'Upgrade ' + D.RARITY[cur].name + ' → ' + D.RARITY[boonResultRarity(b, cur, ch.rarity)].name : '',
           effectMarkup: boonCardEffectMarkup(b, ch.rarity, isOwned ? cur : null, true),
-          onClick: () => { if (G.takeBoon(ch.id, ch.rarity)) closeToPlay(); }
+          onClick: () => { if (G.takeBoon(ch.id, ch.rarity) && !G.pendingReward) closeToPlay(); }
         }));
       });
     }
@@ -974,7 +979,7 @@
     castEcho:'Cast echo projectiles', chargedCombo:'Final combo hit bonus',
     homing:'Projectile homing strength', pierce:'Extra projectile targets', powerShot:'Power shot interval', stagger:'Stagger chance', rootOnHit:'Root chance',
     slowOnHit:'Slow strength', bleedAmp:'Damage vs bleeding targets', weakMul:'Weakening strength', weaken:'Weakening strength', charm:'Charm chance', critMark:'Marked-target damage bonus',
-    poisonTick:'Poison damage bonus', extraReward:'Extra rewards', rerollPlus:'Rerolls', freeShop:'Shop discount', deathDefy:'Death defiance',
+    poisonTick:'Poison damage bonus', extraReward:'Level-up rerolls', rerollPlus:'Level-up rerolls', freeShop:'Shop discount', deathDefy:'Death defiance',
     aegisOnBoss:'Boss aegis', revenge:'Revenge damage', rareChance:'Rare boon chance', immuneSlow:'Slow immunity', ambush:'Ambush damage',
     coinOnHit:'Obols on hit', darkBonus:'Darkness healing', doubleAttack:'Double attack chance', boltOnHit:'Lightning chance on hit',
     boltOnKill:'Lightning chance on kill', stormOnRoom:'Storms per room', raiseOnKill:'Raise on kill', harvestOnKill:'Harvest chance',
@@ -1076,8 +1081,7 @@
     }
     if (BOON_COUNT_KEYS.has(atom.key)) {
       if (atom.key === 'dashCharge') return signed + amount + ' extra dash charge' + (abs === 1 ? '' : 's');
-      if (atom.key === 'extraReward') return signed + amount + ' reward option' + (abs === 1 ? '' : 's');
-      if (atom.key === 'rerollPlus') return signed + amount + ' reroll' + (abs === 1 ? '' : 's');
+      if (atom.key === 'extraReward' || atom.key === 'rerollPlus') return signed + amount + ' level-up reroll' + (abs === 1 ? '' : 's');
       if (atom.key === 'deathDefy') return signed + amount + ' resurrection' + (abs === 1 ? '' : 's');
       if (atom.key === 'multishot') return signed + amount + ' projectile' + (abs === 1 ? '' : 's');
       if (atom.key === 'pierce') return signed + amount + ' extra target' + (abs === 1 ? '' : 's');
@@ -1218,6 +1222,7 @@
     const rows = [
       ['Chambers Cleared', s.chambers],
       ['Enemies Slain', s.kills],
+      ['Run Level / XP', run.practice ? 'Disabled in Practice' : run.level+' · '+run.xp+' / '+(100+20*Math.max(0,(run.level||1)-1))],
       ['Champions Felled', s.elites],
       ['Bosses Defeated', s.bosses],
       ['Damage Dealt', U.comma(s.dmgDealt)],
@@ -1245,6 +1250,7 @@
       'Fated Threads: '+(threadNames.join(' · ')||'none'),
       run.isFatedTrial?'Fated Trial · Pact score '+run.trialScore+' · best clear '+(K.Save.data.fatedTrialBestScore||0):'',
       'Synergies: '+((run.activeSynergies||[]).map(x=>x.name).join(', ')||'none'),
+      run.practice?'Practice session · no run XP':'Run progression: level '+run.level+' · '+run.xp+'/'+(100+20*Math.max(0,(run.level||1)-1))+' XP · '+(run.totalRunXp||0)+' earned',
       run.quest?'Quest: '+run.quest.name+' — '+(run.quest.complete?'complete':run.quest.progress+'/'+run.quest.goal):'Practice session',
       'Second winds: '+run.deathDefySpent+'/'+run.deathDefyMax,
       'Divine favor: '+(Object.keys(run.godFavor||{}).sort((a,b)=>Math.abs(run.godFavor[b]||0)-Math.abs(run.godFavor[a]||0)).slice(0,3).map(id=>D.GODS[id].name+' '+((run.godFavor[id]||0)>0?'+':'')+(run.godFavor[id]||0)).join(' · ')||'no god has taken a side'),
@@ -1599,7 +1605,7 @@
     const r = G.run;
     info.innerHTML = '<p style="color:#b6a68a;font-size:13px;line-height:1.7">' +
       (G.region() ? G.region().name : '') + ' — Chamber ' + (G.chamberIndex + 1) + '/' + ((G.region() && G.region().chamberCount) || 8) + '<br/>' +
-      'Boons: ' + r.boons.length + ' · Relics: ' + r.relics.length + ' · Obols: ' + A.iconHtml('coin', 'currency-icon') + ' ' + r.obols + '<br/>' +
+      'Level ' + r.level + ' · ' + r.xp + '/' + (100+20*Math.max(0,(r.level||1)-1)) + ' XP · Boons: ' + r.boons.length + ' · Relics: ' + r.relics.length + ' · Obols: ' + A.iconHtml('coin', 'currency-icon') + ' ' + r.obols + '<br/>' +
       (G.boss ? 'Boss: ' + G.boss.def.name + ' (' + Math.ceil(G.boss.hp) + ' HP)' : 'No boss present') +
       '</p>';
     document.getElementById('btn-practice-menu').classList.toggle('hidden',!G.practiceMode);
@@ -1654,10 +1660,10 @@
     /* reward buttons */
     document.getElementById('btn-reroll').addEventListener('click', () => {
       const pr = G.pendingReward;
-      if (!pr || pr.rerolls <= 0 || (pr.kind !== 'boon' && pr.kind !== 'boss')) return;
+      if (!pr || pr.rerolls <= 0 || pr.kind !== 'runLevelUp') return;
       pr.rerolls--;
       G.run.rerolls = pr.rerolls;
-      const count = pr.choiceCount || (3 + (G.player.stats.extraReward || 0));
+      const count = pr.choiceCount || 3;
       pr.choices = G.generateBoonChoices(count, { rarityFloor: pr.rarityFloor });
       K.Audio.sfx('ui');
       showRewardScreen(pr);
@@ -1666,6 +1672,7 @@
       const pr = G.pendingReward;
       if (!pr) return;
       if (pr.kind === 'fatedThread') { G.skipFatedThreads(); closeToPlay(); return; }
+      if (pr.kind === 'runLevelUp') return;
       const offeredGods = Array.from(new Set((pr.choices || []).map(ch => D.boonById[ch.id] && D.boonById[ch.id].god).filter(Boolean)));
       if (offeredGods.length) G.changeGodFavor(G.run.rng.pick(offeredGods), -1, 'refused a boon');
       const bonus = pr.skipBonus || 30;

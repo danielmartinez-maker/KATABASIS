@@ -203,7 +203,7 @@
     { id:'quickened-doom', name:'Quickened Doom', desc:'Enemies attack more quickly.', ranks:['+6% enemy tempo','+12% enemy tempo','+18% enemy tempo'], key:'enemyTempo', step:0.06 },
     { id:'thin-mercy', name:'Thin Mercy', desc:'Healing restores less life.', ranks:['−12% healing','−24% healing','−36% healing'], key:'healing', step:0.12 },
     { id:'charons-due', name:'Charon’s Due', desc:'Charon’s wares cost more.', ranks:['+15% shop prices','+30% shop prices','+45% shop prices'], key:'shopPrices', step:0.15 },
-    { id:'scarce-offers', name:'Scarce Offers', desc:'Boon drafts offer fewer choices.', ranks:['−1 boon option','−2 boon options','−3 boon options'], key:'boonOffers', step:1 },
+    { id:'scarce-offers', name:'Scarce Offers', desc:'Level-up drafts have fewer rerolls.', ranks:['−1 reroll','−2 rerolls','−3 rerolls'], key:'rerollPenalty', step:1 },
     { id:'crowded-fate', name:'Crowded Fate', desc:'More enemies enter each wave as elites.', ranks:['+1 elite per wave','+2 elites per wave','+3 elites per wave'], key:'elitePressure', step:1 },
     { id:'mortal-thread', name:'Mortal Thread', desc:'Begin with fewer Death Defiances.', ranks:['−1 Death Defiance','−2 Death Defiances','−3 Death Defiances'], key:'deathDefiance', step:1 }
   ];
@@ -398,14 +398,14 @@
   function pactModifiers(selection) {
     const normalized = normalizePactSelection(selection), out = {
       enemyHealth:1, enemyDamage:1, enemyTempo:1, healing:1, shopPrices:1,
-      boonOfferPenalty:0, elitePressure:0, deathDefiancePenalty:0, score:normalized.score
+      rerollPenalty:0, elitePressure:0, deathDefiancePenalty:0, score:normalized.score
     };
     PACTS.forEach(pact => {
       const rank = normalized.ranks[pact.id] || 0;
       if (!rank) return;
       if (pact.key === 'enemyHealth' || pact.key === 'enemyDamage' || pact.key === 'enemyTempo' || pact.key === 'shopPrices') out[pact.key] *= 1 + pact.step * rank;
       else if (pact.key === 'healing') out.healing = Math.max(0.4, out.healing - pact.step * rank);
-      else if (pact.key === 'boonOffers') out.boonOfferPenalty += rank;
+      else if (pact.key === 'rerollPenalty') out.rerollPenalty += rank;
       else if (pact.key === 'elitePressure') out.elitePressure += rank;
       else if (pact.key === 'deathDefiance') out.deathDefiancePenalty += rank;
     });
@@ -414,7 +414,7 @@
     out.enemyTempo = Math.max(1, Math.min(1.6, out.enemyTempo));
     out.healing = Math.max(0.4, Math.min(1, out.healing));
     out.shopPrices = Math.max(1, Math.min(2.5, out.shopPrices));
-    out.boonOfferPenalty = Math.min(3, out.boonOfferPenalty);
+    out.rerollPenalty = Math.min(3, out.rerollPenalty);
     out.elitePressure = Math.min(3, out.elitePressure);
     out.deathDefiancePenalty = Math.min(3, out.deathDefiancePenalty);
     return out;

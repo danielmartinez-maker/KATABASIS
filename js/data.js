@@ -143,7 +143,7 @@
        healRoom    heal this fraction of max hp each chamber
        obolMul     obol gain multiplier
        rareChance  better boon rarity odds
-       extraReward extra boon choice
+       extraReward legacy alias for level-up rerolls
        aegisOnBoss begin boss fights with shield
        deathDefy   extra death defiances
        revenge     on taking damage, explosive retort
@@ -424,8 +424,8 @@
       desc: 'Gain +%A% critical chance and +%B% movement speed. Chaos asks no price. Yet.',
       fx: { crit: 0.2, moveMul: 0.12, attSpd: 0.1 } },
     { id: 'c_greed', god: 'chaos', slot: 'passive', name: 'Grasp of the Void', icon: '🌀',
-      desc: '+%A% Obols and %B% extra reward choices. Everything costs more.',
-      fx: { obolMul: 0.8, extraReward: 1, freeShop: -0.15 } }
+      desc: '+%A% Obols and %B% level-up rerolls. Everything costs more.',
+      fx: { obolMul: 0.8, rerollPlus: 1, freeShop: -0.15 } }
   ];
 
   /* ------------- Duo & Legendary boons (require foundations) ------------- */
@@ -524,7 +524,7 @@
     c_strike:{A:{path:'dmgMul',unit:'percent'},B:{path:'moveMul',unit:'absolutePercent'}},
     c_call:{A:{path:'callBoost',unit:'percent'}}, c_special:{A:{path:'specialMul',unit:'percent'}}, c_dash:{A:{path:'dashCharge',unit:'dashCharges'},B:{path:'maxHpMul',unit:'absolutePercent'}},
     c_favor:{A:{path:'crit',unit:'percent'},B:{path:'moveMul',unit:'percent'}},
-    c_greed:{A:{path:'obolMul',unit:'percent'},B:{path:'extraReward',unit:'count'}},
+    c_greed:{A:{path:'obolMul',unit:'percent'},B:{path:'rerollPlus',unit:'count'}},
     duo_ice:{A:{path:'waveDmg',unit:'damage'}},
     duo_fastkill:{A:{path:'bleedAmp',unit:'percent'},B:{path:'killHeal',unit:'health'}},
     duo_dark:{A:{path:'dmgMul',unit:'percent'}}, duo_deadly:{A:{path:'crit',unit:'percent'},B:{path:'deflectProj',unit:'percent'}},
@@ -556,7 +556,7 @@
     { id: 'r_pom', name: 'Pomegranate Seed', icon: '🍎', color: '#c0392b',
       desc: 'Six months above, six below. Heal 12% of max life each chamber.', fx: { healRoom: 0.12 } },
     { id: 'r_key', name: 'Key of Hades', icon: '🗝', color: '#9a7ad8',
-      desc: 'The House opens. One extra boon choice from every god.', fx: { extraReward: 1 } },
+      desc: 'The House opens. Gain one level-up reroll.', fx: { rerollPlus: 1 } },
     { id: 'r_hammer', name: 'Cyclops\' Hammer', icon: '🔨', color: '#f0a04a',
       desc: 'Heavy and certain: +28% attack damage, -6% attack speed.', fx: { dmgMul: 0.28, attSpd: -0.06 } },
     { id: 'r_fang', name: 'Fang of Cerberus', icon: '🐕', color: '#8b6f4e',
@@ -598,7 +598,7 @@
     { id: 'm_mercy',   name: 'Death\'s Mercy', icon: '💀', max: 3, cost: 160, step: 160,
       desc: '+1 Death Defiance per rank.', fx: { deathDefy: 1 } },
     { id: 'm_insight', name: 'Insight',        icon: '👁', max: 2, cost: 120, step: 120,
-      desc: '+1 reroll per rank and one more boon choice.', fx: { rerollPlus: 1, extraReward: 1 } },
+      desc: '+2 level-up rerolls per rank.', fx: { rerollPlus: 2 } },
     { id: 'm_tithe',   name: 'Tithe of the Dead', icon: '⚱', max: 3, cost: 90, step: 90,
       desc: 'Heal 4% of max life when you clear a chamber.', fx: { healRoom: 0.04 } },
     { id: 'm_bargain', name: 'Chthonic Bargain', icon: '🏺', max: 3, cost: 65, step: 65,

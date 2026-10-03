@@ -8,8 +8,8 @@
   "homepage": "https://github.com/danielmartinez-maker/KATABASIS",
   "scripts": {
     "postinstall": "install-electron",
-    "start": "electron .",
-    "dist:win": "electron-builder --win portable --x64"
+    "start": "node tools/bundle.js && electron .",
+    "dist:win": "node tools/bundle.js && electron-builder --win portable --x64"
   },
   "devDependencies": {
     "electron": "44.4.5",
@@ -21,10 +21,7 @@
     "asar": true,
     "files": [
       "desktop/**",
-      "assets/**",
-      "css/**",
-      "js/**",
-      "index.html",
+      "katabasis.html",
       "package.json"
     ],
     "directories": {

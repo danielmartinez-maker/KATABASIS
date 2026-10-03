@@ -998,6 +998,10 @@
     this.opts = base.ai_opts || {};
     this.ally = !!mods.ally || !!base.ally;
     this.elite = !!mods.elite;
+    this.summoned = !!mods.summoned || !!base.summon;
+    this.runXpEligible = mods.runXpEligible === undefined ? (!this.ally && !this.summoned) : (!!mods.runXpEligible && !this.ally);
+    this.runXpRank = mods.runXpRank === undefined ? base.runXpRank : mods.runXpRank;
+    this.runXpAwarded = false;
     this.isBoss = false;
     this.dead = false;
     this.removeMe = false;

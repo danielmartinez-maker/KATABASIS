@@ -11,6 +11,23 @@
   const E = K.E;
   const TAU = U.TAU;
   const BASE = { hp: 100, dmg: 15, speed: 268, atkCd: 0.34, dashRegen: 1.4 };
+  const RUN_XP_RANKS = { standard:10, high_threat:20, elite:50, miniboss:100, boss:200 };
+  function runXpThreshold(level){return 100+20*Math.max(0,(Number(level)||1)-1);}
+  function explicitRunXpRank(value){
+    if(value===undefined||value===null||value==='')return null;
+    const name=String(value).toLowerCase().replace(/[\s-]+/g,'_');
+    if(Object.prototype.hasOwnProperty.call(RUN_XP_RANKS,name))return RUN_XP_RANKS[name];
+    const amount=Number(value);if(!Number.isFinite(amount)||amount<=0)return 0;
+    return [10,20,50,100,200].filter(rank=>rank<=amount).pop()||10;
+  }
+  function runXpForEnemy(enemy){
+    const explicit=explicitRunXpRank(enemy.runXpRank!==undefined?enemy.runXpRank:enemy.type&&enemy.type.runXpRank!==undefined?enemy.type.runXpRank:enemy.def&&enemy.def.runXpRank);
+    if(explicit!==null)return explicit;
+    if(enemy.isBoss)return RUN_XP_RANKS.boss;
+    if(enemy.isMiniBoss||enemy.miniboss)return RUN_XP_RANKS.miniboss;
+    if(enemy.elite)return RUN_XP_RANKS.elite;
+    return Number(enemy.type&&enemy.type.score)>=4?RUN_XP_RANKS.high_threat:RUN_XP_RANKS.standard;
+  }
   const LORE = {
     names: ['Akteon','Bia','Damon','Eudora','Ianthe','Kallias','Lykon','Melia','Niko','Phaedra','Theron','Xanthe','Zale','Thalia','Kyros','Myrrine','Dione','Orion','Soter','Aella','Kleon','Eris','Myrto','Leandros'],
     roles: ['potter','ferryman','royal courier','midwife','bronze-smith','vine tender','temple singer','shepherd','scribe','shipwright','olive farmer','shield-bearer','physician','weaver','horse trainer','keeper of a roadside shrine'],
@@ -36,6 +53,10 @@
     this.seed = seed >>> 0;
     this.ordinal = (K.Save.data.runs || 0) + 1;
     this.enemySerial = 0;
+    this.level = 1;
+    this.xp = 0;
+    this.totalRunXp = 0;
+    this.levelUpQueue = [];
     this.rng = new K.RNG(this.seed);
     this.regionIndex = 0;
     this.chamberIndex = 0;
@@ -428,7 +449,8 @@
     this.player.shield = 0;
     this.run.deathDefyMax = Math.max(0, Math.round(this.player.stats.deathDefy || 0) - ((((this.run.modifiers || this.run.trialModifiers) || {}).deathDefiancePenalty) || 0));
     this.run.deathDefy = this.run.deathDefyMax;
-    this.run.rerolls = 1 + (this.run.rerollBonus || 0) + (this.run.endgameOptions && this.run.endgameOptions.rerolls || 0);
+    const trialRerollPenalty = ((this.run.trialModifiers || this.run.modifiers || {}).rerollPenalty || 0);
+    this.run.rerolls = Math.max(0, 1 + (this.run.rerollBonus || 0) + (this.run.endgameOptions && this.run.endgameOptions.rerolls || 0) - trialRerollPenalty);
     this.exitGate = null;
     this.pendingChamberReward = null;
     this.pendingReward = null;
@@ -561,7 +583,7 @@
     if (isShop) { this.roomDef.cleared = true; this.pendingChamberReward = null; if (condition && condition.obols) this.run.addObols(condition.obols); }
     K.Audio.playRegion(region,isShop || type === 'event' ? 'calm' : (isBoss ? 'boss' : (type === 'miniboss' ? 'miniboss' : 'combat')));
     if (type === 'combat') this.spawnWave(region, 1.2);
-    else if (type === 'risk') { this.player.hp=Math.max(1,this.player.hp-Math.ceil(this.player.stats.maxHp*0.12)); this.spawnWave(region,1.7); this.toast('BLOOD TITHE — 12% life pledged for a greater boon','#e2564a',true); }
+    else if (type === 'risk') { this.player.hp=Math.max(1,this.player.hp-Math.ceil(this.player.stats.maxHp*0.12)); this.spawnWave(region,1.7); this.toast('BLOOD TITHE — 12% life pledged; the larger wave yields more run XP','#e2564a',true); }
     else if (type === 'challenge') this.spawnWave(region, 1.9);
     else if (type === 'elite') this.spawnElite(region);
     else if (type === 'miniboss') this.spawnMiniBoss(region);
@@ -922,7 +944,7 @@
       if (this.countActiveHostiles() >= 22) break;
       const a = Math.random() * TAU, r = 60 + Math.random() * 40;
       const q = this.clampToArena(src.x + Math.cos(a) * r, src.y + Math.sin(a) * r, 30);
-      const e = this.addEnemy(id, q.x, q.y, { tier: this.regionIndex });
+      const e = this.addEnemy(id, q.x, q.y, { tier: this.regionIndex, summoned:true, runXpEligible:false });
       this.spawnPuff(e.x, e.y, e.color);
     }
     K.Audio.sfx('bell');
@@ -932,7 +954,7 @@
       if (this.countActiveHostiles() >= 22) break;
       const a = Math.random() * TAU, r = 60 + Math.random() * (spread || 120);
       const q = this.clampToArena(x + Math.cos(a) * r, y + Math.sin(a) * r, 30);
-      const e = this.addEnemy(id, q.x, q.y, { tier: this.regionIndex });
+      const e = this.addEnemy(id, q.x, q.y, { tier: this.regionIndex, summoned:true, runXpEligible:false });
       this.spawnPuff(e.x, e.y, e.color);
     }
     K.Audio.sfx('bell');
@@ -1064,6 +1086,7 @@
     }
     this.run.stats.kills++;
     if (this.practiceMode) { hitFx(this,e.x,e.y,e.color,10,150); return; }
+    this.awardRunXp(e);
     this.progressQuest('kill');
     K.Save.data.kills++;
     const isBoss = e.isBoss;
@@ -1106,6 +1129,29 @@
     }
     if (isElite) { this.run.stats.elites++; K.Save.data.elites++; this.progressQuest('elite'); }
     K.Save.write();
+  };
+
+  Game.prototype.awardRunXp = function(enemy){
+    if(!this.run||this.practiceMode||!enemy||enemy.runXpAwarded)return 0;
+    enemy.runXpAwarded=true;
+    if(enemy.ally||enemy.runXpEligible===false||((enemy.summoned||enemy.type&&enemy.type.summon)&&enemy.runXpEligible!==true))return 0;
+    const amount=runXpForEnemy(enemy);if(amount<=0)return 0;
+    this.run.xp+=amount;this.run.totalRunXp=(this.run.totalRunXp||0)+amount;
+    while(this.run.xp>=runXpThreshold(this.run.level)){
+      this.run.xp-=runXpThreshold(this.run.level);
+      this.run.level++;
+      this.run.levelUpQueue.push(this.run.level);
+    }
+    return amount;
+  };
+
+  Game.prototype.flushRunLevelUps=function(){
+    const run=this.run;
+    if(!run||this.practiceMode||this.phase!=='playing'||this.pendingReward||!run.levelUpQueue.length)return false;
+    const level=run.levelUpQueue[0];
+    this.toast('RUN LEVEL '+level+' — CHOOSE A BOON','#e0b355',true);
+    this.offerBoons({kind:'runLevelUp',count:3,level});
+    return !!this.pendingReward;
   };
 
   Game.prototype.dropObol = function (x, y, amount) {
@@ -1797,12 +1843,13 @@
 
   Game.prototype.offerBoons = function (opts) {
     opts = opts || {};
+    if(opts.kind!=='runLevelUp'||!this.run||this.practiceMode)return false;
     if (this.pendingReward) return;             /* one offer at a time */
-    const baseCount = opts.count === undefined ? 3 + (this.player.stats.extraReward || 0) : Math.max(1, opts.count | 0);
-    const count = Math.max(1, Math.min(6,baseCount + (this.run.endgameOptions && this.run.endgameOptions.draftOptions || 0)) - (this.run.trialModifiers && this.run.trialModifiers.boonOfferPenalty || 0));
+    const count = 3;
     const skipBonus = opts.skipBonus || 30;
     this.pendingReward = {
-      kind: opts.kind || 'boon',
+      kind: 'runLevelUp',
+      level:opts.level||this.run.level,
       choices: this.generateBoonChoices(count, { rarityFloor: opts.rarityFloor }),
       choiceCount: count,
       rarityFloor: opts.rarityFloor || null,
@@ -1820,7 +1867,7 @@
 
   Game.prototype.takeBoon = function (id, rarity) {
     const reward = this.pendingReward;
-    if (!reward || (reward.kind !== 'boon' && reward.kind !== 'boss') || !reward.choices.some(c => c.id === id && c.rarity === rarity)) return false;
+    if (!reward || reward.kind !== 'runLevelUp' || !reward.choices.some(c => c.id === id && c.rarity === rarity)) return false;
     const def = D.boonById[id];
     if (!def) return;
     const isNew = !this.run.hasBoon(id);
@@ -1842,6 +1889,13 @@
     if (!reward) return false;
     this.pendingReward = null;
     if (reward.kind === 'fatedThread') return this.continueAfterReward(reward.continuation);
+    if(reward.kind==='runLevelUp'){
+      if(this.run&&this.run.levelUpQueue.length&&this.run.levelUpQueue[0]===reward.level)this.run.levelUpQueue.shift();
+      else if(this.run&&this.run.levelUpQueue.length)this.run.levelUpQueue.shift();
+      this.phase='playing';
+      if(this.flushRunLevelUps())return true;
+      this.phase='playing';return true;
+    }
     const continuation = { campaignChapter:reward.campaignChapter, advanceAfter:reward.advanceAfter, victoryAfter:reward.victoryAfter };
     if (reward.threadAfter) return this.offerFatedThreads(continuation);
     return this.continueAfterReward(continuation);
@@ -1988,7 +2042,6 @@
     if(this.roomDef.type==='challenge')this.progressQuest('challenge');
     if (this.roomDef.type === 'boss' || this.roomDef.type === 'optionalboss') this.pendingChamberReward = 'boss';
     else if (this.roomDef.type === 'miniboss') this.pendingChamberReward = 'augment';
-    else if (this.roomDef.type === 'combat' || this.roomDef.type === 'risk' || this.roomDef.type === 'challenge' || this.roomDef.type === 'elite') this.pendingChamberReward = 'boon';
     else if (this.roomDef.type === 'treasure') this.pendingChamberReward = 'relic';
     else this.pendingChamberReward = null;
     this.openExitGate(); K.Audio.sfx('levelup');
@@ -2052,12 +2105,12 @@
       const final = !!(this.roomDef && this.roomDef.isFinalCapstone);
       const chapter = this.roomDef && this.roomDef.idx >= 7 ? this.regionIndex : null;
       this.run.addObols(100 + this.regionIndex * 40);
-      this._advanceAfter = false;
       const threadAfter = !!(this.roomDef && this.roomDef.type === 'boss' && (this.regionIndex === 7 || this.regionIndex === 15));
-      this.offerBoons({ kind: 'boss', count: 4, rarityFloor: 'rare', skipBonus: 120, advanceAfter: !final, victoryAfter: final, campaignChapter:chapter, threadAfter });
+      const continuation={campaignChapter:chapter,advanceAfter:!final,victoryAfter:final};
+      if(threadAfter)this.offerFatedThreads(continuation);else this.continueAfterReward(continuation);
       return true;
     }
-    if (reward) { this._advanceAfter = true; this.offerBoons(this.roomDef&&this.roomDef.type==='risk'?{rarityFloor:'rare'}:{}); return true; }
+    if (reward) { this._advanceAfter = false; this.advance(); return true; }
     this._advanceAfter = false; this.advance(); return true;
   };
 
@@ -2145,7 +2198,7 @@
       }
       const labels = { combat:'Combat', risk:'Blood-Tithe Room', miniboss:'Mythic Nemesis', elite:'Champion', treasure:'Treasure', shop:'Charon’s Shop', event:'Fateful Event', challenge:'Trial', optionalboss:'Optional Boss' };
       const danger = type === 'shop' || type === 'event' || type === 'treasure' ? 'Measured' : (type === 'optionalboss' || type === 'elite' || type === 'challenge' || type === 'miniboss' || type === 'risk' ? 'Severe' : 'Steady');
-      const reward = type === 'shop' ? 'Forge upgrade, haggle, or trade life' : type === 'treasure' ? 'Relic and obols' : type === 'event' ? 'Choose a bargain' : type === 'optionalboss' ? 'Boss boon and bonus obols' : type === 'miniboss' ? 'Choose a run augment' : type === 'risk' ? 'Enhanced boon for 12% life' : type === 'elite' ? 'Boon after an elite champion' : type === 'challenge' ? 'Boon after the Trial chamber' : 'Boon after the fight';
+      const reward = type === 'shop' ? 'Forge upgrade, haggle, or trade life' : type === 'treasure' ? 'Relic and obols' : type === 'event' ? 'Choose a bargain' : type === 'optionalboss' ? 'Boss drops, obols, and high-value run XP' : type === 'miniboss' ? 'Choose a run augment' : type === 'risk' ? 'More foes and run XP for 12% life' : type === 'elite' ? 'Elite drops and high-value run XP' : type === 'challenge' ? 'Trial rewards and run XP' : 'Run XP from defeated foes';
       const event = eventId && D.ROOM_EVENTS.find(e => e.id === eventId);
       const familyNames = type === 'optionalboss' ? (D.BOSSES[bossId] && D.BOSSES[bossId].name) : (type==='miniboss'?'A unique champion with a signature attack':families.map(id => D.ENEMIES[id] && D.ENEMIES[id].name).filter(Boolean).slice(0, 2).join(' and '));
       const cost = type === 'risk' ? '12% maximum health' : type === 'event' ? 'Varies by event choice' : 'None';
@@ -2388,6 +2441,8 @@
     if (this.nearInteract && this.nearInteract.kind !== 'gate' && In.hit('KeyE')) {
       this.doInteract(this.nearInteract);
     }
+
+    this.flushRunLevelUps();
 
     /* room clear check */
     if (!this.practiceMode && this.phase === 'playing' && !this.roomDef.cleared) this.checkRoomClear();

@@ -1,0 +1,1197 @@
+{
+  "version": 1,
+  "description": "Every playable region resolves its own stable ID to a terrain family kit, dense walkable ground overlays, and an authored signature landmark.",
+  "atlas": {
+    "cols": 4,
+    "rows": 4,
+    "cellAspect": "per-family manifest aspect",
+    "cells": {
+      "terrainTransitions": [
+        0,
+        7
+      ],
+      "obstacles": [
+        8,
+        11
+      ],
+      "signatureLandmarks": [
+        12,
+        15
+      ]
+    }
+  },
+  "families": {
+    "ash": {
+      "assetId": "regionkit.ash",
+      "src": "assets/regions/generated/ash-world-kit.webp",
+      "biome": "cinder, iron and basalt",
+      "groundAssetId": "regionground.ash",
+      "groundSrc": "assets/regions/generated/ash-ground-kit.webp"
+    },
+    "river": {
+      "assetId": "regionkit.river",
+      "src": "assets/regions/generated/river-world-kit.webp",
+      "biome": "shallows, silt and saltstone",
+      "groundAssetId": "regionground.river",
+      "groundSrc": "assets/regions/generated/river-ground-kit.webp"
+    },
+    "grove": {
+      "assetId": "regionkit.grove",
+      "src": "assets/regions/generated/grove-world-kit.webp",
+      "biome": "roots, blossom and moss",
+      "groundAssetId": "regionground.grove",
+      "groundSrc": "assets/regions/generated/grove-ground-kit.webp"
+    },
+    "fields": {
+      "assetId": "regionkit.fields",
+      "src": "assets/regions/generated/fields-world-kit.webp",
+      "biome": "laurel, marble and poppy fields",
+      "groundAssetId": "regionground.fields",
+      "groundSrc": "assets/regions/generated/fields-ground-kit.webp"
+    },
+    "lava": {
+      "assetId": "regionkit.lava",
+      "src": "assets/regions/generated/lava-world-kit.webp",
+      "biome": "slag, bronze and obsidian",
+      "groundAssetId": "regionground.lava",
+      "groundSrc": "assets/regions/generated/lava-ground-kit.webp"
+    },
+    "ruins": {
+      "assetId": "regionkit.ruins",
+      "src": "assets/regions/generated/ruins-world-kit.webp",
+      "biome": "marble, mosaic and fallen stone",
+      "groundAssetId": "regionground.ruins",
+      "groundSrc": "assets/regions/generated/ruins-ground-kit.webp"
+    },
+    "storm": {
+      "assetId": "regionkit.storm",
+      "src": "assets/regions/generated/storm-world-kit.webp",
+      "biome": "cloudstone, lightning and titan stone",
+      "groundAssetId": "regionground.storm",
+      "groundSrc": "assets/regions/generated/storm-ground-kit.webp"
+    },
+    "terraces": {
+      "assetId": "regionkit.terraces",
+      "src": "assets/regions/generated/terraces-world-kit.webp",
+      "biome": "cloud, sunstone and wind-cut marble",
+      "groundAssetId": "regionground.terraces",
+      "groundSrc": "assets/regions/generated/terraces-ground-kit.webp"
+    }
+  },
+  "groundAtlases": {
+    "ash": {
+      "assetId": "regionground.ash",
+      "src": "assets/regions/generated/ash-ground-kit.webp",
+      "aspect": 1.249554367201426,
+      "cols": 4,
+      "rows": 4,
+      "cells": 16
+    },
+    "river": {
+      "assetId": "regionground.river",
+      "src": "assets/regions/generated/river-ground-kit.webp",
+      "aspect": 1.249554367201426,
+      "cols": 4,
+      "rows": 4,
+      "cells": 16
+    },
+    "grove": {
+      "assetId": "regionground.grove",
+      "src": "assets/regions/generated/grove-ground-kit.webp",
+      "aspect": 1.249554367201426,
+      "cols": 4,
+      "rows": 4,
+      "cells": 16
+    },
+    "fields": {
+      "assetId": "regionground.fields",
+      "src": "assets/regions/generated/fields-ground-kit.webp",
+      "aspect": 1.249554367201426,
+      "cols": 4,
+      "rows": 4,
+      "cells": 16
+    },
+    "lava": {
+      "assetId": "regionground.lava",
+      "src": "assets/regions/generated/lava-ground-kit.webp",
+      "aspect": 1.249554367201426,
+      "cols": 4,
+      "rows": 4,
+      "cells": 16
+    },
+    "ruins": {
+      "assetId": "regionground.ruins",
+      "src": "assets/regions/generated/ruins-ground-kit.webp",
+      "aspect": 1,
+      "cols": 4,
+      "rows": 4,
+      "cells": 16
+    },
+    "storm": {
+      "assetId": "regionground.storm",
+      "src": "assets/regions/generated/storm-ground-kit.webp",
+      "aspect": 1,
+      "cols": 4,
+      "rows": 4,
+      "cells": 16
+    },
+    "terraces": {
+      "assetId": "regionground.terraces",
+      "src": "assets/regions/generated/terraces-ground-kit.webp",
+      "aspect": 1.2475512021371327,
+      "cols": 4,
+      "rows": 4,
+      "cells": 16
+    }
+  },
+  "signatureAtlases": {
+    "regionlandmark.01": {
+      "assetId": "regionlandmark.01",
+      "src": "assets/regions/generated/region-landmarks-01.webp",
+      "cells": 16
+    },
+    "regionlandmark.02": {
+      "assetId": "regionlandmark.02",
+      "src": "assets/regions/generated/region-landmarks-02.webp",
+      "cells": 16
+    }
+  },
+  "regions": [
+    {
+      "id": "tartarus",
+      "name": "TARTARUS",
+      "family": "ash",
+      "atlasAssetId": "regionkit.ash",
+      "groundAssetId": "regionground.ash",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "tartarus",
+      "biomeFamily": "ash",
+      "worldScale": 5,
+      "signatureLandmark": "Chained Gate",
+      "signatureCell": 0,
+      "subzones": [
+        {
+          "id": "cinder",
+          "material": "ash_cinder",
+          "landmark": "Chained Gate",
+          "landmarkCell": 12,
+          "terrainArtKey": "tartarus.terrain.ash_cinder"
+        },
+        {
+          "id": "iron",
+          "material": "ash_iron",
+          "landmark": "Ash Watchtower",
+          "landmarkCell": 13,
+          "terrainArtKey": "tartarus.terrain.ash_iron"
+        },
+        {
+          "id": "basalt",
+          "material": "ash_basalt",
+          "landmark": "Buried Tribunal",
+          "landmarkCell": 14,
+          "terrainArtKey": "tartarus.terrain.ash_basalt"
+        }
+      ]
+    },
+    {
+      "id": "styx",
+      "name": "RIVER STYX",
+      "family": "river",
+      "atlasAssetId": "regionkit.river",
+      "groundAssetId": "regionground.river",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "styx",
+      "biomeFamily": "river",
+      "worldScale": 5,
+      "signatureLandmark": "Ferry Crossing",
+      "signatureCell": 1,
+      "subzones": [
+        {
+          "id": "shallows",
+          "material": "river_shallows",
+          "landmark": "Ferry Crossing",
+          "landmarkCell": 12,
+          "terrainArtKey": "styx.terrain.river_shallows"
+        },
+        {
+          "id": "silt",
+          "material": "river_silt",
+          "landmark": "Drowned Colonnade",
+          "landmarkCell": 13,
+          "terrainArtKey": "styx.terrain.river_silt"
+        },
+        {
+          "id": "saltstone",
+          "material": "river_saltstone",
+          "landmark": "Black-Reed Causeway",
+          "landmarkCell": 14,
+          "terrainArtKey": "styx.terrain.river_saltstone"
+        }
+      ]
+    },
+    {
+      "id": "acheron",
+      "name": "ACHERON, RIVER OF GRIEF",
+      "family": "river",
+      "atlasAssetId": "regionkit.river",
+      "groundAssetId": "regionground.river",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "styx",
+      "biomeFamily": "river",
+      "worldScale": 5,
+      "signatureLandmark": "Sorrow Beacon",
+      "signatureCell": 2,
+      "subzones": [
+        {
+          "id": "shallows",
+          "material": "river_shallows",
+          "landmark": "Sorrow Beacon",
+          "landmarkCell": 12,
+          "terrainArtKey": "acheron.terrain.river_shallows"
+        },
+        {
+          "id": "silt",
+          "material": "river_silt",
+          "landmark": "Silted Ferry",
+          "landmarkCell": 13,
+          "terrainArtKey": "acheron.terrain.river_silt"
+        },
+        {
+          "id": "saltstone",
+          "material": "river_saltstone",
+          "landmark": "Deadwater Steps",
+          "landmarkCell": 14,
+          "terrainArtKey": "acheron.terrain.river_saltstone"
+        }
+      ]
+    },
+    {
+      "id": "asphodel",
+      "name": "ASPHODEL",
+      "family": "grove",
+      "atlasAssetId": "regionkit.grove",
+      "groundAssetId": "regionground.grove",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "asphodel",
+      "biomeFamily": "grove",
+      "worldScale": 5,
+      "signatureLandmark": "Cinder Orchard",
+      "signatureCell": 3,
+      "subzones": [
+        {
+          "id": "roots",
+          "material": "grove_roots",
+          "landmark": "Cinder Orchard",
+          "landmarkCell": 12,
+          "terrainArtKey": "asphodel.terrain.grove_roots"
+        },
+        {
+          "id": "blossom",
+          "material": "grove_blossom",
+          "landmark": "Rooted Shrine",
+          "landmarkCell": 13,
+          "terrainArtKey": "asphodel.terrain.grove_blossom"
+        },
+        {
+          "id": "moss",
+          "material": "grove_moss",
+          "landmark": "Ember-Bloom Glade",
+          "landmarkCell": 14,
+          "terrainArtKey": "asphodel.terrain.grove_moss"
+        }
+      ]
+    },
+    {
+      "id": "punishment",
+      "name": "FIELDS OF PUNISHMENT",
+      "family": "lava",
+      "atlasAssetId": "regionkit.lava",
+      "groundAssetId": "regionground.lava",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "punishment",
+      "biomeFamily": "lava",
+      "worldScale": 5,
+      "signatureLandmark": "Molten Writ",
+      "signatureCell": 4,
+      "subzones": [
+        {
+          "id": "slag",
+          "material": "lava_slag",
+          "landmark": "Molten Writ",
+          "landmarkCell": 12,
+          "terrainArtKey": "punishment.terrain.lava_slag"
+        },
+        {
+          "id": "bronze",
+          "material": "lava_bronze",
+          "landmark": "Chain Winch",
+          "landmarkCell": 13,
+          "terrainArtKey": "punishment.terrain.lava_bronze"
+        },
+        {
+          "id": "obsidian",
+          "material": "lava_obsidian",
+          "landmark": "Furnace Rift",
+          "landmarkCell": 14,
+          "terrainArtKey": "punishment.terrain.lava_obsidian"
+        }
+      ]
+    },
+    {
+      "id": "lethe_garden",
+      "name": "GARDEN OF LETHE",
+      "family": "grove",
+      "atlasAssetId": "regionkit.grove",
+      "groundAssetId": "regionground.grove",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "mourning",
+      "biomeFamily": "grove",
+      "worldScale": 5,
+      "signatureLandmark": "Memory Orchard",
+      "signatureCell": 5,
+      "subzones": [
+        {
+          "id": "roots",
+          "material": "grove_roots",
+          "landmark": "Memory Orchard",
+          "landmarkCell": 12,
+          "terrainArtKey": "lethe_garden.terrain.grove_roots"
+        },
+        {
+          "id": "blossom",
+          "material": "grove_blossom",
+          "landmark": "Veiled Spring",
+          "landmarkCell": 13,
+          "terrainArtKey": "lethe_garden.terrain.grove_blossom"
+        },
+        {
+          "id": "moss",
+          "material": "grove_moss",
+          "landmark": "Forgetful Arbors",
+          "landmarkCell": 14,
+          "terrainArtKey": "lethe_garden.terrain.grove_moss"
+        }
+      ]
+    },
+    {
+      "id": "elysium",
+      "name": "ELYSIUM",
+      "family": "fields",
+      "atlasAssetId": "regionkit.fields",
+      "groundAssetId": "regionground.fields",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "elysium",
+      "biomeFamily": "fields",
+      "worldScale": 5,
+      "signatureLandmark": "Heroic Memorial",
+      "signatureCell": 6,
+      "subzones": [
+        {
+          "id": "laurel",
+          "material": "fields_laurel",
+          "landmark": "Heroic Memorial",
+          "landmarkCell": 12,
+          "terrainArtKey": "elysium.terrain.fields_laurel"
+        },
+        {
+          "id": "marble",
+          "material": "fields_marble",
+          "landmark": "Laurel Arena",
+          "landmarkCell": 13,
+          "terrainArtKey": "elysium.terrain.fields_marble"
+        },
+        {
+          "id": "poppy",
+          "material": "fields_poppy",
+          "landmark": "Broken Colonnade",
+          "landmarkCell": 14,
+          "terrainArtKey": "elysium.terrain.fields_poppy"
+        }
+      ]
+    },
+    {
+      "id": "mourning",
+      "name": "FIELDS OF MOURNING",
+      "family": "fields",
+      "atlasAssetId": "regionkit.fields",
+      "groundAssetId": "regionground.fields",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "mourning",
+      "biomeFamily": "fields",
+      "worldScale": 5,
+      "signatureLandmark": "Weeping Laurel",
+      "signatureCell": 7,
+      "subzones": [
+        {
+          "id": "laurel",
+          "material": "fields_laurel",
+          "landmark": "Weeping Laurel",
+          "landmarkCell": 12,
+          "terrainArtKey": "mourning.terrain.fields_laurel"
+        },
+        {
+          "id": "marble",
+          "material": "fields_marble",
+          "landmark": "Phantom Procession",
+          "landmarkCell": 13,
+          "terrainArtKey": "mourning.terrain.fields_marble"
+        },
+        {
+          "id": "poppy",
+          "material": "fields_poppy",
+          "landmark": "Mourner’s Gate",
+          "landmarkCell": 14,
+          "terrainArtKey": "mourning.terrain.fields_poppy"
+        }
+      ]
+    },
+    {
+      "id": "forge",
+      "name": "THE BRONZE FORGE",
+      "family": "lava",
+      "atlasAssetId": "regionkit.lava",
+      "groundAssetId": "regionground.lava",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "forge",
+      "biomeFamily": "lava",
+      "worldScale": 5,
+      "signatureLandmark": "Bronze Foundry",
+      "signatureCell": 8,
+      "subzones": [
+        {
+          "id": "slag",
+          "material": "lava_slag",
+          "landmark": "Bronze Foundry",
+          "landmarkCell": 12,
+          "terrainArtKey": "forge.terrain.lava_slag"
+        },
+        {
+          "id": "bronze",
+          "material": "lava_bronze",
+          "landmark": "Hammer Hall",
+          "landmarkCell": 13,
+          "terrainArtKey": "forge.terrain.lava_bronze"
+        },
+        {
+          "id": "obsidian",
+          "material": "lava_obsidian",
+          "landmark": "Molten Fault",
+          "landmarkCell": 14,
+          "terrainArtKey": "forge.terrain.lava_obsidian"
+        }
+      ]
+    },
+    {
+      "id": "labyrinth",
+      "name": "DAEDALUS’ LABYRINTH",
+      "family": "ruins",
+      "atlasAssetId": "regionkit.ruins",
+      "groundAssetId": "regionground.ruins",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "labyrinth",
+      "biomeFamily": "ruins",
+      "worldScale": 5,
+      "signatureLandmark": "Turning Hall",
+      "signatureCell": 9,
+      "subzones": [
+        {
+          "id": "marble",
+          "material": "ruins_marble",
+          "landmark": "Turning Hall",
+          "landmarkCell": 12,
+          "terrainArtKey": "labyrinth.terrain.ruins_marble"
+        },
+        {
+          "id": "mosaic",
+          "material": "ruins_mosaic",
+          "landmark": "Pillar Court",
+          "landmarkCell": 13,
+          "terrainArtKey": "labyrinth.terrain.ruins_mosaic"
+        },
+        {
+          "id": "fallen",
+          "material": "ruins_fallen",
+          "landmark": "Royal Gate",
+          "landmarkCell": 14,
+          "terrainArtKey": "labyrinth.terrain.ruins_fallen"
+        }
+      ]
+    },
+    {
+      "id": "knossos",
+      "name": "KNOSSOS, PALACE OF THE DOUBLE AXE",
+      "family": "ruins",
+      "atlasAssetId": "regionkit.ruins",
+      "groundAssetId": "regionground.ruins",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "labyrinth",
+      "biomeFamily": "ruins",
+      "worldScale": 5,
+      "signatureLandmark": "Bull Gate",
+      "signatureCell": 10,
+      "subzones": [
+        {
+          "id": "marble",
+          "material": "ruins_marble",
+          "landmark": "Bull Gate",
+          "landmarkCell": 12,
+          "terrainArtKey": "knossos.terrain.ruins_marble"
+        },
+        {
+          "id": "mosaic",
+          "material": "ruins_mosaic",
+          "landmark": "Daidalos Workshop",
+          "landmarkCell": 13,
+          "terrainArtKey": "knossos.terrain.ruins_mosaic"
+        },
+        {
+          "id": "fallen",
+          "material": "ruins_fallen",
+          "landmark": "Painted Bull Fresco",
+          "landmarkCell": 14,
+          "terrainArtKey": "knossos.terrain.ruins_fallen"
+        }
+      ]
+    },
+    {
+      "id": "aegean",
+      "name": "AEGEAN CROSSING",
+      "family": "river",
+      "atlasAssetId": "regionkit.river",
+      "groundAssetId": "regionground.river",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "aegean",
+      "biomeFamily": "river",
+      "worldScale": 5,
+      "signatureLandmark": "Tidal Shrine",
+      "signatureCell": 11,
+      "subzones": [
+        {
+          "id": "shallows",
+          "material": "river_shallows",
+          "landmark": "Tidal Shrine",
+          "landmarkCell": 12,
+          "terrainArtKey": "aegean.terrain.river_shallows"
+        },
+        {
+          "id": "silt",
+          "material": "river_silt",
+          "landmark": "Whale-Bone Pier",
+          "landmarkCell": 13,
+          "terrainArtKey": "aegean.terrain.river_silt"
+        },
+        {
+          "id": "saltstone",
+          "material": "river_saltstone",
+          "landmark": "Ferry Crossing",
+          "landmarkCell": 14,
+          "terrainArtKey": "aegean.terrain.river_saltstone"
+        }
+      ]
+    },
+    {
+      "id": "aeaea",
+      "name": "AEAEA, ISLE OF CIRCE",
+      "family": "grove",
+      "atlasAssetId": "regionkit.grove",
+      "groundAssetId": "regionground.grove",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "aegean",
+      "biomeFamily": "grove",
+      "worldScale": 5,
+      "signatureLandmark": "Circe’s Loom",
+      "signatureCell": 12,
+      "subzones": [
+        {
+          "id": "roots",
+          "material": "grove_roots",
+          "landmark": "Circe’s Loom",
+          "landmarkCell": 12,
+          "terrainArtKey": "aeaea.terrain.grove_roots"
+        },
+        {
+          "id": "blossom",
+          "material": "grove_blossom",
+          "landmark": "Enchanted Menhir",
+          "landmarkCell": 13,
+          "terrainArtKey": "aeaea.terrain.grove_blossom"
+        },
+        {
+          "id": "moss",
+          "material": "grove_moss",
+          "landmark": "Moonlit Cypress",
+          "landmarkCell": 14,
+          "terrainArtKey": "aeaea.terrain.grove_moss"
+        }
+      ]
+    },
+    {
+      "id": "colchis",
+      "name": "COLCHIS, THE GOLDEN SHORE",
+      "family": "river",
+      "atlasAssetId": "regionkit.river",
+      "groundAssetId": "regionground.river",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "aegean",
+      "biomeFamily": "river",
+      "worldScale": 5,
+      "signatureLandmark": "Golden Fleece Mooring",
+      "signatureCell": 13,
+      "subzones": [
+        {
+          "id": "shallows",
+          "material": "river_shallows",
+          "landmark": "Golden Fleece Mooring",
+          "landmarkCell": 12,
+          "terrainArtKey": "colchis.terrain.river_shallows"
+        },
+        {
+          "id": "silt",
+          "material": "river_silt",
+          "landmark": "Dragon-Tooth Grove",
+          "landmarkCell": 13,
+          "terrainArtKey": "colchis.terrain.river_silt"
+        },
+        {
+          "id": "saltstone",
+          "material": "river_saltstone",
+          "landmark": "Sun-Skein Loom",
+          "landmarkCell": 14,
+          "terrainArtKey": "colchis.terrain.river_saltstone"
+        }
+      ]
+    },
+    {
+      "id": "gigantomachy",
+      "name": "GIGANTOMACHY FRONT",
+      "family": "storm",
+      "atlasAssetId": "regionkit.storm",
+      "groundAssetId": "regionground.storm",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "gigantomachy",
+      "biomeFamily": "storm",
+      "worldScale": 5,
+      "signatureLandmark": "Titan Rampart",
+      "signatureCell": 14,
+      "subzones": [
+        {
+          "id": "cloudstone",
+          "material": "storm_cloudstone",
+          "landmark": "Titan Rampart",
+          "landmarkCell": 12,
+          "terrainArtKey": "gigantomachy.terrain.storm_cloudstone"
+        },
+        {
+          "id": "lightning",
+          "material": "storm_lightning",
+          "landmark": "Storm Beacon",
+          "landmarkCell": 13,
+          "terrainArtKey": "gigantomachy.terrain.storm_lightning"
+        },
+        {
+          "id": "titanstone",
+          "material": "storm_titanstone",
+          "landmark": "War Memorial",
+          "landmarkCell": 14,
+          "terrainArtKey": "gigantomachy.terrain.storm_titanstone"
+        }
+      ]
+    },
+    {
+      "id": "delphi",
+      "name": "DELPHI, SANCTUARY OF APOLLO",
+      "family": "terraces",
+      "atlasAssetId": "regionkit.terraces",
+      "groundAssetId": "regionground.terraces",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "olympus_approach",
+      "biomeFamily": "terraces",
+      "worldScale": 5,
+      "signatureLandmark": "Pythian Well",
+      "signatureCell": 2,
+      "subzones": [
+        {
+          "id": "cloud",
+          "material": "terraces_cloud",
+          "landmark": "Pythian Well",
+          "landmarkCell": 12,
+          "terrainArtKey": "delphi.terrain.terraces_cloud"
+        },
+        {
+          "id": "sunstone",
+          "material": "terraces_sunstone",
+          "landmark": "Omphalos Steps",
+          "landmarkCell": 13,
+          "terrainArtKey": "delphi.terrain.terraces_sunstone"
+        },
+        {
+          "id": "windcut",
+          "material": "terraces_windcut",
+          "landmark": "Tripod Sanctuary",
+          "landmarkCell": 14,
+          "terrainArtKey": "delphi.terrain.terraces_windcut"
+        }
+      ]
+    },
+    {
+      "id": "pelion",
+      "name": "MOUNT PELION",
+      "family": "grove",
+      "atlasAssetId": "regionkit.grove",
+      "groundAssetId": "regionground.grove",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "elysium",
+      "biomeFamily": "grove",
+      "worldScale": 5,
+      "signatureLandmark": "Centaur Grove",
+      "signatureCell": 3,
+      "subzones": [
+        {
+          "id": "roots",
+          "material": "grove_roots",
+          "landmark": "Centaur Grove",
+          "landmarkCell": 12,
+          "terrainArtKey": "pelion.terrain.grove_roots"
+        },
+        {
+          "id": "blossom",
+          "material": "grove_blossom",
+          "landmark": "Ash-Mounted Spring",
+          "landmarkCell": 13,
+          "terrainArtKey": "pelion.terrain.grove_blossom"
+        },
+        {
+          "id": "moss",
+          "material": "grove_moss",
+          "landmark": "Old Wine Press",
+          "landmarkCell": 14,
+          "terrainArtKey": "pelion.terrain.grove_moss"
+        }
+      ]
+    },
+    {
+      "id": "arcadia",
+      "name": "ARCADIA, WILDWOOD OF PAN",
+      "family": "grove",
+      "atlasAssetId": "regionkit.grove",
+      "groundAssetId": "regionground.grove",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "asphodel",
+      "biomeFamily": "grove",
+      "worldScale": 5,
+      "signatureLandmark": "Moonlit Dolmen",
+      "signatureCell": 4,
+      "subzones": [
+        {
+          "id": "roots",
+          "material": "grove_roots",
+          "landmark": "Moonlit Dolmen",
+          "landmarkCell": 12,
+          "terrainArtKey": "arcadia.terrain.grove_roots"
+        },
+        {
+          "id": "blossom",
+          "material": "grove_blossom",
+          "landmark": "Pan’s Fen",
+          "landmarkCell": 13,
+          "terrainArtKey": "arcadia.terrain.grove_blossom"
+        },
+        {
+          "id": "moss",
+          "material": "grove_moss",
+          "landmark": "Horned-Stag Shrine",
+          "landmarkCell": 14,
+          "terrainArtKey": "arcadia.terrain.grove_moss"
+        }
+      ]
+    },
+    {
+      "id": "thebes",
+      "name": "THEBES, CITY OF SEVEN GATES",
+      "family": "ruins",
+      "atlasAssetId": "regionkit.ruins",
+      "groundAssetId": "regionground.ruins",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "labyrinth",
+      "biomeFamily": "ruins",
+      "worldScale": 5,
+      "signatureLandmark": "Sphinx Gate",
+      "signatureCell": 5,
+      "subzones": [
+        {
+          "id": "marble",
+          "material": "ruins_marble",
+          "landmark": "Sphinx Gate",
+          "landmarkCell": 12,
+          "terrainArtKey": "thebes.terrain.ruins_marble"
+        },
+        {
+          "id": "mosaic",
+          "material": "ruins_mosaic",
+          "landmark": "Seven-Gate Causeway",
+          "landmarkCell": 13,
+          "terrainArtKey": "thebes.terrain.ruins_mosaic"
+        },
+        {
+          "id": "fallen",
+          "material": "ruins_fallen",
+          "landmark": "Cadmean Well",
+          "landmarkCell": 14,
+          "terrainArtKey": "thebes.terrain.ruins_fallen"
+        }
+      ]
+    },
+    {
+      "id": "marathon",
+      "name": "MARATHON, THE LONG PLAIN",
+      "family": "fields",
+      "atlasAssetId": "regionkit.fields",
+      "groundAssetId": "regionground.fields",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "gigantomachy",
+      "biomeFamily": "fields",
+      "worldScale": 5,
+      "signatureLandmark": "Runner’s Cairn",
+      "signatureCell": 6,
+      "subzones": [
+        {
+          "id": "laurel",
+          "material": "fields_laurel",
+          "landmark": "Runner’s Cairn",
+          "landmarkCell": 12,
+          "terrainArtKey": "marathon.terrain.fields_laurel"
+        },
+        {
+          "id": "marble",
+          "material": "fields_marble",
+          "landmark": "Laurel Field",
+          "landmarkCell": 13,
+          "terrainArtKey": "marathon.terrain.fields_marble"
+        },
+        {
+          "id": "poppy",
+          "material": "fields_poppy",
+          "landmark": "Poppy Banner",
+          "landmarkCell": 14,
+          "terrainArtKey": "marathon.terrain.fields_poppy"
+        }
+      ]
+    },
+    {
+      "id": "mycenae",
+      "name": "MYCENAE, LION GATE",
+      "family": "ruins",
+      "atlasAssetId": "regionkit.ruins",
+      "groundAssetId": "regionground.ruins",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "forge",
+      "biomeFamily": "ruins",
+      "worldScale": 5,
+      "signatureLandmark": "Lion Gate",
+      "signatureCell": 7,
+      "subzones": [
+        {
+          "id": "marble",
+          "material": "ruins_marble",
+          "landmark": "Lion Gate",
+          "landmarkCell": 12,
+          "terrainArtKey": "mycenae.terrain.ruins_marble"
+        },
+        {
+          "id": "mosaic",
+          "material": "ruins_mosaic",
+          "landmark": "Tholos Treasury",
+          "landmarkCell": 13,
+          "terrainArtKey": "mycenae.terrain.ruins_mosaic"
+        },
+        {
+          "id": "fallen",
+          "material": "ruins_fallen",
+          "landmark": "Bronze King’s Hall",
+          "landmarkCell": 14,
+          "terrainArtKey": "mycenae.terrain.ruins_fallen"
+        }
+      ]
+    },
+    {
+      "id": "olympus_approach",
+      "name": "OLYMPUS APPROACH",
+      "family": "terraces",
+      "atlasAssetId": "regionkit.terraces",
+      "groundAssetId": "regionground.terraces",
+      "signatureAssetId": "regionlandmark.01",
+      "signatureNodeId": "main-7",
+      "floorFamily": "olympus_approach",
+      "biomeFamily": "terraces",
+      "worldScale": 5,
+      "signatureLandmark": "Cloud Bridge",
+      "signatureCell": 15,
+      "subzones": [
+        {
+          "id": "cloud",
+          "material": "terraces_cloud",
+          "landmark": "Cloud Bridge",
+          "landmarkCell": 12,
+          "terrainArtKey": "olympus_approach.terrain.terraces_cloud"
+        },
+        {
+          "id": "sunstone",
+          "material": "terraces_sunstone",
+          "landmark": "Divine Hall",
+          "landmarkCell": 13,
+          "terrainArtKey": "olympus_approach.terrain.terraces_sunstone"
+        },
+        {
+          "id": "windcut",
+          "material": "terraces_windcut",
+          "landmark": "Ascending Terrace",
+          "landmarkCell": 14,
+          "terrainArtKey": "olympus_approach.terrain.terraces_windcut"
+        }
+      ]
+    },
+    {
+      "id": "olympus",
+      "name": "THE SUMMIT",
+      "family": "terraces",
+      "atlasAssetId": "regionkit.terraces",
+      "groundAssetId": "regionground.terraces",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "olympus",
+      "biomeFamily": "terraces",
+      "worldScale": 5,
+      "signatureLandmark": "High Cloud Court",
+      "signatureCell": 0,
+      "subzones": [
+        {
+          "id": "cloud",
+          "material": "terraces_cloud",
+          "landmark": "High Cloud Court",
+          "landmarkCell": 12,
+          "terrainArtKey": "olympus.terrain.terraces_cloud"
+        },
+        {
+          "id": "sunstone",
+          "material": "terraces_sunstone",
+          "landmark": "Storm Throne",
+          "landmarkCell": 13,
+          "terrainArtKey": "olympus.terrain.terraces_sunstone"
+        },
+        {
+          "id": "windcut",
+          "material": "terraces_windcut",
+          "landmark": "Sunward Pillar",
+          "landmarkCell": 14,
+          "terrainArtKey": "olympus.terrain.terraces_windcut"
+        }
+      ]
+    },
+    {
+      "id": "typhon_core",
+      "name": "TYPHON’S CORE",
+      "family": "lava",
+      "atlasAssetId": "regionkit.lava",
+      "groundAssetId": "regionground.lava",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "gigantomachy",
+      "biomeFamily": "lava",
+      "worldScale": 5,
+      "signatureLandmark": "Typhon’s Forge",
+      "signatureCell": 1,
+      "subzones": [
+        {
+          "id": "slag",
+          "material": "lava_slag",
+          "landmark": "Typhon’s Forge",
+          "landmarkCell": 12,
+          "terrainArtKey": "typhon_core.terrain.lava_slag"
+        },
+        {
+          "id": "bronze",
+          "material": "lava_bronze",
+          "landmark": "Cyclopean Chain",
+          "landmarkCell": 13,
+          "terrainArtKey": "typhon_core.terrain.lava_bronze"
+        },
+        {
+          "id": "obsidian",
+          "material": "lava_obsidian",
+          "landmark": "Magma Heart",
+          "landmarkCell": 14,
+          "terrainArtKey": "typhon_core.terrain.lava_obsidian"
+        }
+      ]
+    },
+    {
+      "id": "ancient_greece",
+      "name": "ANCIENT GREECE",
+      "family": "fields",
+      "atlasAssetId": "regionkit.fields",
+      "groundAssetId": "regionground.fields",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "elysium",
+      "biomeFamily": "fields",
+      "worldScale": 5,
+      "signatureLandmark": "Olive Way",
+      "signatureCell": 8,
+      "subzones": [
+        {
+          "id": "laurel",
+          "material": "fields_laurel",
+          "landmark": "Olive Way",
+          "landmarkCell": 12,
+          "terrainArtKey": "ancient_greece.terrain.fields_laurel"
+        },
+        {
+          "id": "marble",
+          "material": "fields_marble",
+          "landmark": "Roadside Shrine",
+          "landmarkCell": 13,
+          "terrainArtKey": "ancient_greece.terrain.fields_marble"
+        },
+        {
+          "id": "poppy",
+          "material": "fields_poppy",
+          "landmark": "Living Village",
+          "landmarkCell": 14,
+          "terrainArtKey": "ancient_greece.terrain.fields_poppy"
+        }
+      ]
+    },
+    {
+      "id": "atlantis",
+      "name": "ATLANTIS",
+      "family": "river",
+      "atlasAssetId": "regionkit.river",
+      "groundAssetId": "regionground.river",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "main-7",
+      "floorFamily": "aegean",
+      "biomeFamily": "river",
+      "worldScale": 5,
+      "signatureLandmark": "Sunken Forum",
+      "signatureCell": 9,
+      "subzones": [
+        {
+          "id": "shallows",
+          "material": "river_shallows",
+          "landmark": "Sunken Forum",
+          "landmarkCell": 12,
+          "terrainArtKey": "atlantis.terrain.river_shallows"
+        },
+        {
+          "id": "silt",
+          "material": "river_silt",
+          "landmark": "Coral Crown",
+          "landmarkCell": 13,
+          "terrainArtKey": "atlantis.terrain.river_silt"
+        },
+        {
+          "id": "saltstone",
+          "material": "river_saltstone",
+          "landmark": "Poseidon’s Gate",
+          "landmarkCell": 14,
+          "terrainArtKey": "atlantis.terrain.river_saltstone"
+        }
+      ]
+    },
+    {
+      "id": "charon_market",
+      "name": "CHARON’S MARKET",
+      "family": "river",
+      "atlasAssetId": "regionkit.river",
+      "groundAssetId": "regionground.river",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "vendor",
+      "floorFamily": "styx",
+      "biomeFamily": "river",
+      "worldScale": 1,
+      "signatureLandmark": "Charon’s Stall",
+      "signatureCell": 10,
+      "subzones": [
+        {
+          "id": "landing",
+          "material": "river_shallows",
+          "landmark": "Ferry Landing",
+          "landmarkCell": 12,
+          "terrainArtKey": "charon_market.terrain.river_shallows"
+        },
+        {
+          "id": "stall",
+          "material": "river_silt",
+          "landmark": "Charon’s Stall",
+          "landmarkCell": 15,
+          "terrainArtKey": "charon_market.terrain.river_silt"
+        },
+        {
+          "id": "lamps",
+          "material": "river_saltstone",
+          "landmark": "Lamp Dock",
+          "landmarkCell": 14,
+          "terrainArtKey": "charon_market.terrain.river_saltstone"
+        }
+      ]
+    },
+    {
+      "id": "practice",
+      "name": "THE TRAINING GROUNDS",
+      "family": "ruins",
+      "atlasAssetId": "regionkit.ruins",
+      "groundAssetId": "regionground.ruins",
+      "signatureAssetId": "regionlandmark.02",
+      "signatureNodeId": "training",
+      "floorFamily": "tartarus",
+      "biomeFamily": "ruins",
+      "worldScale": 1,
+      "signatureLandmark": "Training Court",
+      "signatureCell": 11,
+      "subzones": [
+        {
+          "id": "court",
+          "material": "ruins_marble",
+          "landmark": "Training Court",
+          "landmarkCell": 13,
+          "terrainArtKey": "practice.terrain.ruins_marble"
+        },
+        {
+          "id": "gallery",
+          "material": "ruins_mosaic",
+          "landmark": "Training Court",
+          "landmarkCell": 14,
+          "terrainArtKey": "practice.terrain.ruins_mosaic"
+        },
+        {
+          "id": "yard",
+          "material": "ruins_fallen",
+          "landmark": "Training Court",
+          "landmarkCell": 15,
+          "terrainArtKey": "practice.terrain.ruins_fallen"
+        }
+      ]
+    }
+  ]
+}

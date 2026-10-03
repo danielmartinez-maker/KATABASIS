@@ -18,7 +18,7 @@
     art_refinement:{id:'art_refinement',branch:'artifice',name:'Measured Refinement',cost:1200,requires:['art_target'],desc:'Permit two additional ordinary-affix refinements per item, for a lifetime maximum of five.'},
     accord_reroll:{id:'accord_reroll',branch:'divine_accord',name:'A Second Hearing',cost:250,requires:[],desc:'Begin each descent with one extra boon reroll.'},
     accord_patron:{id:'accord_patron',branch:'divine_accord',name:'Chosen Patron',cost:600,requires:['accord_reroll'],desc:'Choose any eligible god to favor in ordinary boon offers; this never blocks another god.'},
-    accord_draft:{id:'accord_draft',branch:'divine_accord',name:'Wider Counsel',cost:1000,requires:['accord_patron'],desc:'Ordinary boon drafts offer one additional choice, up to six, before modifier penalties.'}
+    accord_draft:{id:'accord_draft',branch:'divine_accord',name:'Wider Counsel',cost:1000,requires:['accord_patron'],desc:'Begin each descent with one additional level-up boon reroll.'}
   };
   Object.setPrototypeOf(BRANCHES,null);Object.setPrototypeOf(NODES,null);
   const current=save=>save || K.Save.data;
@@ -72,8 +72,8 @@
     const save=current(saveArg),prefs=save.endgamePreferences || {};
     return {revealRadius:owns(save,'wf_survey')?96:0,mapLandmarks:owns(save,'wf_landmarks'),routeBias:owns(save,'wf_forks')?prefs.routeBias || null:null,
       salvageBonus:owns(save,'art_salvage')?1:0,gearTarget:owns(save,'art_target')?{setId:prefs.setId || null,traitFamily:prefs.traitFamily || null}:null,
-      refinementCharges:owns(save,'art_refinement')?2:0,rerolls:owns(save,'accord_reroll')?1:0,
-      favoredGod:owns(save,'accord_patron')?prefs.favoredGod || null:null,draftOptions:owns(save,'accord_draft')?1:0};
+      refinementCharges:owns(save,'art_refinement')?2:0,rerolls:(owns(save,'accord_reroll')?1:0)+(owns(save,'accord_draft')?1:0),
+      favoredGod:owns(save,'accord_patron')?prefs.favoredGod || null:null};
   }
   function setPreferences(input) {
     const save=K.Save.data;if(!workbench() || !input || typeof input!=='object')return false;
@@ -125,7 +125,7 @@
   const API={BRANCHES,NODES,BUILD_COVERAGE,normalizeSave,branchPreview,buyBranch,refundPreview,refundBranches,options,setPreferences,modifierPreview,configureRun,atWorkbench:workbench};
   K.Endgame=API;
 
-  // Choice branches change selection agency; they never add permanent damage.
+  // The patron branch changes which gods appear without changing the fixed three-card draft.
   const originalDraft=K.Game.prototype.generateBoonChoices;
   K.Game.prototype.generateBoonChoices=function(count,opts){
     const choices=originalDraft.call(this,count,opts),patron=this.run && this.run.endgameOptions && this.run.endgameOptions.favoredGod;
