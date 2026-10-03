@@ -5,6 +5,8 @@ for (const name of ['world','world-runtime']) {
   const filename=path.join(__dirname,'../js/'+name+'.js');
   if(fs.existsSync(filename) && !(name==='world'?K.World:K.WorldRuntime)) vm.runInNewContext(fs.readFileSync(filename,'utf8'),windowShim,{filename});
 }
+const ambienceFile=path.join(__dirname,'../js/world-ambience.js');
+if(fs.existsSync(ambienceFile)&&!K.WorldAmbience)vm.runInNewContext(fs.readFileSync(ambienceFile,'utf8'),windowShim,{filename:ambienceFile});
 const tests=[];
 function test(name,fn){tests.push([name,fn]);}
 function reset(seed=713){releaseAll();K.Save.clear();G.practiceMode=false;G.startRun(seed);}
@@ -69,12 +71,101 @@ test('Every region owns a distinct terrain and ambience program with seeded trav
   assert.strictEqual(layouts.size,ids.length,'region terrain programs collapsed to duplicate layouts');
   assert.strictEqual(G.run.rng.seed,combatSeed,'world terrain consumed combat RNG');
 });
+test('Regional atmosphere emits deterministic bounded particles and honors reduced motion',()=>{
+  const A=K.WorldAmbience;assert.ok(A,'regional ambience controller is missing');
+  const ids=K.DATA.REGIONS.map(region=>region.id).concat(['charon_market','practice']);
+  const kinds=new Set(ids.map(id=>K.World.PROFILES[id].ambience.particleKind));
+  assert.ok(kinds.size>=7,'regional atmosphere has too few distinct particle families');
+  const makeGame=()=>({world:K.World.generate({seed:818,regionId:'tartarus'}),particles:new K.Particles(2400),
+    cam:{x:0,y:0,zoom:1,ox:0,oy:0},player:{x:0,y:0},phase:'playing',realTime:0});
+  function run(step){const game=makeGame();for(let t=0;t<24;t+=step){A.update(game,step);game.realTime+=step;}return game.particles.list.filter(p=>p.worldAmbience).map(p=>[p.x,p.y,p.vx,p.vy,p.life,p.kind]);}
+  assert.deepStrictEqual(JSON.stringify(run(1/30)),JSON.stringify(run(1/60)),'regional weather changed with frame cadence');
+  const crowded=makeGame();for(let i=0;i<2400;i++)A.update(crowded,1/30);const cap=A.visibleParticleCap(crowded);
+  assert.ok(crowded.particles.list.filter(p=>p.worldAmbience).length<=cap,'atmosphere exceeded its visible-area particle cap');
+  A.setReducedMotion(true);const still=makeGame();for(let i=0;i<180;i++)A.update(still,1/30);
+  assert.strictEqual(still.particles.list.filter(p=>p.worldAmbience).length,0,'reduced motion still emitted ambience');
+  A.setReducedMotion(false);
+});
+test('Legacy saves retain global mute and receive separate ambience preferences',()=>{
+  const legacy=K.Save.load({muted:true,obols:37});
+  assert.strictEqual(legacy.muted,true,'legacy global mute was reset');
+  assert.strictEqual(legacy.obols,37,'legacy progression was reset');
+  assert.strictEqual(legacy.ambienceVolume,0.45,'legacy save missed the ambience volume default');
+  assert.strictEqual(legacy.ambienceMuted,false,'legacy save missed the independent ambience mute default');
+  assert.strictEqual(legacy.reducedMotion,false,'legacy save missed the reduced-motion default');
+  assert.strictEqual(typeof K.Audio.setAmbienceVolume,'function','independent ambience volume API is missing');
+  assert.strictEqual(typeof K.Audio.setAmbienceMuted,'function','independent ambience mute API is missing');
+  assert.strictEqual(typeof K.Audio.setAmbienceProfile,'function','regional ambience profile API is missing');
+  const clamped=K.Save.load({ambienceVolume:4,ambienceMuted:1,reducedMotion:1});
+  assert.strictEqual(clamped.ambienceVolume,1,'ambience volume was not clamped');
+  assert.strictEqual(clamped.ambienceMuted,true);assert.strictEqual(clamped.reducedMotion,true);
+  const audio=K.Audio,old={ctx:audio.ctx,master:audio.master,sfxGain:audio.sfxGain,musicGain:audio.musicGain,ambienceGain:audio.ambienceGain,
+    enabled:audio.enabled,started:audio.started,muted:audio.muted,ambienceMuted:audio.ambienceMuted,ambienceVolume:audio._ambienceVolume,
+    profile:audio._ambienceProfile,profileKey:audio._ambienceKey,synth:audio._ambienceSynth,AudioContext:windowShim.AudioContext};
+  class Param{constructor(value){this.value=value||0;this.ramps=[];}setTargetAtTime(value){this.value=value;}setValueAtTime(value){this.value=value;}linearRampToValueAtTime(value,time){this.value=value;this.ramps.push(time);}cancelScheduledValues(){}}
+  class Node{constructor(){this.gain=new Param(1);this.frequency=new Param(440);this.Q=new Param(1);this.connections=[];this.type='sine';}connect(node){this.connections.push(node);}disconnect(){this.connections=[];}start(){}}
+  class FakeAudioContext{constructor(){this.destination=new Node();this.currentTime=1;this.sampleRate=8000;this.state='suspended';this.oscillators=[];this.sources=[];}createGain(){return new Node();}createOscillator(){const node=new Node();this.oscillators.push(node);return node;}createBiquadFilter(){return new Node();}createBuffer(channels,length,rate){return{getChannelData:()=>new Float32Array(length)};}createBufferSource(){const node=new Node();this.sources.push(node);return node;}resume(){this.state='running';return Promise.resolve();}}
+  try{
+    audio.ctx=null;audio.master=audio.sfxGain=audio.musicGain=audio.ambienceGain=null;audio.started=false;audio.enabled=true;audio._ambienceSynth=null;audio._ambienceProfile=null;audio._ambienceKey=null;
+    windowShim.AudioContext=FakeAudioContext;audio.boot();audio.setAmbienceVolume(0.6);audio.setAmbienceMuted(false);
+    audio.setAmbienceProfile({bed:'river',accentHz:96});assert.strictEqual(audio.ctx.oscillators.length,0,'ambience nodes started before the audio gesture');
+    audio.resume();assert.strictEqual(audio.ctx.oscillators.length,2,'regional ambience synth was not created after audio unlock');
+    const oscillatorCount=audio.ctx.oscillators.length,sourceCount=audio.ctx.sources.length;
+    for(const bed of ['cavern','river','grove','fields','lava','ruins','storm','terraces'])audio.setAmbienceProfile({bed,accentHz:111});
+    assert.strictEqual(audio.ctx.oscillators.length,oscillatorCount,'rapid region changes stacked oscillators');
+    assert.strictEqual(audio.ctx.sources.length,sourceCount,'rapid region changes stacked noise sources');
+    assert.ok(Math.abs(audio._ambienceSynth.bodyGain.gain.ramps.slice(-1)[0]-(audio.ctx.currentTime+0.8))<1e-9,'regional ambience did not crossfade over 0.8 seconds');
+    const musicGain=audio.musicGain.gain.value;audio.setAmbienceMuted(true);assert.strictEqual(audio.ambienceGain.gain.value,0);assert.strictEqual(audio.musicGain.gain.value,musicGain,'ambience-only mute changed music gain');
+    assert.strictEqual(audio.muted,false,'ambience-only mute changed the global mute flag');
+    audio.setAmbienceVolume(9);assert.strictEqual(audio._ambienceVolume,1);audio.setAmbienceVolume(-2);assert.strictEqual(audio._ambienceVolume,0);
+    audio.setMuted(true);assert.strictEqual(audio.master.gain.value,0,'global mute did not silence every bus');audio.setMuted(false);
+  }finally{
+    Object.assign(audio,{ctx:old.ctx,master:old.master,sfxGain:old.sfxGain,musicGain:old.musicGain,ambienceGain:old.ambienceGain,
+      enabled:old.enabled,started:old.started,muted:old.muted,ambienceMuted:old.ambienceMuted,_ambienceVolume:old.ambienceVolume,
+      _ambienceProfile:old.profile,_ambienceKey:old.profileKey,_ambienceSynth:old.synth});windowShim.AudioContext=old.AudioContext;
+  }
+});
 test('Generated terrain art carries matching physical collision and projectile cover',()=>{
   const W=K.World,map=W.generate({seed:872,regionId:'tartarus'}),solidFeatures=map.terrainFeatures.filter(feature=>feature.blocksMovement),terrainBlockers=map.blockers.filter(blocker=>blocker.terrain);
   assert.ok(solidFeatures.length>0,'regional landforms were only decorative');
   for(const feature of map.terrainFeatures)assert.ok(W.cellAt(map,feature.x,feature.y),feature.id+' is floating outside the generated floor');
   for(const feature of solidFeatures)assert.ok(terrainBlockers.some(blocker=>blocker.id.startsWith(feature.id+':terrain-')),feature.id+' is missing its collision footprint');
   for(const blocker of terrainBlockers){const x=blocker.x+blocker.w/2,y=blocker.y+blocker.h/2;assert.strictEqual(W.isWalkable(map,x,y,8),false,blocker.id+' did not block actor movement');assert.strictEqual(W.lineOfSight(map,{x:x-40,y},{x:x+40,y},8),false,blocker.id+' did not occlude a low projectile');}
+});
+test('Main encounter clearings receive dense near-field floor inlays around a clear combat center',()=>{
+  const map=K.World.generate({seed:971,regionId:'tartarus'}),node=map.nodes.find(item=>item.main&&item.idx===0);
+  assert.ok(node,'opening encounter node is missing');
+  const near=map.terrainOverlays.filter(item=>item.kind==='ground-surface'&&Math.hypot(item.x-node.x,item.y-node.y)<1000);
+  assert.ok(near.length>=12,'opening encounter has too little near-field terrain art: '+near.length);
+  assert.ok(near.every(item=>item.walkable&&!item.solid&&!item.collision),'floor art changed encounter collision');
+  assert.ok(map.terrainOverlays.some(item=>item.id===node.id+':arena-inlay'),'encounter center is missing its patterned floor inlay');
+});
+test('Encounter floor details use compact regional decal atlases over the continuous floor',()=>{
+  const map=K.World.generate({seed:872,regionId:'tartarus'}),node=map.nodes.find(item=>item.main&&item.idx===0),manifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/manifest.json'),'utf8'));
+  assert.strictEqual(map.groundAssetId,'regiondetail.ash','floor dressing still resolves to raised island paving');
+  assert.strictEqual(manifest[map.groundAssetId].kind,'region-ground-detail','biome ground-detail atlas was not registered');
+  const near=map.terrainOverlays.filter(item=>item.kind==='ground-surface'&&Math.hypot(item.x-node.x,item.y-node.y)<1500),center=near.find(item=>item.id===node.id+':arena-inlay');
+  assert.ok(center,'encounter center is missing its inlay decal');
+  assert.ok(near.every(item=>item.assetId===map.groundAssetId),'near-field detail did not use the selected biome sheet');
+  assert.ok(near.filter(item=>item!==center).every(item=>item.w<=680&&item.h<=500),'scattered floor details are oversized');
+  assert.ok(center.w<=900&&center.h<=700&&center.alpha<=0.5,'central marking overwhelms the continuous floor');
+});
+test('Encounter landmarks frame the clearing outside the opening combat space',()=>{
+  const map=K.World.generate({seed:872,regionId:'tartarus'}),node=map.nodes.find(item=>item.main&&item.idx===0),landmark=map.props.find(item=>item.id===node.id+':landmark');
+  assert.ok(landmark,'opening encounter lost its regional landmark');
+  assert.ok(Math.hypot(landmark.x-node.x,landmark.y-node.y)>=1500,'landmark intrudes into the player and enemy combat space');
+});
+test('Regional landforms enter the playable camera frame around the opening encounter',()=>{
+  const map=K.World.generate({seed:872,regionId:'tartarus'}),node=map.nodes.find(item=>item.main&&item.idx===0),forms=map.terrainFeatures.filter(feature=>feature.id.startsWith(node.id+':landform-'));
+  assert.ok(forms.length>=3,'opening encounter has no surrounding regional landforms');
+  const nearestEdge=Math.min(...forms.map(feature=>Math.max(0,Math.hypot(feature.x-node.x,feature.y-node.y)-Math.hypot(feature.w/2,feature.h/2))));
+    assert.ok(nearestEdge<=1400,'regional landforms sit outside the opening reveal and gameplay camera: '+Math.round(nearestEdge));
+});
+test('Main encounter approaches place visible nonblocking biome rubble around the fight',()=>{
+  const map=K.World.generate({seed:971,regionId:'tartarus'}),node=map.nodes.find(item=>item.main&&item.idx===0);
+  const debris=map.terrainFeatures.filter(feature=>['rubble','fragments'].includes(feature.kind)&&Math.hypot(feature.x-node.x,feature.y-node.y)<850);
+  assert.ok(debris.length>=12,'opening combat view lacks its dense ring of 12 close biome terrain silhouettes: '+debris.length);
+  assert.ok(debris.every(feature=>!feature.blocksMovement&&!map.blockers.some(blocker=>blocker.id.startsWith(feature.id+':terrain-'))),'decorative rubble encroached on combat clearance');
 });
 test('Encounter rewards claim once and cleared regions permit backtracking without re-spawning',()=>{
   assert.ok(K.WorldRuntime,'World runtime is missing');reset();

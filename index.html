@@ -304,6 +304,13 @@
     <div class="pause-panel">
       <h2 id="pause-title">PAUSED</h2>
       <div id="pause-run-info"></div>
+      <fieldset class="ambience-settings">
+        <legend>DESCENT ATMOSPHERE</legend>
+        <label class="ambience-volume-label" for="ambience-volume">Ambient sound <output id="ambience-volume-value" for="ambience-volume">45%</output></label>
+        <input id="ambience-volume" type="range" min="0" max="1" step="0.01" value="0.45" aria-label="Ambient sound volume" />
+        <label class="ambience-check"><input id="ambience-muted" type="checkbox" /> Mute atmosphere</label>
+        <label class="ambience-check"><input id="reduced-motion" type="checkbox" /> Reduce weather motion</label>
+      </fieldset>
       <div class="title-buttons">
         <button id="btn-resume" class="btn primary">RESUME</button>
         <button id="btn-armory-pause" class="btn">ARMORY</button>
@@ -401,6 +408,7 @@
 <script src="js/mythology.js"></script>
 <script src="js/portraits.js"></script>
 <script src="js/world-runtime.js"></script>
+<script src="js/world-ambience.js"></script>
 <script src="js/render.js"></script>
 <script src="js/world-renderer.js"></script>
 <script src="js/overhaul-ui.js"></script>

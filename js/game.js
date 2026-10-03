@@ -2448,10 +2448,12 @@
     if (!this.practiceMode && this.phase === 'playing' && !this.roomDef.cleared) this.checkRoomClear();
 
     /* ambient particles */
-    this.ambientT += dt;
-    if (this.ambientT > 0.09) {
-      this.ambientT = 0;
-      this.spawnAmbient();
+    if (!this.world) {
+      this.ambientT += dt;
+      if (this.ambientT > 0.09) {
+        this.ambientT = 0;
+        this.spawnAmbient();
+      }
     }
 
     /* banner */
@@ -2465,6 +2467,10 @@
     const lookX = p.x + Math.cos(p.aim) * 34;
     const lookY = p.y + Math.sin(p.aim) * 34;
     this.cam.follow(p.x * 0.65 + lookX * 0.35, p.y * 0.85 + lookY * 0.15, dt);
+    if (this.world && this.world.profile && this.world.profile.ambience) {
+      if (K.Audio && K.Audio.setAmbienceProfile) K.Audio.setAmbienceProfile(this.world.profile.ambience);
+      if (K.WorldAmbience) K.WorldAmbience.update(this, dt);
+    } else if (K.Audio && K.Audio.setAmbienceProfile) K.Audio.setAmbienceProfile(null);
     if (this.phase === 'dead') this.cam.tzoom = 1.35;
     if (this.cinematic) this.cam.tzoom = 1.14;
     this.flash = Math.max(0, this.flash - dt * 2.4);

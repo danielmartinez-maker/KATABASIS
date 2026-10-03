@@ -1829,6 +1829,9 @@
   function boot() {
     if (!K.Save.data) K.Save.load();
     K.Audio.setMuted(!!K.Save.data.muted);
+    K.Audio.setAmbienceVolume(K.Save.data.ambienceVolume);
+    K.Audio.setAmbienceMuted(!!K.Save.data.ambienceMuted);
+    if(K.WorldAmbience)K.WorldAmbience.setReducedMotion(!!K.Save.data.reducedMotion);
     K.Input.init(canvas);
     G = new K.Game(canvas, ctx);
     G.region = function () { return D.REGIONS[Math.min(D.REGIONS.length - 1, this.regionIndex || 0)]; };
@@ -1843,6 +1846,12 @@
 
     /* buttons */
     const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', () => { K.Audio.boot(); K.Audio.resume(); K.Audio.sfx('ui'); fn(); }); };
+    const ambienceSlider=document.getElementById('ambience-volume'),ambienceValue=document.getElementById('ambience-volume-value'),ambienceMute=document.getElementById('ambience-muted'),reducedMotion=document.getElementById('reduced-motion');
+    if(ambienceSlider){ambienceSlider.value=String(K.Save.data.ambienceVolume);if(ambienceValue)ambienceValue.value=Math.round(K.Save.data.ambienceVolume*100)+'%';
+      ambienceSlider.addEventListener('input',()=>{const value=K.Audio.setAmbienceVolume(ambienceSlider.value);if(ambienceValue)ambienceValue.value=Math.round(value*100)+'%';});
+      ambienceSlider.addEventListener('change',()=>{K.Save.data.ambienceVolume=Number(ambienceSlider.value);K.Save.write();});}
+    if(ambienceMute){ambienceMute.checked=!!K.Save.data.ambienceMuted;ambienceMute.addEventListener('change',()=>{K.Audio.setAmbienceMuted(ambienceMute.checked);K.Save.data.ambienceMuted=ambienceMute.checked;K.Save.write();});}
+    if(reducedMotion){reducedMotion.checked=!!K.Save.data.reducedMotion;reducedMotion.addEventListener('change',()=>{K.Save.data.reducedMotion=reducedMotion.checked;if(K.WorldAmbience)K.WorldAmbience.setReducedMotion(reducedMotion.checked);K.Save.write();});}
     // Native button Space/Enter activation is sufficient; no manual keydown->click
     // forwarding (it double-advances dialogue where keydown preventDefault does
     // not cancel the keyup click).

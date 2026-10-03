@@ -13616,5 +13616,165 @@
     "lazy": true,
     "kind": "region-ground-overlay",
     "family": "terraces"
+  },
+  "regionterrain.ash": {
+    "src": "assets/regions/generated/living-terrain-ash.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-terrain-art",
+    "family": "ash",
+    "cells": 16
+  },
+  "regionterrain.river": {
+    "src": "assets/regions/generated/living-terrain-river.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-terrain-art",
+    "family": "river",
+    "cells": 16
+  },
+  "regionterrain.grove": {
+    "src": "assets/regions/generated/living-terrain-grove.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-terrain-art",
+    "family": "grove",
+    "cells": 16
+  },
+  "regionterrain.fields": {
+    "src": "assets/regions/generated/living-terrain-fields.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-terrain-art",
+    "family": "fields",
+    "cells": 16
+  },
+  "regionterrain.lava": {
+    "src": "assets/regions/generated/living-terrain-lava.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-terrain-art",
+    "family": "lava",
+    "cells": 16
+  },
+  "regionterrain.ruins": {
+    "src": "assets/regions/generated/living-terrain-ruins.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-terrain-art",
+    "family": "ruins",
+    "cells": 16
+  },
+  "regionterrain.storm": {
+    "src": "assets/regions/generated/living-terrain-storm.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-terrain-art",
+    "family": "storm",
+    "cells": 16
+  },
+  "regionterrain.terraces": {
+    "src": "assets/regions/generated/living-terrain-terraces.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-terrain-art",
+    "family": "terraces",
+    "cells": 16
+  },
+  "regiondetail.ash": {
+    "src": "assets/regions/generated/living-details-ash.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-detail",
+    "family": "ash",
+    "cells": 16
+  },
+  "regiondetail.river": {
+    "src": "assets/regions/generated/living-details-river.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-detail",
+    "family": "river",
+    "cells": 16
+  },
+  "regiondetail.grove": {
+    "src": "assets/regions/generated/living-details-grove.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-detail",
+    "family": "grove",
+    "cells": 16
+  },
+  "regiondetail.fields": {
+    "src": "assets/regions/generated/living-details-fields.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-detail",
+    "family": "fields",
+    "cells": 16
+  },
+  "regiondetail.lava": {
+    "src": "assets/regions/generated/living-details-lava.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-detail",
+    "family": "lava",
+    "cells": 16
+  },
+  "regiondetail.ruins": {
+    "src": "assets/regions/generated/living-details-ruins.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-detail",
+    "family": "ruins",
+    "cells": 16
+  },
+  "regiondetail.storm": {
+    "src": "assets/regions/generated/living-details-storm.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-detail",
+    "family": "storm",
+    "cells": 16
+  },
+  "regiondetail.terraces": {
+    "src": "assets/regions/generated/living-details-terraces.png",
+    "cols": 4,
+    "rows": 4,
+    "aspect": 1,
+    "lazy": true,
+    "kind": "region-ground-detail",
+    "family": "terraces",
+    "cells": 16
   }
 }

@@ -17,6 +17,14 @@ const groundAtlases = Object.fromEntries(Object.keys(families).map(family => [fa
   src: 'assets/regions/generated/' + family + '-ground-kit.webp',
   aspect: ({ ash: 1402 / 1122, river: 1402 / 1122, grove: 1402 / 1122, fields: 1402 / 1122, lava: 1402 / 1122, ruins: 1, storm: 1, terraces: 1401 / 1123 })[family]
 }]));
+const detailAtlases = Object.fromEntries(Object.keys(families).map(family => [family, {
+  src: 'assets/regions/generated/living-details-' + family + '.png', aspect: 1,
+  cells: ['basalt rubble','ash smear','scrub and stone','ember fissure','broken mosaic','root and leaves','scattered fragments','dust trail','stone shards','petals and grit','engraved trim','low brush','cracked paving','windblown debris','regional detritus','small ground scatter']
+}]));
+const terrainAtlases = Object.fromEntries(Object.keys(families).map(family => [family, {
+  src: 'assets/regions/generated/living-terrain-' + family + '.png', aspect: 1, cols: 4, rows: 4,
+  cells: ['basin','ridge','ravine','channel','island','terrace','rootbank','ruins','shelf','bank','ramp','stair','bridge','causeway','rubble','fragments']
+}]));
 const signatureAtlases = {
   'regionlandmark.01': { src:'assets/regions/generated/region-landmarks-01.webp', aspect:1295/1214, cells:16 },
   'regionlandmark.02': { src:'assets/regions/generated/region-landmarks-02.webp', aspect:1380/1140, cells:16 }
@@ -35,13 +43,25 @@ for (const [family, info] of Object.entries(groundAtlases)) {
     kind: 'region-ground-overlay', family
   };
 }
+for (const [family, info] of Object.entries(detailAtlases)) {
+  assetManifest['regiondetail.' + family] = {
+    src: info.src, cols: 4, rows: 4, aspect: info.aspect, lazy: true,
+    kind: 'region-ground-detail', family, cells: info.cells.length
+  };
+}
+for (const [family, info] of Object.entries(terrainAtlases)) {
+  assetManifest['regionterrain.' + family] = {
+    src: info.src, cols: info.cols, rows: info.rows, aspect: info.aspect, lazy: true,
+    kind: 'region-terrain-art', family, cells: info.cells.length
+  };
+}
 for (const [id, info] of Object.entries(signatureAtlases)) {
   assetManifest[id] = { src:info.src, cols:4, rows:4, aspect:info.aspect, lazy:true, kind:'region-signature-landmarks', cells:info.cells };
 }
 const profileRegions = Object.entries(K.World.PROFILES).map(([id, profile]) => ({
   id, name: profile.name, family: profile.assetKit,
   atlasAssetId: 'regionkit.' + profile.assetKit,
-  groundAssetId: 'regionground.' + profile.assetKit,
+  groundAssetId: 'regiondetail.' + profile.assetKit,
   signatureAssetId: profile.signatureAssetId,
   signatureNodeId: profile.signatureNodeId,
   floorFamily: profile.artFamily, biomeFamily: profile.family,
@@ -55,10 +75,12 @@ const profileRegions = Object.entries(K.World.PROFILES).map(([id, profile]) => (
 }));
 const manifest = {
   version: 1,
-  description: 'Every playable region resolves its own stable ID to a terrain family kit, dense walkable ground overlays, and an authored signature landmark.',
-  atlas: { cols: 4, rows: 4, cellAspect: 'per-family manifest aspect', cells: { terrainTransitions: [0, 7], obstacles: [8, 11], signatureLandmarks: [12, 15] } },
-  families: Object.fromEntries(Object.entries(families).map(([id, info]) => [id, { assetId: 'regionkit.' + id, src: info.src, biome: info.biome, groundAssetId: 'regionground.' + id, groundSrc: groundAtlases[id].src }])),
+  description: 'Every playable region resolves its own terrain family kit, low-profile floor-detail decals, grounded 2.5D landforms with collision and cover, and an authored signature landmark.',
+  atlas: { cols: 4, rows: 4, cellAspect: 'per-family manifest aspect', cells: { terrainTransitions: [0, 7], obstacles: [8, 11], signatureLandmarks: [12, 15], terrainFeatures: { basin: 0, ridge: 1, ravine: 2, channel: 3, island: 4, terrace: 5, rootbank: 6, ruins: 7, shelf: 8, bank: 9, ramp: 10, stair: 11, bridge: 12, causeway: 13, rubble: 14, fragments: 15 } } },
+  families: Object.fromEntries(Object.entries(families).map(([id, info]) => [id, { assetId: 'regionkit.' + id, src: info.src, biome: info.biome, groundAssetId: 'regiondetail.' + id, groundSrc: detailAtlases[id].src }])),
+  terrainAtlases: Object.fromEntries(Object.entries(terrainAtlases).map(([id, info]) => [id, { assetId: 'regionterrain.' + id, src: info.src, aspect: info.aspect, cols: info.cols, rows: info.rows, cells: info.cells } ])),
   groundAtlases: Object.fromEntries(Object.entries(groundAtlases).map(([id, info]) => [id, { assetId: 'regionground.' + id, src: info.src, aspect: info.aspect, cols: 4, rows: 4, cells: 16 }])),
+  detailAtlases: Object.fromEntries(Object.entries(detailAtlases).map(([id, info]) => [id, { assetId: 'regiondetail.' + id, src: info.src, aspect: info.aspect, cols: 4, rows: 4, cells: info.cells }])),
   signatureAtlases: Object.fromEntries(Object.entries(signatureAtlases).map(([id, info]) => [id, { assetId:id, src:info.src, cells:info.cells }])),
   regions: profileRegions
 };

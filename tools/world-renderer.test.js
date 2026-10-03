@@ -16,4 +16,20 @@ assert.equal(R.create({getContext:()=>({drawImage(){}})}),null,'Canvas shim is n
 const color=R.color('#c08040',0.5);
 assert.ok(Math.abs(color[0]-192/255)<1e-6);assert.equal(color[3],0.5);
 assert.deepStrictEqual(JSON.parse(JSON.stringify(R.color('rgba(20,40,60,0.25)',0.5))),[20/255,40/255,60/255,0.125]);
+assert.strictEqual(typeof R.terrainDrawList,'function','missing culling for collision-aligned terrain art');
+assert.strictEqual(typeof R.projectTerrainFeature,'function','missing elevation projection for terrain art');
+const terrainWorld={profile:{assetKit:'ash'},terrainFeatures:[
+  {id:'near',kind:'ridge',x:100,y:200,w:120,h:80,elevation:32,depthY:240,cell:1,assetId:'regionterrain.ash'},
+  {id:'far',kind:'bridge',x:900,y:800,w:160,h:100,elevation:0,depthY:850,cell:12,assetId:'regionterrain.ash'}
+]};
+const terrainList=R.terrainDrawList(terrainWorld,{x0:0,y0:0,x1:300,y1:300});
+assert.deepStrictEqual(Array.from(terrainList,feature=>feature.id),['near'],'terrain draw list did not cull to the view');
+assert.strictEqual(R.terrainAssetId(terrainWorld,terrainList[0]),'regionterrain.ash','feature resolved the wrong family atlas');
+assert.deepStrictEqual(JSON.parse(JSON.stringify(R.projectTerrainFeature(cam,terrainList[0]))),JSON.parse(JSON.stringify(R.project(cam,100,200,32))));
+const assetManifest=JSON.parse(fs.readFileSync('assets/manifest.json','utf8'));
+for(const family of ['ash','river','grove','fields','lava','ruins','storm','terraces']){
+  const detail=assetManifest['regiondetail.'+family],terrain=assetManifest['regionterrain.'+family];
+  assert.ok(detail&&detail.kind==='region-ground-detail'&&detail.cols===4&&detail.rows===4,'missing compact '+family+' floor-detail atlas');
+  assert.ok(terrain&&terrain.kind==='region-terrain-art'&&terrain.cols===4&&terrain.rows===4,'missing '+family+' terrain formation atlas');
+}
 console.log('WORLD RENDERER: projection, culling, material color and capability contract passed');

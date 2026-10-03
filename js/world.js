@@ -193,9 +193,11 @@
   };
   W.indexPlacedArt=function(map){
     const size=map.artChunkSize||1024,bins=Object.create(null);
-    function add(item,kind){const x=Math.floor(item.x/size),y=Math.floor(item.y/size),id=x+','+y;let chunk=bins[id];if(!chunk)chunk=bins[id]={id,x,y,props:[],terrain:[]};chunk[kind].push(item);}
+    function add(item,kind){const x=Math.floor(item.x/size),y=Math.floor(item.y/size),id=x+','+y;let chunk=bins[id];if(!chunk)chunk=bins[id]={id,x,y,props:[],terrain:[],features:[]};chunk[kind].push(item);}
+    function addFeature(feature){const lift=Number(feature.elevation)||0,x0=Math.floor((feature.x-feature.w/2)/size),x1=Math.floor((feature.x+feature.w/2)/size),y0=Math.floor((feature.y-feature.h/2-lift)/size),y1=Math.floor((feature.y+feature.h/2)/size);for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++){const id=x+','+y;let chunk=bins[id];if(!chunk)chunk=bins[id]={id,x,y,props:[],terrain:[],features:[]};chunk.features.push(feature);}}
     for(const prop of map.props||[])add(prop,'props');
     for(const overlay of map.terrainOverlays||[])add(overlay,'terrain');
+    for(const feature of map.terrainFeatures||[])addFeature(feature);
     map.artChunkSize=size;map.artChunkIndex=bins;map.artChunkCount=Object.keys(bins).length;return map.artChunkCount;
   };
   W.validate=function(map){
@@ -214,7 +216,7 @@
     if(version!==W.VERSION)throw new Error('Unsupported world generator version '+version);
     const profile=profiles[options.regionId];if(!profile)throw new Error('Unknown world region '+options.regionId);
     const seed=Number(options.seed)>>>0,modifiers=options.modifiers||{},mirror=options.mirrorOptions||{},rng=new K.RNG(hash(seed+':'+profile.id+':'+version+':'+(options.shopNodeId||'')+':'+canonical(modifiers)+':'+canonical(mirror))),artRng=new K.RNG(hash(seed+':'+profile.id+':'+version+':world-art'));const terrainRng=new K.RNG(hash(seed+':'+profile.id+':'+version+':terrain-art'));
-    const scale=profile.worldScale||1,map={version,seed,regionId:profile.id,regionArtId:profile.regionArtId||profile.id,profile:clone(profile),worldScale:scale,groundAssetId:'regionground.'+profile.assetKit,tileSize:W.TILE_SIZE,modifierSignature:canonical(modifiers),nodes:[],edges:[],cells:[],props:[],terrainOverlays:[],terrainFeatures:[],terrainRoutes:[],subzones:[],blockers:[],hazards:[],revealed:{},revealRevision:0,chapterResolved:false};
+    const scale=profile.worldScale||1,map={version,seed,regionId:profile.id,regionArtId:profile.regionArtId||profile.id,profile:clone(profile),worldScale:scale,groundAssetId:'regiondetail.'+profile.assetKit,tileSize:W.TILE_SIZE,modifierSignature:canonical(modifiers),nodes:[],edges:[],cells:[],props:[],terrainOverlays:[],terrainFeatures:[],terrainRoutes:[],subzones:[],blockers:[],hazards:[],revealed:{},revealRevision:0,chapterResolved:false};
     const carved=Object.create(null),s=map.tileSize;
     function subtractRect(source,cut){
       const x0=Math.max(source.x,cut.x),y0=Math.max(source.y,cut.y),x1=Math.min(source.x+source.w,cut.x+cut.w),y1=Math.min(source.y+source.h,cut.y+cut.h);
@@ -235,7 +237,7 @@
     function corridor(points,width,material){for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],distance=Math.hypot(b.x-a.x,b.y-a.y),steps=Math.max(1,Math.ceil(distance/(s*0.6)));for(let n=0;n<=steps;n++){const t=n/steps;rectangle(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t,width,width,0,material);}}}
     function obstacle(id,x,y,zone,kind,cell,size,solid,assetId){const artCell=cell===undefined?artRng.int(8,11):cell,artKey=kind==='landmark'?profile.regionArtId+'.landmark.'+String(zone.landmark).toLowerCase().replace(/[^a-z0-9]+/g,'-'):profile.regionArtId+'.obstacles.'+(kind||'scenery'),item={id,x,y,cell:artCell,brokenCell:artCell,assetId:assetId||'regionkit.'+profile.assetKit,kind:kind||'scenery',size:size||artRng.int(110,190),height:40,scale:1,depthY:y,solid:!!solid,destructible:!!solid,hp:solid?2:0,interactive:false,interaction:null,landmark:zone.landmark,material:zone.material,artKey,visualState:solid?'intact':'decorative'};map.props.push(item);if(solid){item.collision={x:x-26,y:y-26,w:52,h:52};map.blockers.push({id,x:x-26,y:y-26,w:52,h:52,height:item.height,elevation:0});}else item.collision=null;return item;}
     function groundPatch(id,x,y,zone,cell,w,h,alpha,rot){map.terrainOverlays.push({id,kind:'ground-surface',assetId:map.groundAssetId,artKey:profile.regionArtId+'.ground.'+zone.material,cell,material:zone.material,x,y,w,h,depthY:y,alpha:alpha===undefined?0.94:alpha,rot:rot||0,solid:false,collision:null,walkable:true,interactive:false,regionArtId:profile.regionArtId});}
-    const terrainArtCell={basin:0,ridge:1,ravine:2,channel:3,island:4,terrace:5,rootbank:6,ruins:7,shelf:8,bank:9,ramp:10,stair:11,bridge:12,causeway:13};
+    const terrainArtCell={basin:0,ridge:1,ravine:2,channel:3,island:4,terrace:5,rootbank:6,ruins:7,shelf:8,bank:9,ramp:10,stair:11,bridge:12,causeway:13,rubble:14,fragments:15};
     function addTerrainFeature(id,kind,x,y,w,h,zone,elevation,transition){
       const coverHeight={basin:8,ridge:elevation+28,ravine:elevation+20,channel:0,island:18,terrace:elevation+18,rootbank:32,ruins:56,shelf:elevation+24,bank:20,ramp:0,stair:0,bridge:0,causeway:0}[kind]||0,weather=profile.ambience.weather,bed=profile.ambience.bed,blocksMovement=scale>1&&['ridge','ravine','channel','terrace','rootbank','ruins','shelf'].includes(kind);
       const force=transition?(bed==='river'?22:(weather==='storm'||weather==='wind'?18:(weather==='spray'?14:(weather==='leaves'?8:0)))):0,angle=hash(seed+':terrain-flow:'+id)/4294967296*Math.PI*2;
@@ -243,11 +245,20 @@
       return feature;
     }
     function composeTerrain(n,zone){
-      const forms=profile.terrain.landforms||['ridge','basin','ruins'],ring=scale>1?1180*scale:420,baseAngle=terrainRng.range(0,Math.PI*2);
+      const forms=profile.terrain.landforms||['ridge','basin','ruins'],ring=scale>1?400*scale:420,baseAngle=terrainRng.range(0,Math.PI*2);
       for(let i=0;i<forms.length;i++){
-        const angle=baseAngle+i*Math.PI*2/forms.length,radius=ring+terrainRng.int(-2,2)*80*scale,x=n.x+Math.cos(angle)*radius,y=n.y+Math.sin(angle)*radius,w=(terrainRng.int(250,420))*scale,h=(terrainRng.int(180,320))*scale,material=profile.subzones[(n.idx+i)%profile.subzones.length];
+        const angle=baseAngle+i*Math.PI*2/forms.length,radius=ring+terrainRng.int(-2,2)*32*scale,x=n.x+Math.cos(angle)*radius,y=n.y+Math.sin(angle)*radius,w=(terrainRng.int(250,420))*scale,h=(terrainRng.int(180,320))*scale,material=profile.subzones[(n.idx+i)%profile.subzones.length];
         const feature=addTerrainFeature(n.id+':landform-'+i,forms[i],Math.round(x/s)*s,Math.round(y/s)*s,w,h,material,terrainRng.int(1,3)*16,null),ux=Math.cos(angle),uy=Math.sin(angle),edgeDistance=Math.min(w/(2*Math.abs(ux)||Infinity),h/(2*Math.abs(uy)||Infinity)),trailEnd={x:Math.round((n.x+ux*Math.max(0,radius-edgeDistance-80*scale))/s)*s,y:Math.round((n.y+uy*Math.max(0,radius-edgeDistance-80*scale))/s)*s};
         rectangle(feature.x,feature.y,w+180*scale,h+180*scale,0,material.material);map.terrainRoutes.push({from:{x:n.x,y:n.y},to:trailEnd,width:220*scale,featureId:feature.id});corridor([{x:n.x,y:n.y},trailEnd],220*scale,material.material);
+      }
+      if(scale>1&&n.main){
+        // Keep the encounter center clear while bringing authored, biome-specific
+        // terrain silhouettes into the opening camera frame.
+        const debrisCount=12,orbitStart=terrainRng.range(0,Math.PI*2);
+        for(let i=0;i<debrisCount;i++){
+          const angle=orbitStart+i*Math.PI*2/debrisCount+terrainRng.range(-0.12,0.12),radius=terrainRng.int(420,700),x=Math.round((n.x+Math.cos(angle)*radius)/s)*s,y=Math.round((n.y+Math.sin(angle)*radius)/s)*s,material=profile.subzones[(n.idx+i)%profile.subzones.length],kind=artRng.chance(0.35)?'fragments':'rubble';
+          addTerrainFeature(n.id+':approach-rubble-'+i,kind,x,y,terrainRng.int(220,330),terrainRng.int(150,230),material,0,null);
+        }
       }
       const side=n.idx%2?-1:1,transitionKind=profile.terrain.traversal,x=n.x+side*520*scale,y=n.y+240*scale;
       const transition=addTerrainFeature(n.id+':traversal',transitionKind,Math.round(x/s)*s,Math.round(y/s)*s,360*scale,200*scale,zone,24,transitionKind);
@@ -263,10 +274,17 @@
         for(const dy of [-230,230])for(const dx of [-350,350])sites.push([dx,dy]);
       }
       for(let i=0;i<sites.length;i++){
-        const [dx,dy]=sites[i],large=scale>1,w=large?terrainRng.int(980,1160):terrainRng.int(450,520),h=large?terrainRng.int(760,920):terrainRng.int(340,420);
-        groundPatch(n.id+':ground-'+i,n.x+dx,n.y+dy,zone,terrainRng.int(0,15),w,h,large?0.97:0.92,terrainRng.int(0,3)*Math.PI/2);
+        const [dx,dy]=sites[i],large=scale>1,w=large?terrainRng.int(420,650):terrainRng.int(360,480),h=large?terrainRng.int(300,460):terrainRng.int(270,360);
+        groundPatch(n.id+':ground-'+i,n.x+dx,n.y+dy,zone,terrainRng.int(0,15),w,h,large?0.9:0.84,terrainRng.int(0,3)*Math.PI/2);
       }
-      if(scale>1&&['boss','elite','challenge'].includes(n.type))groundPatch(n.id+':arena-inlay',n.x,n.y,zone,terrainRng.pick([2,6,10,14]),1000,760,0.9,0);
+      if(scale>1&&n.main){
+        const nearCount=12,orbit=terrainRng.range(0,Math.PI*2);
+        for(let i=0;i<nearCount;i++){
+          const angle=orbit+i*Math.PI*2/nearCount+terrainRng.range(-0.12,0.12),radius=terrainRng.int(4,8)*100,dx=Math.round(Math.cos(angle)*radius/s)*s,dy=Math.round(Math.sin(angle)*radius/s)*s,patchZone=profile.subzones[(n.idx+i)%profile.subzones.length];
+          groundPatch(n.id+':near-ground-'+i,n.x+dx,n.y+dy,patchZone,terrainRng.int(0,15),terrainRng.int(320,480),terrainRng.int(230,360),0.78,terrainRng.int(0,3)*Math.PI/2);
+        }
+        groundPatch(n.id+':arena-inlay',n.x,n.y,zone,terrainRng.pick([2,5,6,10,14]),860,620,0.46,0);
+      }
     }
     function dressPath(from,to,points){
       if(scale<=1)return;
@@ -281,7 +299,7 @@
         }
       }
     }
-    function node(id,type,x,y,idx,main){x=coord(x,s)*s;y=coord(y,s)*s;const zone=profile.subzones[Math.abs(idx)%profile.subzones.length],isSignature=id===profile.signatureNodeId,landmark=isSignature?profile.signatureLandmark:zone.landmark,cell=isSignature?profile.signatureCell:zone.landmarkCell||12+idx%4,landmarkAssetId=isSignature?profile.signatureAssetId:'regionkit.'+profile.assetKit,seed=hash(profile.id),rotation=((seed>>>((idx%4)*3))&3)*Math.PI/2,n={id:profile.id+':'+id,type,x,y,idx,main:!!main,status:'pending',rewardClaimed:false,discovered:false,landmark:isSignature?profile.signatureLandmark:rng.pick(profile.landmarks),signatureLandmark:landmark,signature:isSignature,signatureCell:cell,subzoneId:zone.id,material:zone.material,artKey:profile.regionArtId+'.landmark.'+String(landmark).toLowerCase().replace(/[^a-z0-9]+/g,'-'),landmarkAssetId,bounds:{x:x-600,y:y-440,w:1200,h:880},terrainBounds:{x:x-600*scale,y:y-440*scale,w:1200*scale,h:880*scale}};map.nodes.push(n);map.subzones.push({id:n.id,subzoneId:zone.id,material:zone.material,artKey:profile.regionArtId+'.terrain.'+zone.material,assetId:'regionkit.'+profile.assetKit,bounds:n.terrainBounds,landmark});rectangle(x,y,1200*scale,880*scale,profile.family==='terraces'?(main?idx%4:1)*16:0,zone.material);scatterGround(n,zone);composeTerrain(n,zone);map.terrainOverlays.push({id:n.id+':transition',kind:'terrain-transition',assetId:'regionkit.'+profile.assetKit,artKey:profile.regionArtId+'.terrain.'+zone.material,cell:Math.abs(hash(profile.id+n.id))%8,material:zone.material,x:n.x,y:n.y-scale*420,w:380,h:300,depthY:n.y-scale*420+150,alpha:0.9,regionArtId:profile.regionArtId});if(idx===0||isSignature||!main){const item=obstacle(n.id+':landmark',x+520,y+300,{id:zone.id,material:zone.material,landmark},'landmark',cell,isSignature?340:250,false,isSignature?profile.signatureAssetId:null);item.rot=rotation;item.scale=isSignature?1.18:1;}return n;}
+    function node(id,type,x,y,idx,main){x=coord(x,s)*s;y=coord(y,s)*s;const zone=profile.subzones[Math.abs(idx)%profile.subzones.length],isSignature=id===profile.signatureNodeId,landmark=isSignature?profile.signatureLandmark:zone.landmark,cell=isSignature?profile.signatureCell:zone.landmarkCell||12+idx%4,landmarkAssetId=isSignature?profile.signatureAssetId:'regionkit.'+profile.assetKit,seed=hash(profile.id),rotation=((seed>>>((idx%4)*3))&3)*Math.PI/2,n={id:profile.id+':'+id,type,x,y,idx,main:!!main,status:'pending',rewardClaimed:false,discovered:false,landmark:isSignature?profile.signatureLandmark:rng.pick(profile.landmarks),signatureLandmark:landmark,signature:isSignature,signatureCell:cell,subzoneId:zone.id,material:zone.material,artKey:profile.regionArtId+'.landmark.'+String(landmark).toLowerCase().replace(/[^a-z0-9]+/g,'-'),landmarkAssetId,bounds:{x:x-600,y:y-440,w:1200,h:880},terrainBounds:{x:x-600*scale,y:y-440*scale,w:1200*scale,h:880*scale}};map.nodes.push(n);map.subzones.push({id:n.id,subzoneId:zone.id,material:zone.material,artKey:profile.regionArtId+'.terrain.'+zone.material,assetId:'regionkit.'+profile.assetKit,bounds:n.terrainBounds,landmark});rectangle(x,y,1200*scale,880*scale,profile.family==='terraces'?(main?idx%4:1)*16:0,zone.material);scatterGround(n,zone);composeTerrain(n,zone);map.terrainOverlays.push({id:n.id+':transition',kind:'terrain-transition',assetId:'regionkit.'+profile.assetKit,artKey:profile.regionArtId+'.terrain.'+zone.material,cell:Math.abs(hash(profile.id+n.id))%8,material:zone.material,x:n.x,y:n.y-scale*420,w:380,h:300,depthY:n.y-scale*420+150,alpha:0.9,regionArtId:profile.regionArtId});if(idx===0||isSignature||!main){const landmarkX=x+(scale>1?1480:520),landmarkY=y+(scale>1?720:300),item=obstacle(n.id+':landmark',landmarkX,landmarkY,{id:zone.id,material:zone.material,landmark},'landmark',cell,isSignature?340:250,false,isSignature?profile.signatureAssetId:null);item.rot=rotation;item.scale=isSignature?1.18:1;}return n;}
     function edge(from,to,optional){let points=[{x:from.x,y:from.y}];const horizontal=rng.chance(0.5);points.push(horizontal?{x:to.x,y:from.y}:{x:from.x,y:to.y});points.push({x:to.x,y:to.y});const width=(optional&&modifiers.flooding?240:320)*scale;corridor(points,width,to.material);dressPath(from,to,points);map.edges.push({from:from.id,to:to.id,optional:!!optional,path:points});if(scale>1){let placed=0;for(let seg=1;seg<points.length;seg++){const a=points[seg-1],b=points[seg],length=Math.hypot(b.x-a.x,b.y-a.y),count=Math.max(0,Math.floor(length/420)-4);for(let j=0;j<count;j++){const t=(j+2)/(count+3),px=a.x+(b.x-a.x)*t,py=a.y+(b.y-a.y)*t;if(map.nodes.some(n=>n.main&&Math.hypot(n.x-px,n.y-py)<1050))continue;const horizontalSegment=Math.abs(b.x-a.x)>Math.abs(b.y-a.y),side=(placed++%2?1:-1),lateral=side*(340+artRng.int(0,3)*50);obstacle(from.id+':edge-'+to.idx+'-'+placed,px+(horizontalSegment?0:lateral),py+(horizontalSegment?lateral:0),profile.subzones[to.idx%profile.subzones.length],artRng.chance(0.55)?'solid':'debris',undefined,artRng.int(90,180),artRng.chance(0.66));}}}}
     if(profile.id==='practice'){
       const n=node('training','practice',0,0,0,true);rectangle(0,0,2000,1600,0);map.entry={x:0,y:240};map.capstone=n;

@@ -921,6 +921,13 @@ button.codex-entry>:is(p,.boon-effects,.note){display:none}
 .pause-panel{padding:36px;max-width:460px}
 .pause-panel .title-buttons{display:flex;flex-direction:column}
 .pause-panel .btn{width:100%}
+.ambience-settings{display:grid;gap:10px;margin:20px 0;padding:14px 16px;border:1px solid var(--atlas-line);border-radius:6px;background:rgba(8,6,5,.42);text-align:left}
+.ambience-settings legend{padding:0 8px;color:var(--gold);font:700 10px var(--font-display);letter-spacing:.16em}
+.ambience-volume-label{display:flex;justify-content:space-between;gap:12px;color:var(--bone);font-size:13px}
+.ambience-volume-label output{color:#f1d489;font-variant-numeric:tabular-nums}
+#ambience-volume{width:100%;accent-color:#d7a94b}
+.ambience-check{display:flex;align-items:center;gap:10px;min-height:28px;color:var(--bone-dim);font-size:12px;cursor:pointer}
+.ambience-check input{width:18px;height:18px;margin:0;accent-color:#d7a94b}
 .cutscene-dialogue{background-color:#120f0de8;border-color:var(--atlas-line);box-shadow:0 6px 24px #0006;padding:20px 24px}
 .cutscene-caption p{font-size:17px;line-height:1.65}
 .cutscene-heading h2{font-size:clamp(24px,3vw,40px)}

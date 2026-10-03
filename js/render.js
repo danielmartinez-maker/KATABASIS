@@ -318,21 +318,25 @@
     A.drawCell(ctx, atlas, col, row, f.x, f.y, size, size * 0.76, { alpha: Math.max(0.25, 1 - t), rot: dir });
   }
 
-  function drawParticles(ctx, G) {
+  function drawParticles(ctx, G, layer) {
     const l = G.particles && G.particles.list || [];
     const viewRect = K.WorldRenderer && K.WorldRenderer.viewRect;
     const view = viewRect && G.cam ? viewRect(G.cam, 60) : null;
     const tick = Math.floor((G.realTime || 0) * 8);
     for (let i = 0; i < l.length; i++) {
-      const p = l[i], alpha = p.fade ? Math.max(0, p.life / p.max) : 1;
+      const p = l[i], isAmbience=!!p.worldAmbience;
+      if(layer==='ambience'&&!isAmbience||layer==='combat'&&isAmbience)continue;
+      const alpha = p.fade ? Math.max(0, p.life / p.max) : 1;
       if (alpha < 0.04) continue;
       if (view) { const r = (p.size || 3) * 4; if (p.x + r < view.x0 || p.y + r < view.y0 || p.x - r > view.x1 || p.y - r > view.y1) continue; }
       let cell = (i * 7 + tick) % 16;
-      if (p.color && (p.color.indexOf('7a') >= 0 || p.color.indexOf('9b') >= 0)) cell = 9 + (cell % 4);
+      const ambienceCells={ash:9,mist:4,embers:12,sparks:13,spores:6,petals:7,dust:3,spray:5,rain:8,clouds:1,leaves:10,motes:11};
+      if(isAmbience&&ambienceCells[p.kind]!==undefined)cell=ambienceCells[p.kind];
+      else if (p.color && (p.color.indexOf('7a') >= 0 || p.color.indexOf('9b') >= 0)) cell = 9 + (cell % 4);
       else if (p.color && (p.color.indexOf('5f') >= 0 || p.color.indexOf('bf') >= 0)) cell = 4 + (cell % 4);
       const t = p.fade === false ? 1 : Math.max(0.36, 0.35 + 0.65 * alpha);
       A.drawCell(ctx, 'effects.particles', cell % 4, Math.floor(cell / 4), p.x, p.y,
-        p.size * 4.2 * t, p.size * 3.6 * t, { alpha, rot: p.rot || 0 });
+        p.size * 4.2 * t, p.size * 3.6 * t * (p.ambienceStretch||1), { alpha, rot: p.rot || 0 });
     }
   }
 
@@ -461,6 +465,7 @@
     G.cam.apply(ctx);
     A.drawImage(ctx, 'region.' + regionArtId(rid) + '.floor', G.arena.x, G.arena.y, G.arena.w, G.arena.h);
     drawDecor(ctx, G, rid);
+    drawParticles(ctx,G,'ambience');
     for (const h of G.hazards || []) drawHazard(ctx, G, h);
     for (const f of E.telegraphs || []) drawEffect(ctx, G, Object.assign({ kind: 'telegraph' }, f));
     for (const f of E.effects || []) drawEffect(ctx, G, f);
@@ -474,7 +479,7 @@
       else drawInteractable(ctx, G, t.it, rid);
     }
     for (const p of E.projectiles || []) drawProjectile(ctx, p);
-    drawParticles(ctx, G);
+    drawParticles(ctx, G, 'combat');
     for (const p of E.pickups || []) drawPickup(ctx, p, G);
     ctx.restore();
     drawBanner(ctx, G);

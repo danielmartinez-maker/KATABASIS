@@ -206,7 +206,7 @@ const sandbox = vm.createContext(windowShim);
 sandbox.globalThis = windowShim;
 sandbox.self = windowShim;
 
-const FILES = ['js/core.js', 'js/persistence.js', 'js/data.js', 'js/content-expansion.js', 'js/world.js', 'js/gear.js', 'js/paragon.js', 'js/run-systems.js', 'js/boon-expansion.js', 'js/asset-manifest.js', 'js/assets.js', 'js/entities.js', 'js/game.js', 'js/build-powers.js', 'js/endgame.js', 'js/mythology.js', 'js/portraits.js', 'js/world-runtime.js', 'js/render.js', 'js/world-renderer.js', 'js/overhaul-ui.js', 'js/main.js'];
+const FILES = ['js/core.js', 'js/persistence.js', 'js/data.js', 'js/content-expansion.js', 'js/world.js', 'js/gear.js', 'js/paragon.js', 'js/run-systems.js', 'js/boon-expansion.js', 'js/asset-manifest.js', 'js/assets.js', 'js/entities.js', 'js/game.js', 'js/build-powers.js', 'js/endgame.js', 'js/mythology.js', 'js/portraits.js', 'js/world-runtime.js', 'js/world-ambience.js', 'js/render.js', 'js/world-renderer.js', 'js/overhaul-ui.js', 'js/main.js'];
 
 const errors = [];
 const logs = [];

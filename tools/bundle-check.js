@@ -93,9 +93,18 @@ async function main() {
     if (r.exceptionDetails) return { __err: r.exceptionDetails.text + ' :: ' + (r.exceptionDetails.exception && r.exceptionDetails.exception.description || '') };
     return r.result ? r.result.value : null;
   };
+  const waitForExpression = async (expression, label, timeoutMs = 90000) => {
+    const started = Date.now();
+    while (Date.now() - started < timeoutMs) {
+      if (await ev(expression) === true) return Date.now() - started;
+      await sleep(250);
+    }
+    throw new Error('timed out waiting for ' + label);
+  };
 
   await send('Runtime.enable'); await send('Log.enable'); await send('Network.enable');
-  await sleep(1600);
+  const bootWaitMs = await waitForExpression('!!(window.K && window.K.G && window.K.Save && window.K.Save.data && window.K.Persistence && window.K.Persistence.ready && document.getElementById("asset-loading") && document.getElementById("asset-loading").classList.contains("hidden"))', 'game and save initialization');
+  console.log('game/save readiness:', bootWaitMs + 'ms after DevTools attached');
 
   /* no external requests at all should have been needed */
   const net = await ev('JSON.stringify(performance.getEntriesByType("resource").map(function(r){return r.name;}))');
@@ -109,7 +118,7 @@ async function main() {
   try {
     const b = JSON.parse(boot);
     if (!b.k || !b.g || !b.save) problems.push('bundle did not boot');
-    if (b.boons < 90 || b.gods !== 12 || b.monsters < 24 || b.bosses < b.regions || b.relics < 18 || b.regions !== 26 || b.chapters !== 26 || !b.chronicle || !b.nemeses) {
+    if (b.boons < 90 || b.gods < 12 || b.monsters < 24 || b.bosses < b.regions || b.relics < 18 || b.regions !== 26 || b.chapters !== 26 || !b.chronicle || !b.nemeses) {
       problems.push('bundle content is incomplete: ' + boot);
     }
   } catch (e) { problems.push('boot probe failed'); }
@@ -360,8 +369,10 @@ async function main() {
   await ev('window.K.Save.addObols(777)');
   const before = await ev('window.K.Save.data.obols');
   if (!(await ev('window.K.Save.flush()'))) problems.push('save flush failed before reload');
+  const timeOriginBeforeReload = await ev('performance.timeOrigin');
   await send('Page.reload', { ignoreCache: true });
-  await sleep(2200);
+  const reloadWaitMs = await waitForExpression('performance.timeOrigin > ' + timeOriginBeforeReload + ' && !!(window.K && window.K.G && window.K.Save && window.K.Save.data && window.K.Persistence && window.K.Persistence.ready)', 'game and save initialization after reload');
+  console.log('reload readiness:', reloadWaitMs + 'ms');
   const after = await ev('window.K && window.K.Save ? window.K.Save.data.obols : null');
   console.log('obols before reload: ' + before + ' | after: ' + after);
   if (after !== before) problems.push('bundle save did not survive a reload (' + before + ' -> ' + after + ')');

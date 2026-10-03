@@ -42,12 +42,12 @@
 - Consumes: Terrain plan's `world.profile.ambience`, map seed, player position, and `K.Particles`.
 - Produces: `K.WorldAmbience.update(game, dt)` and `K.WorldAmbience.setReducedMotion(enabled)` with seeded regional schedules, bounded local emitters, spatial force/hazard cues; weather draws beneath telegraphs and over terrain without masking actors.
 
-- [ ] Add failing assertions for stable ambience profiles across all 28 worlds, same-seed scheduling, visible-area particle caps, and reduced-motion suppression.
-- [ ] Run `node tools/world-overhaul.test.js` and `node tools/world-renderer.test.js`; confirm the new controller behaviors are absent.
-- [ ] Implement the controller and call it from the game update/render path; use spatially anchored ash, spray, spores, leaves, rain, embers, cloud shadow, and fog variants based on each profile.
-- [ ] Keep visual motion bounded, deterministic, and separate from gameplay randomness; preserve hazard telegraphs at the highest visual priority.
-- [ ] Run the two targeted suites and confirm all ambience/controller assertions pass.
-- [ ] Commit as `feat: add regional visual atmosphere`.
+- [x] Add failing assertions for stable ambience profiles across all 28 worlds, same-seed scheduling, visible-area particle caps, and reduced-motion suppression.
+- [x] Run `node tools/world-overhaul.test.js` and `node tools/world-renderer.test.js`; confirm the new controller behaviors are absent.
+- [x] Implement the controller and call it from the game update/render path; use spatially anchored ash, spray, spores, leaves, rain, embers, cloud shadow, and fog variants based on each profile.
+- [x] Keep visual motion bounded, deterministic, and separate from gameplay randomness; preserve hazard telegraphs at the highest visual priority.
+- [x] Run the two targeted suites and confirm all ambience/controller assertions pass.
+- [x] Commit the coordinated terrain and ambience delivery after the final native build.
 
 ### Task 2: Regional ambience audio and accessible controls
 
@@ -63,13 +63,13 @@
 - Consumes: Task 1's current region and the terrain plan's `profile.ambience.bed`/`accentHz` values.
 - Produces: `K.Audio.setAmbienceProfile(profile)` and `K.Audio.setAmbienceVolume(value)`; new save fields default to ambience volume `0.45`, ambience mute `false`, and reduced motion `false`; ambience gain is independent of music gain and existing global mute. Reduced motion is controlled through `K.WorldAmbience.setReducedMotion(enabled)` from Task 1.
 
-- [ ] Add failing assertions that legacy saves normalize the new fields, ambience volume clamps to `[0,1]`, global mute silences all buses, and an ambience-only mute leaves music/SFX settings intact.
-- [ ] Add a fake Web Audio context assertion for bounded region crossfades and cleanup when switching profiles rapidly.
-- [ ] Run `node tools/world-overhaul.test.js`; confirm the preference and ambience APIs are missing.
-- [ ] Implement family-specific Web Audio beds plus region accent cues using the `bed` and `accentHz` fields on one ambience bus; crossfade profile changes over 0.8 seconds and create/resume nodes only after the existing gesture unlock.
-- [ ] Add separate ambience volume/mute and reduced-motion controls in the existing settings UI; persist defaults without migrating or resetting old saves.
-- [ ] Run `node tools/world-overhaul.test.js`; confirm preferences, mute isolation, profile crossfade, and save migration assertions pass.
-- [ ] Commit as `feat: add regional ambience audio settings`.
+- [x] Add failing assertions that legacy saves normalize the new fields, ambience volume clamps to `[0,1]`, global mute silences all buses, and an ambience-only mute leaves music/SFX settings intact.
+- [x] Add a fake Web Audio context assertion for bounded region crossfades and cleanup when switching profiles rapidly.
+- [x] Run `node tools/world-overhaul.test.js`; confirm the preference and ambience APIs are missing.
+- [x] Implement family-specific Web Audio beds plus region accent cues using the `bed` and `accentHz` fields on one ambience bus; crossfade profile changes over 0.8 seconds and create/resume nodes only after the existing gesture unlock.
+- [x] Add separate ambience volume/mute and reduced-motion controls in the existing settings UI; persist defaults without migrating or resetting old saves.
+- [x] Run `node tools/world-overhaul.test.js`; confirm preferences, mute isolation, profile crossfade, and save migration assertions pass.
+- [x] Commit the coordinated terrain and ambience delivery after the final native build.
 
 ### Task 3: Offline and native integration
 
@@ -83,9 +83,9 @@
 - Produces: a self-contained production single-file build and native portable package with no remote ambience dependencies.
 
 - [ ] Register the ambience module in `index.html` and bundler order, if not already registered in Task 1.
-- [ ] Run the complete `node tools/world-overhaul.test.js` and `node tools/world-renderer.test.js` suites after focused task checks; record any failure before packaging.
-- [ ] Run `node tools/bundle.js`; inspect the bundle inventory and offline reference audit for all new scripts/assets.
-- [ ] Run `pnpm dist:win` to package the native build from the regenerated production file.
-- [ ] Open the production build, listen to representative Tartarus, Aegean, and grove beds, and confirm the independent ambience control and reduced-motion switch work.
-- [ ] Commit build metadata; preserve generated build outputs in the worktree.
+- [ ] Run the complete `node tools/world-overhaul.test.js` suite. **Not completed:** the full run previously exceeded 700 CPU seconds in its six-seed campaign sweep; the final 28-profile sweep and focused terrain, renderer, ambience, Market, and save/audio cases passed.
+- [x] Run `node tools/bundle.js`; inspect the bundle inventory and offline reference audit for all new scripts/assets (299 embedded images, four audio tracks, zero external references).
+- [x] Run `pnpm dist:win` to package the native build from the regenerated production file.
+- [ ] Acoustically listen to representative Tartarus, Aegean, and grove beds. The production file opened offline and its ambience volume, mute, and reduced-motion controls were exercised successfully; audible listening was not verified.
+- [x] Commit build metadata and preserve the generated production file and portable executable in the worktree.
 

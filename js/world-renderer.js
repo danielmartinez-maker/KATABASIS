@@ -6,6 +6,15 @@
   const FRAGMENT='precision mediump float;uniform sampler2D u_texture;uniform float u_time;uniform float u_light;varying vec2 v_uv;varying vec4 v_color;varying float v_mode;void main(){vec4 tex=texture2D(u_texture,v_uv);float light=u_light;if(v_mode>0.5&&v_mode<1.5){float r=length((v_uv-0.5)*2.0);tex=vec4(1.0,1.0,1.0,pow(max(0.0,1.0-r),1.5));light=1.0;}if(v_mode>1.5&&v_mode<2.5){light+=0.045*sin(v_uv.x*18.0+v_uv.y*12.0+u_time*1.4);}if(v_mode>2.5){light=1.0;}gl_FragColor=vec4(tex.rgb*v_color.rgb*light,tex.a*v_color.a);}';
   R.project=function(cam,x,y,height){return{x:K.W/2+(x-cam.x+(cam.ox||0))*cam.zoom,y:K.H/2+(y-cam.y+(cam.oy||0)-(height||0))*cam.zoom};};
   R.visible=function(cam,b,padding){const p=R.project(cam,b.x,b.y,0),pad=(padding||180)*cam.zoom,w=(b.w||0)*cam.zoom,h=(b.h||0)*cam.zoom;return p.x+w>=-pad&&p.y+h>=-pad&&p.x<=K.W+pad&&p.y<=K.H+pad;};
+  R.terrainAssetId=function(world,feature){return feature.assetId||'regionterrain.'+(world&&world.profile&&world.profile.assetKit||'ruins');};
+  R.projectTerrainFeature=function(cam,feature){return R.project(cam,feature.x,feature.y,feature.elevation||0);};
+  R.terrainDrawList=function(world,view){
+    if(!world)return[];const source=world.terrainFeatures||[],found=[],seen=new Set(),chunks=world.artChunkIndex,span=world.artChunkSize||1024;
+    function add(feature){if(!feature||seen.has(feature))return;seen.add(feature);if(view){const left=feature.x-feature.w/2,top=feature.y-feature.h/2-(feature.elevation||0),right=feature.x+feature.w/2,bottom=feature.y+feature.h/2;if(right<view.x0||left>view.x1||bottom<view.y0||top>view.y1)return;}found.push(feature);}
+    if(chunks&&view){const x0=Math.floor(view.x0/span),x1=Math.floor(view.x1/span),y0=Math.floor(view.y0/span),y1=Math.floor(view.y1/span);for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++)for(const feature of chunks[x+','+y]?.features||[])add(feature);}
+    else for(const feature of source)add(feature);
+    found.sort((a,b)=>(a.depthY===undefined?a.y+a.h/2:a.depthY)-(b.depthY===undefined?b.y+b.h/2:b.depthY)||String(a.id).localeCompare(String(b.id)));return found;
+  };
   R.color=(function(){
     const cache=Object.create(null);let size=0;
     return function(value,alpha){
@@ -303,7 +312,7 @@
   R.prewarmWorld=function(ctx,world){
     if(!ctx||!ctx._webgl||ctx.lost||!world)return 0;
     const family=artFamily(world);
-    return R.prewarmIds(ctx,['region.'+family+'.floor','region.'+family+'.props','region.'+family+'.backdrop','regionkit.'+(world.profile&&world.profile.assetKit||'ruins'),world.groundAssetId||'regionground.'+(world.profile&&world.profile.assetKit||'ruins'),world.profile&&world.profile.signatureAssetId].filter(Boolean));
+    return R.prewarmIds(ctx,['region.'+family+'.floor','region.'+family+'.props','region.'+family+'.backdrop','regionkit.'+(world.profile&&world.profile.assetKit||'ruins'),'regionterrain.'+(world.profile&&world.profile.assetKit||'ruins'),world.groundAssetId||'regionground.'+(world.profile&&world.profile.assetKit||'ruins'),world.profile&&world.profile.signatureAssetId].filter(Boolean));
   };
   // Deterministic per-tile light variation and shoreline foam. Purely visual:
   // derived from tile coordinates, so generation output and saves are unchanged.
@@ -329,7 +338,7 @@
     const span=world.artChunkSize||1024,view=R.viewRect(cam,720),x0=Math.floor(view.x0/span),x1=Math.floor(view.x1/span),y0=Math.floor(view.y0/span),y1=Math.floor(view.y1/span),A=K.Assets;
     for(let cx=x0;cx<=x1;cx++)for(let cy=y0;cy<=y1;cy++){
       const chunk=chunks[cx+','+cy];if(!chunk)continue;
-      for(const item of chunk.terrain){const w=item.w||240,h=item.h||200,id=item.assetId,aspect=A.entry(id)?.aspect||A.cellAspect(id)||1,drawW=Math.min(w,h*aspect),extent=Math.max(drawW,h);if(!artRevealed(world,item.x,item.y)||!R.visible(cam,{x:item.x-extent/2,y:item.y-extent/2,w:extent,h:extent},80))continue;ctx.save();ctx.globalAlpha=item.alpha===undefined?0.9:item.alpha;if(item.rot){ctx.translate(item.x,item.y);ctx.rotate(item.rot);ctx.translate(-item.x,-item.y);}A.drawCell(ctx,id,item.cell%4,Math.floor(item.cell/4),item.x-drawW/2,item.y-h/2,drawW,h);ctx.restore();}
+    for(const item of chunk.terrain){const w=item.w||240,h=item.h||200,id=item.assetId,aspect=A.entry(id)?.aspect||A.cellAspect(id)||1,drawW=Math.min(w,h*aspect),extent=Math.max(drawW,h);if(!artRevealed(world,item.x,item.y)||!R.visible(cam,{x:item.x-extent/2,y:item.y-extent/2,w:extent,h:extent},80))continue;ctx.save();ctx.globalAlpha=item.alpha===undefined?0.9:item.alpha;if(item.rot){ctx.translate(item.x,item.y);ctx.rotate(item.rot);ctx.translate(-item.x,-item.y);}A.drawCell(ctx,id,item.cell%4,Math.floor(item.cell/4),item.x,item.y-h*0.12,drawW,h);ctx.restore();}
     }
   }
   function visibleProps(world,cam){
@@ -341,6 +350,10 @@
     }
     return visible;
   }
+  function drawTerrainFeature(ctx,A,world,feature){
+    const id=R.terrainAssetId(world,feature),entry=A.entry(id),cols=entry&&entry.cols||4,cell=Math.max(0,Number(feature.cell)||0),x=feature.x,y=feature.y-(feature.elevation||0)-feature.h*0.12;
+    ctx.save();ctx.globalAlpha=feature.alpha===undefined?1:feature.alpha;A.drawCell(ctx,id,cell%cols,Math.floor(cell/cols),x,y,feature.w,feature.h,{rot:feature.rot||0});ctx.restore();
+  }
   R.draw=function(ctx,G){
     if(!ctx||!ctx._webgl||ctx.lost)return;const started=typeof performance!=='undefined'?performance.now():0,world=G.world,cam=G.cam,A=K.Assets;
     ctx.beginFrame(G.realTime,world?.profile?.voidColor||'#100c10');
@@ -351,20 +364,22 @@
     ctx.save();cam.apply(ctx);
     drawTerrain(ctx,G,world,cam,family,size);
     drawPlacedTerrain(ctx,world,cam);
+    helpers.particles(ctx,G,'ambience');
     // Props are grounded and depth sorted with actors. Telegraphs always stay visible.
     const things=[];
+    const terrainView=R.viewRect(cam,420);for(const feature of R.terrainDrawList(world,terrainView))if(artRevealed(world,feature.x,feature.y))things.push({y:feature.depthY===undefined?feature.y+feature.h*0.5:feature.depthY,feature});
     for(const prop of visibleProps(world,cam))things.push({y:prop.depthY===undefined?prop.y:prop.depthY,prop});
     for(const ent of K.E.enemies||[])if(ent&&!ent.removeMe&&R.visible(cam,{x:ent.x-100,y:ent.y-180,w:200,h:240},20))things.push({y:ent.y,ent});
     if(G.player)things.push({y:G.player.y,ent:G.player});
     for(const it of G.interactables||[])if(R.visible(cam,{x:it.x-80,y:it.y-140,w:160,h:200},40))things.push({y:it.y,it});
-    for(const t of things){const o=t.ent||t.it||t.prop;ctx.shadow(o.x,o.y+6,t.ent?(o.radius||18)*3:(o.size||100)*0.72,t.ent?18:26,0.48);}
+    for(const t of things)if(!t.feature){const o=t.ent||t.it||t.prop;ctx.shadow(o.x,o.y+6,t.ent?(o.radius||18)*3:(o.size||100)*0.72,t.ent?18:26,0.48);}
     for(const h of G.hazards||[])if(R.visible(cam,{x:h.x-150,y:h.y-150,w:300,h:300}))helpers.hazard(ctx,G,h);
     for(const f of K.E.effects||[])if(R.visible(cam,{x:f.x-180,y:f.y-180,w:360,h:360}))helpers.effect(ctx,G,f);
     things.sort((a,b)=>a.y-b.y);
-    for(const t of things){if(t.ent)helpers.actor(ctx,G,t.ent);else if(t.it)helpers.interactable(ctx,G,t.it,family);else{const p=t.prop,s=(p.size||100)*(p.scale||1),id=p.assetId||p.asset||'region.'+family+'.props',entry=A.entry(id),cols=entry?.cols||4,aspect=entry&&entry.aspect||1,cell=p.broken?(p.brokenCell||0):(p.cell||0),y=p.y-s*0.28;ctx.save();ctx.globalAlpha=p.broken?0.58:(p.alpha||0.95);if(G.player&&Math.abs(p.x-G.player.x)<s*0.45&&p.y>G.player.y&&p.y-G.player.y<s*0.75)ctx.globalAlpha*=0.4;A.drawCell(ctx,id,cell%cols,Math.floor(cell/cols),p.x,y,s*aspect,s,{rot:p.rot||0});ctx.restore();}}
+    for(const t of things){if(t.feature)drawTerrainFeature(ctx,A,world,t.feature);else if(t.ent)helpers.actor(ctx,G,t.ent);else if(t.it)helpers.interactable(ctx,G,t.it,family);else{const p=t.prop,s=(p.size||100)*(p.scale||1),id=p.assetId||p.asset||'region.'+family+'.props',entry=A.entry(id),cols=entry?.cols||4,aspect=entry&&entry.aspect||1,cell=p.broken?(p.brokenCell||0):(p.cell||0),y=p.y-s*0.28;ctx.save();ctx.globalAlpha=p.broken?0.58:(p.alpha||0.95);if(G.player&&Math.abs(p.x-G.player.x)<s*0.45&&p.y>G.player.y&&p.y-G.player.y<s*0.75)ctx.globalAlpha*=0.4;A.drawCell(ctx,id,cell%cols,Math.floor(cell/cols),p.x,y,s*aspect,s,{rot:p.rot||0});ctx.restore();}}
     for(const f of K.E.telegraphs||[])helpers.effect(ctx,G,Object.assign({kind:'telegraph'},f));
     for(const p of K.E.projectiles||[])if(R.visible(cam,{x:p.x-40,y:p.y-40,w:80,h:80}))helpers.projectile(ctx,p);
-    helpers.particles(ctx,G);
+    helpers.particles(ctx,G,'combat');
     for(const p of K.E.pickups||[])if(R.visible(cam,{x:p.x-40,y:p.y-40,w:80,h:80}))helpers.pickup(ctx,p,G);
     ctx.restore();helpers.banner(ctx,G);helpers.cinematic(ctx,G);
     ctx.flush();ctx.stats.frameMs=typeof performance!=='undefined'?performance.now()-started:0;

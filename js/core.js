@@ -244,10 +244,10 @@
 
   /* ---------------- Audio ---------------- */
   const Audio2 = {
-    ctx: null, master: null, sfxGain: null, musicGain: null,
-    enabled: true, started: false, muted: false,
+    ctx: null, master: null, sfxGain: null, musicGain: null, ambienceGain: null,
+    enabled: true, started: false, muted: false, ambienceMuted: false,
     _last: Object.create(null), _musicRegion: null, _currentTrack: null, _musicSource: null, _musicBuffer: null, _layer: 'calm',
-    _musicBaseVolume: 0.72,
+    _musicBaseVolume: 0.72, _ambienceVolume: 0.45, _ambienceProfile: null, _ambienceKey: null, _ambienceSynth: null,
 
     /* The five existing region cue numbers now select the supplied recordings.
        Cues 3 and 4 intentionally share Nike_Kratei; cue 0 is reserved.
@@ -275,6 +275,9 @@
         this.musicGain = this.ctx.createGain();
         this.musicGain.gain.value = 1;
         this.musicGain.connect(this.master);
+        this.ambienceGain = this.ctx.createGain();
+        this.ambienceGain.gain.value = 0;
+        this.ambienceGain.connect(this.master);
       } catch (e) { this.enabled = false; }
       if (!this._bootResumeBound) {
         this._bootResumeBound = true;
@@ -283,7 +286,12 @@
         document.addEventListener('keydown', resume, { once: true, passive: true });
       }
     },
-    resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
+    resume() {
+      if (!this.ctx) return;
+      if (this.ctx.state === 'suspended' && this.ctx.resume) { try { this.ctx.resume(); } catch (e) {} }
+      this.started = true;
+      this._syncAmbienceProfile();
+    },
     setMuted(m) {
       this.muted = m;
       if (this.master) this.master.gain.value = m ? 0 : 0.85;
@@ -426,6 +434,53 @@
         this._musicGain.gain.value = this.muted ? 0 : this._musicBaseVolume * this._layerVolume();
       }
     },
+    _applyAmbienceVolume() {
+      if (this.ambienceGain) this.ambienceGain.gain.value = this.muted || this.ambienceMuted ? 0 : this._ambienceVolume * 0.34;
+    },
+    setAmbienceVolume(value) {
+      const n=Number(value);this._ambienceVolume=Number.isFinite(n)?Math.max(0,Math.min(1,n)):0.45;this._applyAmbienceVolume();return this._ambienceVolume;
+    },
+    setAmbienceMuted(value) { this.ambienceMuted=!!value;this._applyAmbienceVolume();return this.ambienceMuted; },
+    setAmbienceProfile(profile) {
+      const next=profile&&typeof profile==='object'?{
+        bed:String(profile.bed||'cavern'),accentHz:Math.max(32,Math.min(880,Number(profile.accentHz)||82)),
+        motif:String(profile.motif||''),weather:String(profile.weather||''),palette:String(profile.palette||'#b6a68a')
+      }:null;
+      const key=next?[next.bed,next.accentHz,next.motif,next.weather,next.palette].join('|'):'';
+      if(key===this._ambienceKey)return;
+      this._ambienceProfile=next;this._ambienceKey=key;
+      this._syncAmbienceProfile();
+    },
+    _ensureAmbienceSynth() {
+      if(this._ambienceSynth||!this.ctx||!this.ambienceGain||!this.started)return this._ambienceSynth;
+      const c=this.ctx,body=c.createOscillator(),overtone=c.createOscillator(),noise=c.createBufferSource(),filter=c.createBiquadFilter();
+      const bodyGain=c.createGain(),overtoneGain=c.createGain(),noiseGain=c.createGain();
+      body.type='sine';overtone.type='triangle';body.frequency.value=44;overtone.frequency.value=82;
+      bodyGain.gain.value=0;overtoneGain.gain.value=0;noiseGain.gain.value=0;filter.type='lowpass';filter.frequency.value=240;filter.Q.value=0.65;
+      const rate=c.sampleRate||22050,length=Math.max(2048,Math.floor(rate*2)),buffer=c.createBuffer(1,length,rate),data=buffer.getChannelData(0);let noiseSeed=0x6d2b79f5;
+      for(let i=0;i<length;i++){noiseSeed^=noiseSeed<<13;noiseSeed^=noiseSeed>>>17;noiseSeed^=noiseSeed<<5;data[i]=((noiseSeed>>>0)/2147483648)-1;}
+      noise.buffer=buffer;noise.loop=true;
+      body.connect(bodyGain);bodyGain.connect(this.ambienceGain);overtone.connect(overtoneGain);overtoneGain.connect(this.ambienceGain);
+      noise.connect(filter);filter.connect(noiseGain);noiseGain.connect(this.ambienceGain);
+      body.start();overtone.start();noise.start();
+      this._ambienceSynth={body,overtone,noise,filter,bodyGain,overtoneGain,noiseGain};
+      return this._ambienceSynth;
+    },
+    _rampAmbience(param,value,duration) {
+      if(!param)return;const now=this.ctx?this.ctx.currentTime||0:0;
+      try{if(param.cancelScheduledValues)param.cancelScheduledValues(now);if(param.setValueAtTime)param.setValueAtTime(Number(param.value)||0,now);if(param.linearRampToValueAtTime)param.linearRampToValueAtTime(value,now+(duration||0.8));else param.value=value;}catch(e){param.value=value;}
+    },
+    _syncAmbienceProfile() {
+      if(!this.started||!this.ctx||!this.ambienceGain)return;
+      const synth=this._ambienceProfile?this._ensureAmbienceSynth():this._ambienceSynth;if(!synth)return;
+      if(!this._ambienceProfile){this._rampAmbience(synth.bodyGain.gain,0,0.8);this._rampAmbience(synth.overtoneGain.gain,0,0.8);this._rampAmbience(synth.noiseGain.gain,0,0.8);return;}
+      const beds={cavern:[42,185,0.022],river:[68,920,0.058],grove:[92,620,0.032],fields:[110,480,0.028],lava:[38,230,0.045],ruins:[52,330,0.024],storm:[74,1450,0.075],terraces:[126,1050,0.04]};
+      const cfg=beds[this._ambienceProfile.bed]||beds.cavern;
+      this._rampAmbience(synth.body.frequency,cfg[0],0.8);this._rampAmbience(synth.overtone.frequency,this._ambienceProfile.accentHz,0.8);
+      this._rampAmbience(synth.filter.frequency,cfg[1],0.8);this._rampAmbience(synth.bodyGain.gain,0.3,0.8);
+      this._rampAmbience(synth.overtoneGain.gain,0.075,0.8);this._rampAmbience(synth.noiseGain.gain,cfg[2],0.8);
+      this._applyAmbienceVolume();
+    },
     _playMusicTrack(tr) {
       if (!tr) return;
       this.boot();
@@ -542,6 +597,9 @@
         paragonPoints: 0,
         paragonNodes: [],
         muted: false,
+        ambienceVolume: 0.45,
+        ambienceMuted: false,
+        reducedMotion: false,
         tutorialDone: false,
         unlockedHeroes: ['perseus'],
         selectedHero: 'perseus',
@@ -562,6 +620,9 @@
       if (d.__proto__) delete d.__proto__;
       if (d.equippedGear && typeof d.equippedGear === 'object' && d.equippedGear.__proto__) delete d.equippedGear.__proto__;
       this.data = Object.assign(this.defaults(), d || {});
+      this.data.ambienceVolume=Math.max(0,Math.min(1,savedNumber(this.data.ambienceVolume,0.45,false)));
+      this.data.ambienceMuted=!!this.data.ambienceMuted;
+      this.data.reducedMotion=!!this.data.reducedMotion;
       if (!this.data.campaignMilestones || typeof this.data.campaignMilestones !== 'object' || Array.isArray(this.data.campaignMilestones)) this.data.campaignMilestones = { firstCapstone:false, actI:false, actII:false, campaignVictory:false };
       if (!this.data.endgamePreferences || typeof this.data.endgamePreferences !== 'object' || Array.isArray(this.data.endgamePreferences)) this.data.endgamePreferences = {};
       if (!Array.isArray(this.data.unlockedWeapons)) this.data.unlockedWeapons = ['xiphos'];
