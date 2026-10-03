@@ -59,12 +59,12 @@
 - Consumes: Task 1's `map.terrainFeatures` and terrain metadata.
 - Produces: `K.World.surfaceAt(map, x, y) -> { material, surface, elevation, flowX, flowY, coverHeight }`; `K.World.lineOfSight(map, from, to, projectileHeight) -> boolean`; movement and projectiles query those functions and the existing blocker index.
 
-- [ ] Add failing tests for a non-traversable cliff/water edge, a traversable ramp/bridge, deterministic current force applied to both player and enemy, and projectile occlusion by raised cover.
-- [ ] Run `node tools/world-overhaul.test.js`; confirm each case fails on absent surface/visibility behavior.
-- [ ] Implement bounded transitions in `W.isWalkable`/`W.resolveMove`, surface sampling, cover ray checks, and force application in the existing movement/runtime hooks; reserve a stable main route and keep force magnitudes capped.
-- [ ] Make enemy and player collision use the same world queries; make projectile path checks sample the same cells and blockers.
-- [ ] Run the focused movement, projectile, and environment cases from `tools/world-overhaul.test.js`; confirm each named case passes.
-- [ ] Commit as `feat: make terrain affect traversal and combat`.
+- [x] Add failing tests for a non-traversable cliff/water edge, a traversable ramp/bridge, deterministic current force applied to both player and enemy, and projectile occlusion by raised cover.
+- [x] Run `node tools/world-overhaul.test.js`; confirm each case fails on absent surface/visibility behavior.
+- [x] Implement bounded transitions in `W.isWalkable`/`W.resolveMove`, surface sampling, cover ray checks, and force application in the existing movement/runtime hooks; reserve a stable main route and keep force magnitudes capped.
+- [x] Make enemy and player collision use the same world queries; make projectile path checks sample the same cells and blockers.
+- [x] Run the focused movement, projectile, and environment cases from `tools/world-overhaul.test.js`; confirm each named case passes.
+- [x] Commit as `feat: make terrain affect traversal and combat`.
 
 ### Task 3: Terrain art atlas and painterly map composition
 

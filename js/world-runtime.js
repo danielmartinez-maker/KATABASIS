@@ -107,6 +107,11 @@
   P.collideWithWalls=function(entity){
     if(!this.world)return base.collideWithWalls.call(this,entity);
     const b=this.activeEncounter?this.activeEncounter.bounds:null;
+    const dt=Math.max(0,Math.min(0.08,Number(this._terrainDt)||0)),surface=dt>0&&entity&&W.surfaceAt(this.world,entity.x,entity.y);
+    if(surface&&(surface.flowX||surface.flowY)){
+      const length=Math.hypot(surface.flowX,surface.flowY),scale=length>180?180/length:1;
+      entity.vx=(Number(entity.vx)||0)+surface.flowX*scale*dt;entity.vy=(Number(entity.vy)||0)+surface.flowY*scale*dt;
+    }
     const previous=positions.get(entity);const result=W.resolveMove(this.world,entity,previous,b);
     positions.set(entity,result);
   };
@@ -267,13 +272,14 @@
   const projectileUpdate=E.Projectile&&E.Projectile.prototype.update;
   if(projectileUpdate)E.Projectile.prototype.update=function(dt,game){
     const before={x:this.x,y:this.y};projectileUpdate.call(this,dt,game);
-    if(game.world&&this.life>0&&this.hitWall){const length=Math.hypot(this.x-before.x,this.y-before.y),steps=Math.max(1,Math.ceil(length/(game.world.tileSize*0.4)));for(let i=1;i<=steps;i++){const t=i/steps;if(!W.isWalkable(game.world,before.x+(this.x-before.x)*t,before.y+(this.y-before.y)*t,Math.min(12,this.radius||2))){this.life=0;if(this.aoe>0)this.explode(game);this.die(game);break;}}}
+    if(game.world&&this.life>0&&this.hitWall){const height=Number.isFinite(this.projectileHeight)?this.projectileHeight:24;if(!W.lineOfSight(game.world,before,{x:this.x,y:this.y},height)){this.life=0;if(this.aoe>0)this.explode(game);this.die(game);}}
   };
   P.update=function(dt){
     if(!this.world)return base.update.call(this,dt);
     // Also absorb legacy/direct Obol pickup producers immediately, before movement can collect them.
     for(const pickup of E.pickups.slice())if(pickup.kind==='obol'&&!pickup.dead)base.collectPickup.call(this,pickup);
-    const result=base.update.call(this,dt);
+    const previousTerrainDt=this._terrainDt;this._terrainDt=Math.max(0,Math.min(0.08,Number(dt)||0));let result;
+    try{result=base.update.call(this,dt);}finally{this._terrainDt=previousTerrainDt;}
     if(!this.run||!this.player)return result;
     for(const prop of this.world.props)if(prop.impactT>0)prop.impactT=Math.max(0,prop.impactT-dt);
     this._worldRevealT=(this._worldRevealT||0)+dt;

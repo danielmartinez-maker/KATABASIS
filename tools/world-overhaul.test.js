@@ -58,6 +58,9 @@ test('Every region owns a distinct terrain and ambience program with seeded trav
   for(const id of ids){
     const a=K.World.generate({seed:872,regionId:id});
     assert.ok(Array.isArray(a.terrainFeatures)&&a.terrainFeatures.length>0,id+' generated no terrain features');
+    assert.ok(a.terrainFeatures.every(feature=>Number.isFinite(feature.coverHeight)&&Number.isFinite(feature.flowX)&&Number.isFinite(feature.flowY)),id+' terrain is missing simulation fields');
+    assert.ok(a.terrainFeatures.every(feature=>K.World.cellAt(a,feature.x,feature.y)),id+' has terrain detached from the floor map');
+    if(K.DATA.REGIONS.some(region=>region.id===id)){assert.ok(a.terrainFeatures.some(feature=>feature.blocksMovement),id+' has no solid landform terrain');for(const feature of a.terrainFeatures.filter(item=>item.blocksMovement))assert.ok(a.blockers.some(blocker=>blocker.terrain&&blocker.id.startsWith(feature.id+':terrain-')),id+' landform has no matching collision: '+feature.id);}
     if(repeatSeeds.has(id)){const b=K.World.generate({seed:872,regionId:id});assert.deepStrictEqual(JSON.parse(JSON.stringify(a.terrainFeatures)),JSON.parse(JSON.stringify(b.terrainFeatures)),id+' terrain features are not deterministic');}
     layouts.add(JSON.stringify(a.terrainFeatures.map(feature=>[feature.kind,feature.shape,feature.x,feature.y,feature.w,feature.h,feature.elevation,feature.material])));
     if(K.DATA.REGIONS.some(region=>region.id===id))assert.ok(a.terrainFeatures.some(feature=>feature.kind==='ramp'||feature.kind==='stair'||feature.kind==='bridge'||feature.kind==='causeway'),id+' has no gameplay traversal feature');
@@ -65,6 +68,13 @@ test('Every region owns a distinct terrain and ambience program with seeded trav
   }
   assert.strictEqual(layouts.size,ids.length,'region terrain programs collapsed to duplicate layouts');
   assert.strictEqual(G.run.rng.seed,combatSeed,'world terrain consumed combat RNG');
+});
+test('Generated terrain art carries matching physical collision and projectile cover',()=>{
+  const W=K.World,map=W.generate({seed:872,regionId:'tartarus'}),solidFeatures=map.terrainFeatures.filter(feature=>feature.blocksMovement),terrainBlockers=map.blockers.filter(blocker=>blocker.terrain);
+  assert.ok(solidFeatures.length>0,'regional landforms were only decorative');
+  for(const feature of map.terrainFeatures)assert.ok(W.cellAt(map,feature.x,feature.y),feature.id+' is floating outside the generated floor');
+  for(const feature of solidFeatures)assert.ok(terrainBlockers.some(blocker=>blocker.id.startsWith(feature.id+':terrain-')),feature.id+' is missing its collision footprint');
+  for(const blocker of terrainBlockers){const x=blocker.x+blocker.w/2,y=blocker.y+blocker.h/2;assert.strictEqual(W.isWalkable(map,x,y,8),false,blocker.id+' did not block actor movement');assert.strictEqual(W.lineOfSight(map,{x:x-40,y},{x:x+40,y},8),false,blocker.id+' did not occlude a low projectile');}
 });
 test('Encounter rewards claim once and cleared regions permit backtracking without re-spawning',()=>{
   assert.ok(K.WorldRuntime,'World runtime is missing');reset();
@@ -87,6 +97,46 @@ test('Collision stops traversal through void and long dashes cannot tunnel outsi
   clear();G.useExitGate();G.closeOffer();
   const outside={x:G.world.bounds.x-400,y:G.world.bounds.y-400,radius:25,vx:1,vy:1};
   G.collideWithWalls(outside);assert.ok(K.World.isWalkable(G.world,outside.x,outside.y,25));
+});
+test('Terrain surfaces stop at ledges and water while ramps and bridges connect elevations',()=>{
+  const W=K.World;assert.strictEqual(typeof W.surfaceAt,'function','terrain surface query is missing');
+  const cell=(x,height,kind='ground',walkable=true)=>({x,y:0,height,kind,walkable,material:'stone'});
+  const map=(cells,terrainFeatures=[])=>({tileSize:100,cells,terrainFeatures,blockers:[],profile:{terrain:{surface:'stone'}}});
+  const cliff=map([cell(0,0),cell(100,48)]),walker={x:100,y:0,radius:8,vx:100,vy:0};
+  W.resolveMove(cliff,walker,{x:0,y:0});assert.ok(walker.x<60,'unlinked cliff face was traversed');
+  const water=map([cell(0,0),cell(100,-12,'water',false),cell(200,0)]),swimmer={x:200,y:0,radius:8,vx:200,vy:0};
+  assert.ok(W.isWalkable(water,0,0,8),'fixture start is not walkable: '+JSON.stringify(W.cellAt(water,0,0)));
+  W.resolveMove(water,swimmer,{x:0,y:0});assert.ok(swimmer.x<100,'water channel was treated as walkable at '+swimmer.x);
+  const ridge=map([cell(0,0),cell(100,0),cell(200,0)],[{id:'ridge',kind:'ridge',x:100,y:0,w:40,h:80,blocksMovement:true,coverHeight:48}]);ridge.blockers.push({id:'ridge:collision',x:80,y:-40,w:40,h:80,height:48});
+  assert.strictEqual(W.isWalkable(ridge,100,0,8),false,'solid terrain artwork had no matching collision');
+  const ramp=map([cell(0,0),cell(100,24),cell(200,48)], [{id:'ramp',kind:'ramp',x:100,y:0,w:200,h:100,transition:{fromElevation:0,toElevation:48},coverHeight:0}]);
+  const climber={x:200,y:0,radius:8,vx:200,vy:0};W.resolveMove(ramp,climber,{x:0,y:0});assert.ok(climber.x>180,'authored ramp did not connect its elevation bands');
+  assert.strictEqual(W.surfaceAt(ramp,100,0).elevation,24,'ramp surface did not interpolate its elevation');
+  const bridge=map([cell(0,0),cell(100,12,'bridge'),cell(200,12)]),crossing={x:200,y:0,radius:8,vx:200,vy:0};
+  W.resolveMove(bridge,crossing,{x:0,y:0});assert.ok(crossing.x>180,'bridge height was not traversable');
+});
+test('Terrain currents apply the same bounded deterministic force to player and enemy movement',()=>{
+  assert.strictEqual(typeof K.World.surfaceAt,'function','terrain surface query is missing');assert.ok(K.WorldRuntime,'World runtime is missing');reset();
+  const W=K.World,world=G.world,origin=W.nearestWalkable(world,G.player.x,G.player.y,0),cell=W.cellAt(world,origin.x,origin.y);cell.flowX=120;cell.flowY=-30;
+  assert.deepStrictEqual([W.surfaceAt(world,origin.x,origin.y).flowX,W.surfaceAt(world,origin.x,origin.y).flowY],[120,-30]);
+  G._terrainDt=0.1;const player={x:origin.x,y:origin.y,radius:8,vx:0,vy:0};G.collideWithWalls(player);
+  const enemy={x:origin.x,y:origin.y,radius:8,vx:0,vy:0,ai:'lunge'};G.collideWithWalls(enemy);G._terrainDt=0;
+  assert.deepStrictEqual([player.vx,player.vy],[enemy.vx,enemy.vy],'player and enemy received different terrain forces');
+  assert.ok(player.vx>0&&player.vy<0,'current did not affect movement');assert.ok(Math.hypot(player.vx,player.vy)<=25,'current acceleration exceeded its frame bound');
+});
+test('Raised terrain and solid blockers occlude only low projectile paths',()=>{
+  const W=K.World;assert.strictEqual(typeof W.lineOfSight,'function','terrain line-of-sight query is missing');
+  const cells=[];for(const y of [-100,0,100])for(const x of [0,100,200])cells.push({x,y,height:0,kind:'ground',walkable:true,material:'stone'});
+  const world={tileSize:100,cells,terrainFeatures:[{id:'ridge',kind:'ridge',x:80,y:-50,w:40,h:100,elevation:48,coverHeight:42}],blockers:[{id:'pillar',x:180,y:-25,w:24,h:50,height:36}],profile:{terrain:{surface:'stone'}}};
+  assert.strictEqual(W.lineOfSight(world,{x:0,y:0},{x:200,y:0},24),false,'raised ridge failed to stop a low shot');
+  assert.strictEqual(W.lineOfSight(world,{x:0,y:0},{x:200,y:0},60),true,'raised ridge blocked a shot above its cover');
+  world.terrainFeatures=[];assert.strictEqual(W.lineOfSight(world,{x:100,y:0},{x:200,y:0},24),false,'solid pillar failed to stop a low shot');
+  assert.strictEqual(W.lineOfSight(world,{x:100,y:0},{x:200,y:0},60),true,'solid pillar blocked a shot above its cover');
+  reset();const previousWorld=G.world,previousArena=G.arena;G.world=world;G.arena={x:-500,y:-500,w:1000,h:1000};K.E.enemies.length=0;
+  world.terrainFeatures=[{id:'ridge',kind:'ridge',x:80,y:-50,w:40,h:100,elevation:48,coverHeight:42}];
+  const low=new K.E.Projectile({x:0,y:0,vx:1000,vy:0,life:1,friendly:true,trail:false});low.update(0.2,G);assert.strictEqual(low.life,0,'projectile runtime passed through raised cover');
+  const high=new K.E.Projectile({x:0,y:0,vx:1000,vy:0,life:1,friendly:true,trail:false});high.projectileHeight=60;assert.strictEqual(W.lineOfSight(world,{x:0,y:0},{x:200,y:0},60),true,'test path should clear the cover');high.update(0.2,G);assert.ok(high.life>0,'high projectile was stopped by lower cover: '+JSON.stringify({life:high.life,x:high.x,y:high.y,dead:high.dead}));
+  G.world=previousWorld;G.arena=previousArena;
 });
 test('Activating distant encounters preserves map bounds and relocates spawns exactly once',()=>{
   assert.ok(K.WorldRuntime,'World runtime is missing');reset();

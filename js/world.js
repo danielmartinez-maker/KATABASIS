@@ -98,9 +98,39 @@
   const coord=(value,size)=>Math.round(value/size);
   const key=(x,y)=>x+','+y;
   W.cellKey=(x,y,size)=>key(coord(x,size||W.TILE_SIZE),coord(y,size||W.TILE_SIZE));
-  const indexes=new WeakMap(),blockerIndexes=new WeakMap();
+  const indexes=new WeakMap(),blockerIndexes=new WeakMap(),terrainIndexes=new WeakMap();
   function index(map){let cells=indexes.get(map);if(!cells){cells=Object.create(null);for(const cell of map.cells)cells[W.cellKey(cell.x,cell.y,map.tileSize)]=cell;indexes.set(map,cells);}return cells;}
   W.cellAt=(map,x,y)=>index(map)[W.cellKey(x,y,map.tileSize)]||null;
+  function terrainIndex(map){
+    const source=map.terrainFeatures||[],state=terrainIndexes.get(map);if(state&&state.source===source)return state;
+    const span=(map.tileSize||W.TILE_SIZE)*8,bins=Object.create(null);
+    for(const feature of source){const left=feature.x-feature.w/2,right=feature.x+feature.w/2,top=feature.y-feature.h/2,bottom=feature.y+feature.h/2;for(let cx=Math.floor(left/span);cx<=Math.floor(right/span);cx++)for(let cy=Math.floor(top/span);cy<=Math.floor(bottom/span);cy++){const id=cx+','+cy;(bins[id]||(bins[id]=[])).push(feature);}}
+    const next={source,span,bins};terrainIndexes.set(map,next);return next;
+  }
+  function terrainFeaturesAt(map,x,y){const state=terrainIndex(map),items=state.bins[Math.floor(x/state.span)+','+Math.floor(y/state.span)]||[];return items.filter(feature=>x>=feature.x-feature.w/2&&x<=feature.x+feature.w/2&&y>=feature.y-feature.h/2&&y<=feature.y+feature.h/2);}
+  W.surfaceAt=function(map,x,y){
+    if(!map||!Number.isFinite(x)||!Number.isFinite(y))return null;
+    const cell=W.cellAt(map,x,y);if(!cell)return null;
+    let elevation=Number(cell.height)||0,coverHeight=Math.max(Number(cell.coverHeight)||0,!cell.walkable&&cell.height>0?Number(cell.height):0),flowX=Number(cell.flowX)||0,flowY=Number(cell.flowY)||0,surface=cell.surface||map.profile&&map.profile.terrain&&map.profile.terrain.surface||cell.material,transition=null;
+    const features=terrainFeaturesAt(map,x,y);
+    for(const feature of features){
+      if(feature.surface)surface=feature.surface;
+      coverHeight=Math.max(coverHeight,Number(feature.coverHeight)||0);
+      if(feature.transition){
+        const axis=feature.w>=feature.h?'x':'y',start=(axis==='x'?feature.x-feature.w/2:feature.y-feature.h/2),span=axis==='x'?feature.w:feature.h,t=Math.max(0,Math.min(1,((axis==='x'?x:y)-start)/span)),from=Number(feature.transition.fromElevation)||0,to=Number(feature.transition.toElevation)||0;
+        elevation=from+(to-from)*t;transition=feature.transition;
+      }
+      flowX+=Number(feature.flowX)||0;flowY+=Number(feature.flowY)||0;
+    }
+    return{material:cell.material,surface,elevation,flowX,flowY,coverHeight,transition,walkable:!!cell.walkable||features.some(feature=>feature.walkable&&feature.transition)};
+  };
+  W.canTraverse=function(map,from,to,radius){
+    if(!map||!from||!to)return false;
+    const distance=Math.hypot(to.x-from.x,to.y-from.y),steps=Math.min(512,Math.max(1,Math.ceil(distance/((map.tileSize||W.TILE_SIZE)*0.3))));
+    let prior=W.surfaceAt(map,from.x,from.y);if(!prior||!W.isWalkable(map,from.x,from.y,radius))return false;
+    for(let i=1;i<=steps;i++){const t=i/steps,x=from.x+(to.x-from.x)*t,y=from.y+(to.y-from.y)*t,surface=W.surfaceAt(map,x,y);if(!surface||!W.isWalkable(map,x,y,radius)||Math.abs(surface.elevation-prior.elevation)>16.001)return false;prior=surface;}
+    return true;
+  };
   function blockerIndex(map){
     let state=blockerIndexes.get(map);if(state&&state.source===map.blockers)return state.bins;
     const span=(map.tileSize||W.TILE_SIZE)*8,bins=Object.create(null);
@@ -111,7 +141,7 @@
     if(!map||!Number.isFinite(x)||!Number.isFinite(y))return false;
     const r=Math.max(0,Number(radius)||0),s=map.tileSize,half=s/2;
     const xmin=Math.floor((x-r+half)/s),xmax=Math.floor((x+r+half-0.001)/s),ymin=Math.floor((y-r+half)/s),ymax=Math.floor((y+r+half-0.001)/s),cells=index(map);
-    for(let cx=xmin;cx<=xmax;cx++)for(let cy=ymin;cy<=ymax;cy++){const cell=cells[key(cx,cy)];if(!cell||!cell.walkable)return false;}
+    for(let cx=xmin;cx<=xmax;cx++)for(let cy=ymin;cy<=ymax;cy++){const cell=cells[key(cx,cy)];if(!cell)return false;if(!cell.walkable&&!terrainFeaturesAt(map,cx*s,cy*s).some(feature=>feature.walkable&&feature.transition))return false;}
     const bins=blockerIndex(map),span=(map.tileSize||W.TILE_SIZE)*8,cx0=Math.floor((x-r)/span),cx1=Math.floor((x+r)/span),cy0=Math.floor((y-r)/span),cy1=Math.floor((y+r)/span);
     for(let cx=cx0;cx<=cx1;cx++)for(let cy=cy0;cy<=cy1;cy++)for(const b of bins[cx+','+cy]||[]){const nx=Math.max(b.x,Math.min(x,b.x+b.w)),ny=Math.max(b.y,Math.min(y,b.y+b.h));if((x-nx)**2+(y-ny)**2<r*r || (r===0&&x>b.x&&x<b.x+b.w&&y>b.y&&y<b.y+b.h))return false;}
     return true;
@@ -119,7 +149,7 @@
   W.nearestWalkable=function(map,x,y,radius,bounds){
     if(W.isWalkable(map,x,y,radius)&&(!bounds||inside(bounds,x,y,radius)))return{x,y};
     let nearest=null,best=Infinity;
-    for(const cell of map.cells){if(!cell.walkable||bounds&&!inside(bounds,cell.x,cell.y,radius))continue;const d=(cell.x-x)**2+(cell.y-y)**2;if(d>=best||!W.isWalkable(map,cell.x,cell.y,radius))continue;nearest={x:cell.x,y:cell.y};best=d;}
+    for(const cell of map.cells){if(bounds&&!inside(bounds,cell.x,cell.y,radius))continue;const d=(cell.x-x)**2+(cell.y-y)**2;if(d>=best||!W.isWalkable(map,cell.x,cell.y,radius))continue;nearest={x:cell.x,y:cell.y};best=d;}
     return nearest||{x:map.entry.x,y:map.entry.y};
   };
   function inside(b,x,y,r){return x>=b.x+r&&y>=b.y+r&&x<=b.x+b.w-r&&y<=b.y+b.h-r;}
@@ -130,12 +160,24 @@
     let x=from.x,y=from.y;
     for(let i=1;i<=steps;i++){
       const tx=from.x+(goal.x-from.x)*i/steps,ty=from.y+(goal.y-from.y)*i/steps;
-      if(W.isWalkable(map,tx,ty,r)&&(!bounds||inside(bounds,tx,ty,r))){x=tx;y=ty;}
-      else if(W.isWalkable(map,tx,y,r)&&(!bounds||inside(bounds,tx,y,r))){x=tx;entity.vy=0;}
-      else if(W.isWalkable(map,x,ty,r)&&(!bounds||inside(bounds,x,ty,r))){y=ty;entity.vx=0;}
+      if(W.canTraverse(map,{x,y},{x:tx,y:ty},r)&&(!bounds||inside(bounds,tx,ty,r))){x=tx;y=ty;}
+      else if(W.canTraverse(map,{x,y},{x:tx,y},r)&&(!bounds||inside(bounds,tx,y,r))){x=tx;entity.vy=0;}
+      else if(W.canTraverse(map,{x,y},{x,y:ty},r)&&(!bounds||inside(bounds,x,ty,r))){y=ty;entity.vx=0;}
       else{entity.vx=0;entity.vy=0;break;}
     }
     entity.x=x;entity.y=y;return{x,y};
+  };
+  W.lineOfSight=function(map,from,to,projectileHeight){
+    if(!map||!from||!to)return false;
+    const distance=Math.hypot(to.x-from.x,to.y-from.y),height=Math.max(0,Number(projectileHeight)||0),steps=Math.min(512,Math.max(1,Math.ceil(distance/((map.tileSize||W.TILE_SIZE)*0.35)))),bins=blockerIndex(map),span=(map.tileSize||W.TILE_SIZE)*8;
+    for(let i=1;i<=steps;i++){
+      const t=i/steps,x=from.x+(to.x-from.x)*t,y=from.y+(to.y-from.y)*t,surface=W.surfaceAt(map,x,y);if(!surface)return false;
+      if(!surface.walkable&&surface.elevation>height)return false;
+      if(surface.coverHeight>height)return false;
+      const candidates=bins[Math.floor(x/span)+','+Math.floor(y/span)]||[];
+      for(const blocker of candidates)if(x>=blocker.x&&x<=blocker.x+blocker.w&&y>=blocker.y&&y<=blocker.y+blocker.h&&(Number(blocker.height)||48)>height)return false;
+    }
+    return true;
   };
   W.reveal=function(map,x,y,radius){
     const r=radius||720,r2=r*r;let changed=false;
@@ -160,7 +202,7 @@
     const errors=[],cells=index(map),visited=new Set(),queue=[W.cellKey(map.entry.x,map.entry.y,map.tileSize)],start=cells[queue[0]];
     if(!start||!start.walkable)errors.push('Entry is blocked');
     if(start&&start.walkable)visited.add(queue[0]);
-    for(let cursor=0;cursor<queue.length;cursor++){const parts=queue[cursor].split(',').map(Number);for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const id=key(parts[0]+d[0],parts[1]+d[1]);if(!visited.has(id)&&cells[id]&&cells[id].walkable){visited.add(id);queue.push(id);}}}
+    for(let cursor=0;cursor<queue.length;cursor++){const parts=queue[cursor].split(',').map(Number),from=cells[queue[cursor]];for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const id=key(parts[0]+d[0],parts[1]+d[1]),to=cells[id];if(!visited.has(id)&&to&&W.isWalkable(map,to.x,to.y,0)&&W.canTraverse(map,{x:from.x,y:from.y},{x:to.x,y:to.y},0)){visited.add(id);queue.push(id);}}}
     for(const node of map.nodes){if(!visited.has(W.cellKey(node.x,node.y,map.tileSize)))errors.push('Unreachable '+node.id);if(!W.isWalkable(map,node.x,node.y,32))errors.push('No clearance '+node.id);if(node.main&&['combat','boss','elite','challenge','risk','treasure'].includes(node.type)){const b=node.bounds;for(const dx of [-400,0,400])for(const dy of [-260,0,260])if(!W.isWalkable(map,node.x+dx,node.y+dy,32))errors.push('Encounter space '+node.id);if(!b||b.w<1100||b.h<800)errors.push('Small encounter '+node.id);}}
     for(const feature of map.terrainFeatures||[]){if(!feature.id||!Number.isFinite(feature.x)||!Number.isFinite(feature.y)||!(feature.w>0)||!(feature.h>0))errors.push('Invalid terrain feature '+(feature.id||'unknown'));if(feature.transition){if(!Number.isFinite(feature.transition.fromElevation)||!Number.isFinite(feature.transition.toElevation))errors.push('Invalid terrain transition '+feature.id);if(!W.isWalkable(map,feature.x,feature.y,8))errors.push('Unreachable terrain transition '+feature.id);}}
     if(D.REGIONS.some(region=>region.id===map.regionId)&&!(map.terrainFeatures||[]).some(feature=>feature.transition))errors.push('Missing regional traversal terrain');
@@ -172,24 +214,44 @@
     if(version!==W.VERSION)throw new Error('Unsupported world generator version '+version);
     const profile=profiles[options.regionId];if(!profile)throw new Error('Unknown world region '+options.regionId);
     const seed=Number(options.seed)>>>0,modifiers=options.modifiers||{},mirror=options.mirrorOptions||{},rng=new K.RNG(hash(seed+':'+profile.id+':'+version+':'+(options.shopNodeId||'')+':'+canonical(modifiers)+':'+canonical(mirror))),artRng=new K.RNG(hash(seed+':'+profile.id+':'+version+':world-art'));const terrainRng=new K.RNG(hash(seed+':'+profile.id+':'+version+':terrain-art'));
-    const scale=profile.worldScale||1,map={version,seed,regionId:profile.id,regionArtId:profile.regionArtId||profile.id,profile:clone(profile),worldScale:scale,groundAssetId:'regionground.'+profile.assetKit,tileSize:W.TILE_SIZE,modifierSignature:canonical(modifiers),nodes:[],edges:[],cells:[],props:[],terrainOverlays:[],terrainFeatures:[],subzones:[],blockers:[],hazards:[],revealed:{},revealRevision:0,chapterResolved:false};
+    const scale=profile.worldScale||1,map={version,seed,regionId:profile.id,regionArtId:profile.regionArtId||profile.id,profile:clone(profile),worldScale:scale,groundAssetId:'regionground.'+profile.assetKit,tileSize:W.TILE_SIZE,modifierSignature:canonical(modifiers),nodes:[],edges:[],cells:[],props:[],terrainOverlays:[],terrainFeatures:[],terrainRoutes:[],subzones:[],blockers:[],hazards:[],revealed:{},revealRevision:0,chapterResolved:false};
     const carved=Object.create(null),s=map.tileSize;
+    function subtractRect(source,cut){
+      const x0=Math.max(source.x,cut.x),y0=Math.max(source.y,cut.y),x1=Math.min(source.x+source.w,cut.x+cut.w),y1=Math.min(source.y+source.h,cut.y+cut.h);
+      if(x1<=x0||y1<=y0)return[source];
+      const pieces=[{x:source.x,y:source.y,w:source.w,h:y0-source.y},{x:source.x,y:y1,w:source.w,h:source.y+source.h-y1},{x:source.x,y:y0,w:x0-source.x,h:y1-y0},{x:x1,y:y0,w:source.x+source.w-x1,h:y1-y0}];
+      return pieces.filter(piece=>piece.w>48&&piece.h>48);
+    }
+    function buildTerrainBlockers(){
+      const cuts=[];for(const edge of map.edges)for(let i=1;i<edge.path.length;i++){const a=edge.path[i-1],b=edge.path[i],width=320*scale+96;if(Math.abs(a.x-b.x)>=Math.abs(a.y-b.y)){if(Math.abs(a.x-b.x)>1)cuts.push({x:Math.min(a.x,b.x),y:(a.y+b.y)/2-width/2,w:Math.abs(a.x-b.x),h:width});}else if(Math.abs(a.y-b.y)>1)cuts.push({x:(a.x+b.x)/2-width/2,y:Math.min(a.y,b.y),w:width,h:Math.abs(a.y-b.y)});}
+      for(const route of map.terrainRoutes){const a=route.from,b=route.to,width=route.width;if(Math.abs(a.x-b.x)>=Math.abs(a.y-b.y)){if(Math.abs(a.x-b.x)>1)cuts.push({x:Math.min(a.x,b.x),y:(a.y+b.y)/2-width/2,w:Math.abs(a.x-b.x),h:width});}else if(Math.abs(a.y-b.y)>1)cuts.push({x:(a.x+b.x)/2-width/2,y:Math.min(a.y,b.y),w:width,h:Math.abs(a.y-b.y)});}
+      for(const node of map.nodes)cuts.push({x:node.x-640*scale,y:node.y-480*scale,w:1280*scale,h:960*scale});
+      for(const feature of map.terrainFeatures)if(feature.transition)cuts.push({x:feature.x-feature.w/2-48,y:feature.y-feature.h/2-48,w:feature.w+96,h:feature.h+96});
+      for(const feature of map.terrainFeatures)if(feature.blocksMovement){let pieces=[{x:feature.x-feature.w/2+12,y:feature.y-feature.h/2+12,w:Math.max(1,feature.w-24),h:Math.max(1,feature.h-24)}];for(const cut of cuts){pieces=pieces.flatMap(piece=>subtractRect(piece,cut));if(!pieces.length)break;}feature.blocksMovement=pieces.length>0;for(let i=0;i<pieces.length;i++)map.blockers.push(Object.assign({id:feature.id+':terrain-'+i,height:feature.coverHeight,elevation:feature.elevation,terrain:true},pieces[i]));}
+    }
     function materialAt(){return profile.subzones[0].material;}
-    function tile(cx,cy,kind,height,material){const id=key(cx,cy),m=material||materialAt(cx*s,cy*s);carved[id]={x:cx*s,y:cy*s,kind:kind||'ground',height:height||0,walkable:true,material:m,artKey:profile.regionArtId+'.terrain.'+m};}
+    function tile(cx,cy,kind,height,material){const id=key(cx,cy),m=material||materialAt(cx*s,cy*s),current=kind==='bridge'&&profile.ambience.bed==='river'?12:0;carved[id]={x:cx*s,y:cy*s,kind:kind||'ground',height:height||0,flowX:current,flowY:0,walkable:true,material:m,artKey:profile.regionArtId+'.terrain.'+m};}
     function rectangle(x,y,w,h,height,material){for(let cx=Math.ceil((x-w/2)/s);cx<=Math.floor((x+w/2)/s);cx++)for(let cy=Math.ceil((y-h/2)/s);cy<=Math.floor((y+h/2)/s);cy++)tile(cx,cy,'ground',height,material);}
     function corridor(points,width,material){for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],distance=Math.hypot(b.x-a.x,b.y-a.y),steps=Math.max(1,Math.ceil(distance/(s*0.6)));for(let n=0;n<=steps;n++){const t=n/steps;rectangle(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t,width,width,0,material);}}}
-    function obstacle(id,x,y,zone,kind,cell,size,solid,assetId){const artCell=cell===undefined?artRng.int(8,11):cell,artKey=kind==='landmark'?profile.regionArtId+'.landmark.'+String(zone.landmark).toLowerCase().replace(/[^a-z0-9]+/g,'-'):profile.regionArtId+'.obstacles.'+(kind||'scenery'),item={id,x,y,cell:artCell,brokenCell:artCell,assetId:assetId||'regionkit.'+profile.assetKit,kind:kind||'scenery',size:size||artRng.int(110,190),height:40,scale:1,depthY:y,solid:!!solid,destructible:!!solid,hp:solid?2:0,interactive:false,interaction:null,landmark:zone.landmark,material:zone.material,artKey,visualState:solid?'intact':'decorative'};map.props.push(item);if(solid){item.collision={x:x-26,y:y-26,w:52,h:52};map.blockers.push({id,x:x-26,y:y-26,w:52,h:52});}else item.collision=null;return item;}
+    function obstacle(id,x,y,zone,kind,cell,size,solid,assetId){const artCell=cell===undefined?artRng.int(8,11):cell,artKey=kind==='landmark'?profile.regionArtId+'.landmark.'+String(zone.landmark).toLowerCase().replace(/[^a-z0-9]+/g,'-'):profile.regionArtId+'.obstacles.'+(kind||'scenery'),item={id,x,y,cell:artCell,brokenCell:artCell,assetId:assetId||'regionkit.'+profile.assetKit,kind:kind||'scenery',size:size||artRng.int(110,190),height:40,scale:1,depthY:y,solid:!!solid,destructible:!!solid,hp:solid?2:0,interactive:false,interaction:null,landmark:zone.landmark,material:zone.material,artKey,visualState:solid?'intact':'decorative'};map.props.push(item);if(solid){item.collision={x:x-26,y:y-26,w:52,h:52};map.blockers.push({id,x:x-26,y:y-26,w:52,h:52,height:item.height,elevation:0});}else item.collision=null;return item;}
     function groundPatch(id,x,y,zone,cell,w,h,alpha,rot){map.terrainOverlays.push({id,kind:'ground-surface',assetId:map.groundAssetId,artKey:profile.regionArtId+'.ground.'+zone.material,cell,material:zone.material,x,y,w,h,depthY:y,alpha:alpha===undefined?0.94:alpha,rot:rot||0,solid:false,collision:null,walkable:true,interactive:false,regionArtId:profile.regionArtId});}
     const terrainArtCell={basin:0,ridge:1,ravine:2,channel:3,island:4,terrace:5,rootbank:6,ruins:7,shelf:8,bank:9,ramp:10,stair:11,bridge:12,causeway:13};
-    function addTerrainFeature(id,kind,x,y,w,h,zone,elevation,transition){const feature={id,kind,shape:profile.terrain.shape,x,y,w,h,elevation,material:zone.material,surface:profile.terrain.surface,walkable:!!transition,cell:terrainArtCell[kind]===undefined?14:terrainArtCell[kind],assetId:'regionterrain.'+profile.assetKit,depthY:y+h*0.5,transition:transition?{kind:transition,fromElevation:0,toElevation:Math.max(16,elevation||24)}:null};map.terrainFeatures.push(feature);return feature;}
+    function addTerrainFeature(id,kind,x,y,w,h,zone,elevation,transition){
+      const coverHeight={basin:8,ridge:elevation+28,ravine:elevation+20,channel:0,island:18,terrace:elevation+18,rootbank:32,ruins:56,shelf:elevation+24,bank:20,ramp:0,stair:0,bridge:0,causeway:0}[kind]||0,weather=profile.ambience.weather,bed=profile.ambience.bed,blocksMovement=scale>1&&['ridge','ravine','channel','terrace','rootbank','ruins','shelf'].includes(kind);
+      const force=transition?(bed==='river'?22:(weather==='storm'||weather==='wind'?18:(weather==='spray'?14:(weather==='leaves'?8:0)))):0,angle=hash(seed+':terrain-flow:'+id)/4294967296*Math.PI*2;
+      const feature={id,kind,shape:profile.terrain.shape,x,y,w,h,elevation,coverHeight,blocksMovement,flowX:Math.cos(angle)*force,flowY:Math.sin(angle)*force,material:zone.material,surface:profile.terrain.surface,walkable:!!transition,cell:terrainArtCell[kind]===undefined?14:terrainArtCell[kind],assetId:'regionterrain.'+profile.assetKit,depthY:y+h*0.5,transition:transition?{kind:transition,fromElevation:0,toElevation:Math.max(16,elevation||24)}:null};map.terrainFeatures.push(feature);
+      return feature;
+    }
     function composeTerrain(n,zone){
       const forms=profile.terrain.landforms||['ridge','basin','ruins'],ring=scale>1?1180*scale:420,baseAngle=terrainRng.range(0,Math.PI*2);
       for(let i=0;i<forms.length;i++){
         const angle=baseAngle+i*Math.PI*2/forms.length,radius=ring+terrainRng.int(-2,2)*80*scale,x=n.x+Math.cos(angle)*radius,y=n.y+Math.sin(angle)*radius,w=(terrainRng.int(250,420))*scale,h=(terrainRng.int(180,320))*scale,material=profile.subzones[(n.idx+i)%profile.subzones.length];
-        addTerrainFeature(n.id+':landform-'+i,forms[i],Math.round(x/s)*s,Math.round(y/s)*s,w,h,material,terrainRng.int(1,3)*16,null);
+        const feature=addTerrainFeature(n.id+':landform-'+i,forms[i],Math.round(x/s)*s,Math.round(y/s)*s,w,h,material,terrainRng.int(1,3)*16,null),ux=Math.cos(angle),uy=Math.sin(angle),edgeDistance=Math.min(w/(2*Math.abs(ux)||Infinity),h/(2*Math.abs(uy)||Infinity)),trailEnd={x:Math.round((n.x+ux*Math.max(0,radius-edgeDistance-80*scale))/s)*s,y:Math.round((n.y+uy*Math.max(0,radius-edgeDistance-80*scale))/s)*s};
+        rectangle(feature.x,feature.y,w+180*scale,h+180*scale,0,material.material);map.terrainRoutes.push({from:{x:n.x,y:n.y},to:trailEnd,width:220*scale,featureId:feature.id});corridor([{x:n.x,y:n.y},trailEnd],220*scale,material.material);
       }
       const side=n.idx%2?-1:1,transitionKind=profile.terrain.traversal,x=n.x+side*520*scale,y=n.y+240*scale;
-      addTerrainFeature(n.id+':traversal',transitionKind,Math.round(x/s)*s,Math.round(y/s)*s,360*scale,200*scale,zone,24,transitionKind);
+      const transition=addTerrainFeature(n.id+':traversal',transitionKind,Math.round(x/s)*s,Math.round(y/s)*s,360*scale,200*scale,zone,24,transitionKind);
+      rectangle(transition.x,transition.y,transition.w+120*scale,transition.h+120*scale,0,zone.material);map.terrainRoutes.push({from:{x:n.x,y:n.y},to:{x:transition.x,y:transition.y},width:220*scale,featureId:transition.id});corridor([{x:n.x,y:n.y},{x:transition.x,y:transition.y}],220*scale,zone.material);
     }
     function scatterGround(n,zone){
       const sites=[];
@@ -253,6 +315,7 @@
       // River channels cut through the terrain; narrow bridges retain the protected route.
       if(profile.family==='river')for(const n of main.filter(n=>n.idx%2===1))for(let dx=-560*scale;dx<=560*scale;dx+=80*scale)for(const dy of [520,600,680].map(v=>v*scale)){const cx=coord(n.x+dx,s),cy=coord(n.y+dy,s);if(Math.abs(dx)<=160*scale)tile(cx,cy,'bridge',12,n.material);else carved[key(cx,cy)]={x:cx*s,y:cy*s,kind:'water',height:-12,walkable:false,material:'river_shallows',artKey:profile.regionArtId+'.terrain.river_shallows'};}
     }
+    buildTerrainBlockers();
     // Encounter pockets stay open even when a river crosses the approach. Bridge banks are peripheral.
     for(const n of map.nodes.filter(n=>n.main))for(const dx of [-400,0,400])for(const dy of [-260,0,260])rectangle(n.x+dx,n.y+dy,160,160,profile.family==='terraces'?n.idx%4*16:0,n.material);
     const walkable=Object.values(carved).filter(c=>c.walkable);

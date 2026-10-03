@@ -123,6 +123,7 @@
   }
 
   Projectile.prototype.update = function (dt, G) {
+    const worldFrom = { x: this.x, y: this.y };
     this.life -= dt;
     if (this.life <= 0) { this.die(G); return; }
 
@@ -172,6 +173,15 @@
     }
     if (this.x < b.x - 200 || this.x > b.x + b.w + 200 || this.y < b.y - 200 || this.y > b.y + b.h + 200) {
       this.life = 0; this.die(G); return;
+    }
+
+    // Resolve raised terrain and blockers before an actor can be hit behind them.
+    if (this.hitWall && G.world && K.World && typeof K.World.lineOfSight === 'function') {
+      const height = Number.isFinite(this.projectileHeight) ? this.projectileHeight : 24;
+      if (!K.World.lineOfSight(G.world, worldFrom, { x: this.x, y: this.y }, height)) {
+        if (this.shape === 'rock' || this.aoe > 0) this.explode(G);
+        this.life = 0; this.die(G); return;
+      }
     }
 
     // collisions
